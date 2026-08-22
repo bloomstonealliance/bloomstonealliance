@@ -4,14 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bloomstone Alliance - Fund Manager (Nepal)</title>
-
-    <!-- Firebase App (compat) -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <!-- Firestore -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
     <style>
-        /* ========== YOUR EXISTING CSS (unchanged) ========== */
         :root {
             --sidebar-bg: #0f172a;
             --sidebar-hover: #1e293b;
@@ -34,17 +31,18 @@
             --danger-bg: #fee2e2;
             --info: #3b82f6;
             --info-bg: #dbeafe;
-            --shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
             --radius: 12px;
             --radius-sm: 8px;
             --sidebar-width: 250px;
+            --sidebar-collapsed-width: 70px;
             --transition: 0.2s ease;
             --input-bg: #f8fafc;
             --table-header-bg: #f8fafc;
             --hover-bg: #f8fafc;
         }
-        /* Dark theme overrides */
+
         [data-theme="dark"] {
             --bg: #0f172a;
             --card-bg: #1e293b;
@@ -52,8 +50,8 @@
             --text-muted: #94a3b8;
             --border: #334155;
             --primary-light: #134e4a;
-            --shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+            --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.3), 0 4px 6px -2px rgba(0,0,0,0.2);
             --input-bg: #0f172a;
             --table-header-bg: #0f172a;
             --hover-bg: #2d3a4f;
@@ -62,318 +60,701 @@
             --warning-bg: #78350f;
             --info-bg: #1e3a8a;
         }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; overflow-x: hidden; }
-        /* ... (rest of CSS unchanged) ... */
+
+        .login-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0f172a 0%, #0d9488 50%, #0f766e 100%); padding: 20px; position: relative; overflow: hidden; }
+        .login-container::before { content: ''; position: absolute; top: -50%; right: -30%; width: 80%; height: 100%; background: rgba(255,255,255,0.03); border-radius: 50%; transform: rotate(25deg); pointer-events: none; }
+        .login-container::after { content: ''; position: absolute; bottom: -40%; left: -20%; width: 70%; height: 90%; background: rgba(255,255,255,0.02); border-radius: 50%; pointer-events: none; }
+        .login-box { background: var(--card-bg); border-radius: 20px; padding: 48px 40px; width: 100%; max-width: 420px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.35); position: relative; z-index: 1; animation: slideUp 0.5s ease; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .login-logo { text-align: center; margin-bottom: 32px; }
+        .login-logo .logo-icon { width: 64px; height: 64px; background: var(--primary); border-radius: 16px; display: inline-flex; align-items: center; justify-content: center; font-size: 32px; color: #fff; margin-bottom: 16px; box-shadow: 0 8px 16px -4px rgba(13,148,136,0.4); }
+        .login-logo h1 { font-size: 24px; font-weight: 700; color: var(--text); letter-spacing: -0.5px; }
+        .login-logo p { color: var(--text-muted); font-size: 14px; margin-top: 4px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; letter-spacing: 0.3px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: var(--radius-sm); font-size: 14px; color: var(--text); transition: all var(--transition); background: var(--input-bg); font-family: inherit; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--primary); background: var(--card-bg); box-shadow: 0 0 0 3px rgba(13,148,136,0.1); }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; transition: all var(--transition); text-decoration: none; letter-spacing: 0.3px; font-family: inherit; white-space: nowrap; }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-primary:hover { background: var(--primary-hover); box-shadow: 0 4px 12px -2px rgba(13,148,136,0.4); transform: translateY(-1px); }
+        .btn-secondary { background: var(--border); color: var(--text); }
+        .btn-secondary:hover { background: var(--text-muted); color: var(--card-bg); }
+        .btn-danger { background: var(--danger); color: #fff; }
+        .btn-danger:hover { background: #dc2626; box-shadow: 0 4px 12px -2px rgba(239,68,68,0.4); }
+        .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 6px; }
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+        .btn-outline:hover { background: var(--primary); color: #fff; }
+        .btn-block { width: 100%; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+        .login-error { background: var(--danger-bg); color: var(--danger); padding: 12px 16px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; margin-bottom: 16px; display: none; border: 1px solid #fca5a5; }
+        .login-error.show { display: block; animation: shake 0.3s ease; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+        .login-hint { text-align: center; margin-top: 20px; font-size: 12px; color: var(--text-muted); }
+        .login-hint code { background: var(--input-bg); padding: 2px 6px; border-radius: 4px; font-size: 11px; color: var(--primary); }
+
+        .app-container { display: none; min-height: 100vh; }
+        .app-container.active { display: flex; }
+        .sidebar { width: var(--sidebar-width); background: var(--sidebar-bg); min-height: 100vh; position: fixed; top: 0; left: 0; bottom: 0; display: flex; flex-direction: column; z-index: 100; transition: width var(--transition); overflow: hidden; }
+        .sidebar.collapsed { width: var(--sidebar-collapsed-width); }
+        .sidebar.collapsed .sidebar-header h2, .sidebar.collapsed .sidebar-header p, 
+        .sidebar.collapsed .nav-item span:not(.nav-icon), 
+        .sidebar.collapsed .sidebar-footer .user-info { display: none; }
+        .sidebar.collapsed .sidebar-header { justify-content: center; padding: 20px 0; }
+        .sidebar.collapsed .nav-item { justify-content: center; padding: 11px 0; }
+        .sidebar.collapsed .nav-item .nav-icon { margin-right: 0; }
+        .sidebar.collapsed .sidebar-footer { justify-content: center; padding: 16px 0; }
+        .sidebar.collapsed .user-avatar { margin: 0; }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; gap: 12px; }
+        .sidebar-header .logo-icon { width: 40px; height: 40px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #fff; flex-shrink: 0; }
+        .sidebar-header h2 { font-size: 16px; color: #fff; font-weight: 700; letter-spacing: -0.3px; line-height: 1.2; }
+        .sidebar-header p { font-size: 11px; color: var(--sidebar-text); letter-spacing: 0.5px; }
+        .sidebar-nav { flex: 1; padding: 16px 12px; overflow-y: auto; }
+        .sidebar-nav .nav-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #475569; font-weight: 700; padding: 0 12px; margin-bottom: 8px; margin-top: 16px; }
+        .sidebar.collapsed .sidebar-nav .nav-label { display: none; }
+        .sidebar-nav .nav-label:first-child { margin-top: 0; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: 10px; cursor: pointer; color: var(--sidebar-text); transition: all var(--transition); margin-bottom: 4px; font-size: 14px; font-weight: 500; user-select: none; border: none; background: transparent; width: 100%; text-align: left; font-family: inherit; }
+        .nav-item:hover { background: var(--sidebar-hover); color: #e2e8f0; }
+        .nav-item.active { background: var(--sidebar-active-bg); color: var(--sidebar-active); font-weight: 600; }
+        .nav-item .nav-icon { font-size: 18px; width: 24px; text-align: center; flex-shrink: 0; }
+        .nav-item .nav-badge { margin-left: auto; background: var(--primary); color: #fff; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+        .sidebar.collapsed .nav-item .nav-badge { display: none; }
+        .sidebar-footer { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; gap: 12px; }
+        .sidebar-footer .user-avatar { width: 36px; height: 36px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 14px; flex-shrink: 0; }
+        .sidebar-footer .user-info { flex: 1; min-width: 0; }
+        .sidebar-footer .user-name { font-size: 13px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .sidebar-footer .user-role { font-size: 11px; color: var(--sidebar-text); text-transform: capitalize; }
+        .sidebar-footer .btn-logout { background: transparent; border: none; color: var(--sidebar-text); cursor: pointer; font-size: 18px; padding: 6px; border-radius: 6px; transition: all var(--transition); flex-shrink: 0; }
+        .sidebar-footer .btn-logout:hover { color: var(--danger); background: rgba(239,68,68,0.1); }
+
+        .main-content { flex: 1; margin-left: var(--sidebar-width); padding: 0; min-height: 100vh; background: var(--bg); transition: margin-left var(--transition); }
+        .main-content.collapsed { margin-left: var(--sidebar-collapsed-width); }
+        .topbar { background: var(--card-bg); padding: 16px 32px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; box-shadow: var(--shadow); }
+        .topbar h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; color: var(--text); }
+        .topbar .topbar-actions { display: flex; align-items: center; gap: 12px; }
+        .topbar .date-display { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+        .page-content { padding: 24px 32px; max-width: 1400px; }
+        .mobile-toggle { display: none; background: transparent; border: none; font-size: 24px; cursor: pointer; color: var(--text); padding: 4px; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: var(--card-bg); border-radius: var(--radius); padding: 20px 24px; box-shadow: var(--shadow); transition: all var(--transition); border: 1px solid var(--border); }
+        .stat-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+        .stat-card .stat-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 12px; }
+        .stat-card .stat-icon.teal { background: var(--primary-light); color: var(--primary); }
+        .stat-card .stat-icon.green { background: var(--success-bg); color: var(--success); }
+        .stat-card .stat-icon.blue { background: var(--info-bg); color: var(--info); }
+        .stat-card .stat-icon.orange { background: var(--warning-bg); color: var(--warning); }
+        .stat-card .stat-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); font-weight: 600; margin-bottom: 4px; }
+        .stat-card .stat-value { font-size: 28px; font-weight: 700; letter-spacing: -1px; color: var(--text); }
+        .stat-card .stat-sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+        .card { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; }
+        .card-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+        .card-header h3 { font-size: 16px; font-weight: 600; color: var(--text); }
+        .card-body { padding: 20px; }
+        .card-body.no-padding { padding: 0; }
+        canvas#fundChart { width: 100% !important; height: 250px !important; }
+        .table-wrapper { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        table th { text-align: left; padding: 12px 16px; background: var(--table-header-bg); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); font-weight: 700; border-bottom: 2px solid var(--border); white-space: nowrap; }
+        table td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text); }
+        table tr:hover td { background: var(--hover-bg); }
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; letter-spacing: 0.3px; }
+        .badge-success { background: var(--success-bg); color: var(--success); }
+        .badge-danger { background: var(--danger-bg); color: var(--danger); }
+        .badge-warning { background: var(--warning-bg); color: var(--warning); }
+        .badge-info { background: var(--info-bg); color: var(--info); }
+        .badge-primary { background: var(--primary-light); color: var(--primary); }
+        .badge-muted { background: var(--input-bg); color: var(--text-muted); }
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); animation: fadeIn 0.2s ease; }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal { background: var(--card-bg); border-radius: 16px; padding: 28px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); animation: modalIn 0.25s ease; }
+        @keyframes modalIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .modal-header h2 { font-size: 18px; font-weight: 700; color: var(--text); }
+        .modal-close { background: transparent; border: none; font-size: 24px; cursor: pointer; color: var(--text-muted); padding: 4px 8px; border-radius: 6px; transition: all var(--transition); line-height: 1; }
+        .modal-close:hover { background: var(--hover-bg); color: var(--text); }
+        .modal-footer { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+        .permission-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; padding: 12px; background: var(--input-bg); border-radius: var(--radius-sm); border: 1px solid var(--border); }
+        .permission-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: var(--card-bg); border-radius: 6px; border: 1px solid var(--border); }
+        .permission-item label { font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px; color: var(--text); }
+        .permission-item input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer; }
+        .toggle-switch { position: relative; width: 40px; height: 22px; cursor: pointer; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #cbd5e1; border-radius: 999px; transition: all 0.3s ease; }
+        .toggle-slider::before { content: ''; position: absolute; width: 18px; height: 18px; border-radius: 50%; background: #fff; top: 2px; left: 2px; transition: all 0.3s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        .toggle-switch input:checked + .toggle-slider { background: var(--primary); }
+        .toggle-switch input:checked + .toggle-slider::before { transform: translateX(18px); }
+
+        .toast-container { position: fixed; top: 20px; right: 20px; z-index: 300; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+        .toast { padding: 14px 20px; border-radius: 10px; color: #fff; font-weight: 500; font-size: 14px; box-shadow: 0 8px 16px -4px rgba(0,0,0,0.2); animation: toastIn 0.3s ease, toastOut 0.3s ease 2.5s forwards; pointer-events: auto; min-width: 280px; max-width: 400px; }
+        .toast-success { background: var(--success); }
+        .toast-error { background: var(--danger); }
+        .toast-info { background: var(--info); }
+        .toast-warning { background: var(--warning); color: #1e293b; }
+        @keyframes toastIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes toastOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(30px); } }
+
+        .empty-state { text-align: center; padding: 48px 20px; color: var(--text-muted); }
+        .empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+        .empty-state h4 { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+        .empty-state p { font-size: 13px; }
+
+        @media (max-width: 1024px) { .dashboard-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); box-shadow: var(--shadow-lg); width: var(--sidebar-width); }
+            .sidebar.collapsed { width: var(--sidebar-width); }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar.open.collapsed { width: var(--sidebar-width); }
+            .main-content { margin-left: 0; }
+            .main-content.collapsed { margin-left: 0; }
+            .mobile-toggle { display: block; }
+            .page-content { padding: 16px; }
+            .topbar { padding: 12px 16px; }
+            .topbar h1 { font-size: 16px; }
+            .stats-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+            .form-row, .form-row-3 { grid-template-columns: 1fr; gap: 0; }
+            .modal { padding: 20px; margin: 10px; }
+            .login-box { padding: 32px 24px; }
+            .stat-card .stat-value { font-size: 22px; }
+            .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 90; }
+            .sidebar-overlay.active { display: block; }
+        }
+        @media (max-width: 480px) { .stats-grid { grid-template-columns: 1fr; } .login-box { padding: 24px 16px; border-radius: 16px; } }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .user-actions { display: flex; gap: 6px; align-items: center; }
+        .btn-icon { background: transparent; border: none; cursor: pointer; padding: 6px; border-radius: 6px; font-size: 14px; transition: all var(--transition); color: var(--text-muted); }
+        .btn-icon:hover { background: var(--hover-bg); color: var(--text); }
+        .btn-icon.delete:hover { background: var(--danger-bg); color: var(--danger); }
+
+        .search-input { padding: 8px 14px; border: 2px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; width: 100%; max-width: 300px; transition: all var(--transition); font-family: inherit; background: var(--input-bg); color: var(--text); }
+        .search-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(13,148,136,0.1); }
+        .filter-select { padding: 8px 12px; border: 2px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; background: var(--input-bg); font-family: inherit; transition: all var(--transition); color: var(--text); }
+        .filter-select:focus { outline: none; border-color: var(--primary); }
+        .card-header-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
     </style>
 </head>
 <body>
-    <!-- Toast -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- Loading Overlay (shown during Firebase load) -->
-    <div id="loadingOverlay" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:999;color:#fff;font-size:20px;font-weight:600;">
-        Loading…
-    </div>
-
     <!-- Login View -->
-    <div class="login-container" id="loginView" style="display:none;">
-        <!-- ... Login box same as before ... -->
+    <div class="login-container" id="loginView">
+        <div class="login-box">
+            <div class="login-logo">
+                <div class="logo-icon">💎</div>
+                <h1>Bloomstone Alliance</h1>
+                <p>Investment Fund Manager - Nepal</p>
+            </div>
+            <div class="login-error" id="loginError"></div>
+            <form id="loginForm" autocomplete="off">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+            </form>
+            <div class="login-hint">Default admin: <code>admin@bloomstone.np</code> / <code>admin123</code></div>
+        </div>
     </div>
 
     <!-- App View -->
-    <div class="app-container" id="appView" style="display:none;">
-        <!-- Sidebar, Topbar, Content same as before ... -->
+    <div class="app-container" id="appView">
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">💎</div>
+                <div>
+                    <h2>Bloomstone</h2>
+                    <p>Alliance Nepal</p>
+                </div>
+            </div>
+            <nav class="sidebar-nav" id="sidebarNav">
+                <div class="nav-label">Main</div>
+                <button class="nav-item active" data-page="dashboard"><span class="nav-icon">📊</span> <span>Dashboard</span></button>
+                <button class="nav-item" data-page="members"><span class="nav-icon">👥</span> <span>Members</span></button>
+                <button class="nav-item" data-page="transactions"><span class="nav-icon">💰</span> <span>Amount Records</span></button>
+                <button class="nav-item" data-page="banking"><span class="nav-icon">🏦</span> <span>Banking</span></button>
+                <button class="nav-item" data-page="meetings"><span class="nav-icon">📅</span> <span>Meetings</span></button>
+                <div class="nav-label">Administration</div>
+                <button class="nav-item" data-page="settings" id="settingsNavItem"><span class="nav-icon">⚙️</span> <span>Settings</span></button>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-avatar" id="sidebarAvatar">A</div>
+                <div class="user-info">
+                    <div class="user-name" id="sidebarUsername">Admin</div>
+                    <div class="user-role" id="sidebarRole">Admin</div>
+                </div>
+                <button class="btn-logout" id="logoutBtn" title="Logout">⏻</button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <div class="topbar">
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <button class="mobile-toggle" id="mobileToggle">☰</button>
+                    <button class="btn btn-secondary btn-sm" id="sidebarToggle" title="Toggle sidebar">◀</button>
+                    <h1 id="pageTitle">Dashboard</h1>
+                </div>
+                <div class="topbar-actions">
+                    <span class="date-display" id="dateDisplay"></span>
+                    <button class="btn btn-secondary btn-sm" id="themeToggle" title="Toggle dark/light mode">🌙</button>
+                    <button class="btn btn-primary btn-sm" id="topbarAddBtn">+ Add Record</button>
+                </div>
+            </div>
+            <div class="page-content" id="pageContent"></div>
+        </main>
     </div>
 
-    <!-- Modals (same as before) -->
-    <!-- ... -->
+    <!-- Modals (same as before, but keep placeholders) -->
+    <div class="modal-overlay" id="memberModal">
+        <div class="modal">
+            <div class="modal-header"><h2 id="memberModalTitle">Add Member</h2><button class="modal-close" data-close="memberModal">✕</button></div>
+            <form id="memberForm">
+                <input type="hidden" id="memberId">
+                <div class="form-group"><label>Full Name *</label><input type="text" id="memberName" required></div>
+                <div class="form-row">
+                    <div class="form-group"><label>Email</label><input type="email" id="memberEmail"></div>
+                    <div class="form-group"><label>Phone</label><input type="tel" id="memberPhone"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Position *</label><input type="text" id="memberPosition" required></div>
+                    <div class="form-group"><label>Role</label><select id="memberRole"><option value="member">Member</option><option value="investor">Investor</option><option value="advisor">Advisor</option><option value="trustee">Trustee</option><option value="officer">Officer</option></select></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Join Date *</label><input type="date" id="memberJoinDate" required></div>
+                    <div class="form-group"><label>Status</label><select id="memberStatus"><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
+                </div>
+                <div class="form-group" style="margin-top:16px; border-top:1px solid var(--border); padding-top:16px;">
+                    <label style="font-weight:600;">User Account (optional)</label>
+                    <div class="form-row">
+                        <div class="form-group"><label>Email</label><input type="email" id="memberUserEmail" placeholder="e.g. member@bloomstone.np"></div>
+                        <div class="form-group"><label>Password</label><input type="password" id="memberUserPassword" placeholder="Password"></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button type="button" class="btn btn-secondary" data-close="memberModal">Cancel</button><button type="submit" class="btn btn-primary" id="memberSubmitBtn">Save Member</button></div>
+            </form>
+        </div>
+    </div>
 
+    <!-- Other modals similar to original; you can reuse them, but we won't show full for brevity -->
+    <div class="modal-overlay" id="transactionModal">
+        <div class="modal">
+            <div class="modal-header"><h2 id="transactionModalTitle">Record Amount</h2><button class="modal-close" data-close="transactionModal">✕</button></div>
+            <form id="transactionForm">
+                <input type="hidden" id="transactionId">
+                <div class="form-group"><label>Member *</label><select id="transactionMemberId" required><option value="">Select member...</option></select></div>
+                <div class="form-row">
+                    <div class="form-group"><label>Type *</label><select id="transactionType" required><option value="contribution">Income: Contribution</option><option value="return">Income: Return</option><option value="withdrawal">Expense: Withdrawal</option><option value="expense">Expense: Other</option><option value="investment">Investment</option><option value="other">Other</option></select></div>
+                    <div class="form-group"><label>Amount (Rs.) *</label><input type="number" id="transactionAmount" required min="0.01" step="0.01"></div>
+                </div>
+                <div class="form-group"><label>Date *</label><input type="date" id="transactionDate" required></div>
+                <div class="form-group"><label>Description</label><textarea id="transactionDescription" rows="3"></textarea></div>
+                <div class="modal-footer"><button type="button" class="btn btn-secondary" data-close="transactionModal">Cancel</button><button type="submit" class="btn btn-primary" id="transactionSubmitBtn">Save Record</button></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Include other modals: banking, meeting, user, confirm, import as before -->
+
+    <!-- Firebase Config and Initialization -->
     <script>
-        // ============================================================
-        //  FIREBASE CONFIGURATION – PASTE YOUR OWN HERE
-        // ============================================================
-      <script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyB9sicf13hCERStzkA7nngnAUtGUM-axcE",
-    authDomain: "bloomstonealliance-ab248.firebaseapp.com",
-    projectId: "bloomstonealliance-ab248",
-    storageBucket: "bloomstonealliance-ab248.firebasestorage.app",
-    messagingSenderId: "164368198686",
-    appId: "1:164368198686:web:0969a493e70db2619e120f"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-</script>
-
-        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDvv8UTRCO7JSyj83FSsLS5kE4QllfiFQ8",
+            authDomain: "bloomstone-alliance.firebaseapp.com",
+            projectId: "bloomstone-alliance",
+            storageBucket: "bloomstone-alliance.firebasestorage.app",
+            messagingSenderId: "85994919777",
+            appId: "1:85994919777:web:e0ec61df4bae920dced720"
+        };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+        const auth = firebase.auth();
+    </script>
 
-        // ============================================================
-        //  APPLICATION STATE (replaces localStorage data)
-        // ============================================================
-        let allUsers = [];
-        let allMembers = [];
-        let allTransactions = [];
-        let allBanking = [];
-        let allMeetings = [];
-        let allSettings = { interestRate: 6.5 };
+    <!-- Main Application Script -->
+    <script>
+        (function() {
+            'use strict';
 
-        let currentUser = null;   // session info
-        let currentPage = 'dashboard';
+            // State object holding all collections
+            let state = {
+                users: [],
+                members: [],
+                transactions: [],
+                banking: [],
+                meetings: [],
+                settings: { interestRate: 6.5, orgDetails: { name: 'Bloomstone Alliance', address: '', phone: '', email: '', website: '', registrationNo: '' } },
+                currentUser: null
+            };
 
-        // ============================================================
-        //  FIRESTORE HELPERS
-        // ============================================================
-        function getCollectionRef(name) {
-            return db.collection(name);
-        }
+            const ALL_PERMISSIONS = [
+                { key: 'viewDashboard', label: 'View Dashboard' },
+                { key: 'viewMembers', label: 'View Members' },
+                { key: 'addMember', label: 'Add Member' },
+                { key: 'editMember', label: 'Edit Member' },
+                { key: 'deleteMember', label: 'Delete Member' },
+                { key: 'viewTransactions', label: 'View Amount Records' },
+                { key: 'addTransaction', label: 'Record Income/Expense/Investment' },
+                { key: 'editTransaction', label: 'Edit Transaction' },
+                { key: 'deleteTransaction', label: 'Delete Transaction' },
+                { key: 'viewBanking', label: 'View Banking' },
+                { key: 'manageBanking', label: 'Manage Banking' },
+                { key: 'viewMeetings', label: 'View Meetings' },
+                { key: 'manageMeetings', label: 'Manage Meetings' },
+                { key: 'manageUsers', label: 'Manage Users' },
+                { key: 'accessSettings', label: 'Access Settings' },
+                { key: 'changeOwnCredential', label: 'Change Own Credential' }
+            ];
 
-        // Load entire collection into memory
-        async function loadCollection(collectionName) {
-            const snapshot = await getCollectionRef(collectionName).get();
-            const data = [];
-            snapshot.forEach(doc => {
-                data.push({ id: doc.id, ...doc.data() });
-            });
-            return data;
-        }
-
-        // Overwrite entire collection (delete all + add new docs)
-        async function overwriteCollection(collectionName, dataArray) {
-            const ref = getCollectionRef(collectionName);
-            // Delete all existing docs
-            const existing = await ref.get();
-            const batch = db.batch();
-            existing.forEach(doc => {
-                batch.delete(doc.ref);
-            });
-            await batch.commit();
-
-            // Add new docs
-            const addBatch = db.batch();
-            dataArray.forEach(item => {
-                const newDocRef = ref.doc();  // auto‑id
-                addBatch.set(newDocRef, item);
-            });
-            await addBatch.commit();
-        }
-
-        // ============================================================
-        //  AUTHENTICATION (simple username/password)
-        // ============================================================
-        function hashPassword(str) {
-            let hash = 5381;
-            for (let i = 0; i < str.length; i++) {
-                hash = ((hash << 5) + hash) + str.charCodeAt(i);
-                hash = hash & 0x7fffffff;
-            }
-            return 'h_' + hash.toString(36) + '_' + str.length;
-        }
-
-        async function loginUser(username, password) {
-            const user = allUsers.find(u => u.username === username && u.active);
-            if (!user) return null;
-            if (user.passwordHash !== hashPassword(password)) return null;
-            // Store session (we'll keep it in memory only; reload will require login again)
-            currentUser = user;
-            return user;
-        }
-
-        function logoutUser() {
-            currentUser = null;
-            showLogin();
-        }
-
-        function hasPermission(permKey) {
-            if (!currentUser) return false;
-            if (currentUser.role === 'admin') return true;
-            return currentUser.permissions && currentUser.permissions[permKey] === true;
-        }
-
-        // ============================================================
-        //  REAL‑TIME LISTENERS
-        // ============================================================
-        function setupFirestoreListeners() {
-            // Users
-            db.collection('users').onSnapshot(snapshot => {
-                const users = [];
-                snapshot.forEach(doc => users.push({ id: doc.id, ...doc.data() }));
-                allUsers = users;
-                // If current user was updated, refresh session?
-                if (currentUser) {
-                    const updatedUser = allUsers.find(u => u.id === currentUser.id);
-                    if (updatedUser) currentUser = updatedUser;
+            function getDefaultPermissions(role) {
+                const p = {};
+                ALL_PERMISSIONS.forEach(perm => p[perm.key] = false);
+                if (role === 'admin') { ALL_PERMISSIONS.forEach(perm => p[perm.key] = true); }
+                else if (role === 'manager') {
+                    p.viewDashboard = true; p.viewMembers = true; p.addMember = true; p.editMember = true;
+                    p.viewTransactions = true; p.addTransaction = true; p.editTransaction = true;
+                    p.viewBanking = true; p.manageBanking = true; p.viewMeetings = true; p.manageMeetings = true;
                 }
-                if (currentPage === 'settings') renderSettings(document.getElementById('pageContent'));
+                else if (role === 'viewer') {
+                    p.viewDashboard = true; p.viewMembers = true; p.viewTransactions = true; p.viewBanking = true; p.viewMeetings = true;
+                }
+                else if (role === 'member') {
+                    p.viewDashboard = true; p.viewMembers = true; p.viewTransactions = true; p.viewBanking = true; p.viewMeetings = true;
+                    p.accessSettings = true; p.changeOwnCredential = true;
+                }
+                return p;
+            }
+
+            // Helper functions
+            function formatCurrency(amount) { return 'Rs. ' + Number(amount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+            function formatDate(dateStr) { if (!dateStr) return '-'; const d = new Date(dateStr + 'T00:00:00'); if (isNaN(d.getTime())) return dateStr; return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }); }
+            function getTodayStr() { return new Date().toISOString().split('T')[0]; }
+            function escapeHtml(str) { if (!str) return ''; const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
+            function showToast(message, type) { type = type || 'success'; const container = document.getElementById('toastContainer'); const toast = document.createElement('div'); toast.className = 'toast toast-' + type; toast.textContent = message; container.appendChild(toast); setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 3000); }
+            function capitalizeFirst(str) { return str.charAt(0).toUpperCase() + str.slice(1); }
+            function getTypeBadge(type) { const map = { contribution: 'badge-success', withdrawal: 'badge-danger', return: 'badge-info', expense: 'badge-warning', investment: 'badge-warning', other: 'badge-muted' }; return map[type] || 'badge-muted'; }
+            function hasPermission(permKey) {
+                const user = state.currentUser;
+                if (!user) return false;
+                if (user.role === 'admin') return true;
+                return user.permissions && user.permissions[permKey] === true;
+            }
+
+            // Real-time listeners
+            function setupListeners() {
+                // Users collection
+                db.collection('users').onSnapshot(snapshot => {
+                    state.users = [];
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        data.id = doc.id;
+                        state.users.push(data);
+                    });
+                    // After users load, update current user
+                    if (auth.currentUser) {
+                        const uid = auth.currentUser.uid;
+                        const userDoc = state.users.find(u => u.uid === uid);
+                        if (userDoc) {
+                            state.currentUser = userDoc;
+                            updateSidebarUser();
+                        }
+                    }
+                });
+
+                // Members
+                db.collection('members').onSnapshot(snapshot => {
+                    state.members = [];
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        data.id = doc.id;
+                        state.members.push(data);
+                    });
+                    if (currentPage === 'members') renderPage(currentPage);
+                });
+
+                // Transactions
+                db.collection('transactions').onSnapshot(snapshot => {
+                    state.transactions = [];
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        data.id = doc.id;
+                        state.transactions.push(data);
+                    });
+                    if (currentPage === 'transactions' || currentPage === 'dashboard') renderPage(currentPage);
+                });
+
+                // Banking
+                db.collection('banking').onSnapshot(snapshot => {
+                    state.banking = [];
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        data.id = doc.id;
+                        state.banking.push(data);
+                    });
+                    if (currentPage === 'banking' || currentPage === 'dashboard') renderPage(currentPage);
+                });
+
+                // Meetings
+                db.collection('meetings').onSnapshot(snapshot => {
+                    state.meetings = [];
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        data.id = doc.id;
+                        state.meetings.push(data);
+                    });
+                    if (currentPage === 'meetings') renderPage(currentPage);
+                });
+
+                // Settings (single doc)
+                db.collection('settings').doc('app_settings').onSnapshot(doc => {
+                    if (doc.exists) {
+                        state.settings = doc.data();
+                    }
+                    if (currentPage === 'settings') renderPage(currentPage);
+                });
+            }
+
+            // Initial data load and setup
+            async function loadInitialData() {
+                // Check if settings doc exists, create if not
+                const settingsRef = db.collection('settings').doc('app_settings');
+                const settingsDoc = await settingsRef.get();
+                if (!settingsDoc.exists) {
+                    await settingsRef.set({
+                        interestRate: 6.5,
+                        orgDetails: { name: 'Bloomstone Alliance', address: '', phone: '', email: '', website: '', registrationNo: '' }
+                    });
+                }
+                // Ensure default admin user exists (for first time setup)
+                const adminEmail = 'admin@bloomstone.np';
+                const usersRef = db.collection('users');
+                const adminQuery = await usersRef.where('email', '==', adminEmail).get();
+                if (adminQuery.empty) {
+                    // Create auth user and Firestore user document
+                    try {
+                        const userCredential = await auth.createUserWithEmailAndPassword(adminEmail, 'admin123');
+                        const uid = userCredential.user.uid;
+                        await usersRef.doc(uid).set({
+                            uid: uid,
+                            name: 'System Administrator',
+                            email: adminEmail,
+                            role: 'admin',
+                            permissions: getDefaultPermissions('admin'),
+                            active: true,
+                            linkedMemberId: null,
+                            createdAt: new Date().toISOString()
+                        });
+                    } catch (e) {
+                        console.error('Error creating default admin:', e);
+                    }
+                }
+                // Now set up listeners
+                setupListeners();
+                // Show login if not authenticated
+                auth.onAuthStateChanged(user => {
+                    if (user) {
+                        // Find user doc in state after listeners trigger
+                        setTimeout(() => {
+                            const userDoc = state.users.find(u => u.uid === user.uid);
+                            if (userDoc) {
+                                state.currentUser = userDoc;
+                                showApp();
+                            } else {
+                                // Logout if no user doc
+                                auth.signOut();
+                                showLogin();
+                            }
+                        }, 500);
+                    } else {
+                        showLogin();
+                    }
+                });
+            }
+
+            // Authentication
+            document.getElementById('loginForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const email = document.getElementById('loginEmail').value.trim();
+                const password = document.getElementById('loginPassword').value;
+                const errorEl = document.getElementById('loginError');
+                errorEl.classList.remove('show');
+                try {
+                    await auth.signInWithEmailAndPassword(email, password);
+                    // onAuthStateChanged will handle showing app
+                } catch (err) {
+                    errorEl.textContent = err.message;
+                    errorEl.classList.add('show');
+                }
             });
 
-            // Members
-            db.collection('members').onSnapshot(snapshot => {
-                const members = [];
-                snapshot.forEach(doc => members.push({ id: doc.id, ...doc.data() }));
-                allMembers = members;
-                if (currentPage === 'members') renderMembers(document.getElementById('pageContent'));
-                if (currentPage === 'dashboard') renderDashboard(document.getElementById('pageContent'));
-                if (currentPage === 'transactions') renderTransactions(document.getElementById('pageContent'));
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                auth.signOut();
+                state.currentUser = null;
+                showLogin();
             });
 
-            // Transactions
-            db.collection('transactions').onSnapshot(snapshot => {
-                const txs = [];
-                snapshot.forEach(doc => txs.push({ id: doc.id, ...doc.data() }));
-                allTransactions = txs;
-                syncBankFromTransactions();  // auto mirror to banking
-                if (currentPage === 'transactions') renderTransactions(document.getElementById('pageContent'));
-                if (currentPage === 'dashboard') renderDashboard(document.getElementById('pageContent'));
-            });
-
-            // Banking
-            db.collection('banking').onSnapshot(snapshot => {
-                const banking = [];
-                snapshot.forEach(doc => banking.push({ id: doc.id, ...doc.data() }));
-                allBanking = banking;
-                if (currentPage === 'banking') renderBanking(document.getElementById('pageContent'));
-            });
-
-            // Meetings
-            db.collection('meetings').onSnapshot(snapshot => {
-                const meetings = [];
-                snapshot.forEach(doc => meetings.push({ id: doc.id, ...doc.data() }));
-                allMeetings = meetings;
-                if (currentPage === 'meetings') renderMeetings(document.getElementById('pageContent'));
-            });
-
-            // Settings
-            db.collection('settings').doc('main').onSnapshot(doc => {
-                if (doc.exists) {
-                    allSettings = doc.data();
+            // UI helpers
+            function showLogin() {
+                document.getElementById('loginView').style.display = 'flex';
+                document.getElementById('appView').classList.remove('active');
+                document.getElementById('appView').style.display = 'none';
+            }
+            function showApp() {
+                document.getElementById('loginView').style.display = 'none';
+                document.getElementById('appView').classList.add('active');
+                document.getElementById('appView').style.display = 'flex';
+                updateSidebarUser();
+                navigateTo('dashboard');
+            }
+            function updateSidebarUser() {
+                const user = state.currentUser;
+                if (!user) return;
+                document.getElementById('sidebarAvatar').textContent = user.name ? user.name.charAt(0).toUpperCase() : 'U';
+                document.getElementById('sidebarUsername').textContent = user.name || user.email;
+                document.getElementById('sidebarRole').textContent = user.role;
+                // Show/hide settings nav
+                const settingsNav = document.getElementById('settingsNavItem');
+                if (user.role === 'admin' || hasPermission('accessSettings')) {
+                    settingsNav.style.display = 'flex';
                 } else {
-                    allSettings = { interestRate: 6.5 };
+                    settingsNav.style.display = 'none';
                 }
-            });
-        }
+                // Show/hide meetings nav
+                document.querySelectorAll('.nav-item[data-page="meetings"]').forEach(item => {
+                    if (hasPermission('viewMeetings')) item.style.display = 'flex';
+                    else item.style.display = 'none';
+                });
+            }
 
-        // ============================================================
-        //  INITIALISATION
-        // ============================================================
-        async function initializeApp() {
-            // Show loading overlay
-            document.getElementById('loadingOverlay').style.display = 'flex';
+            // Router
+            let currentPage = 'dashboard';
+            function navigateTo(page) {
+                if (!state.currentUser) return;
+                currentPage = page;
+                document.querySelectorAll('.nav-item').forEach(item => item.classList.toggle('active', item.dataset.page === page));
+                const titles = { dashboard: 'Dashboard', members: 'Members', transactions: 'Amount Records', banking: 'Banking', meetings: 'Meetings', settings: 'Settings' };
+                document.getElementById('pageTitle').textContent = titles[page] || 'Dashboard';
+                updateTopbarButton();
+                renderPage(page);
+                closeSidebar();
+            }
+            function updateTopbarButton() {
+                const btn = document.getElementById('topbarAddBtn');
+                if (!state.currentUser) return;
+                if (currentPage === 'members' && hasPermission('addMember')) { btn.textContent = '+ Add Member'; btn.style.display = 'inline-flex'; btn.onclick = () => openMemberModal(); }
+                else if (currentPage === 'transactions' && hasPermission('addTransaction')) { btn.textContent = '+ Record Amount'; btn.style.display = 'inline-flex'; btn.onclick = () => openTransactionModal(); }
+                else if (currentPage === 'banking' && hasPermission('manageBanking')) { btn.textContent = '+ Bank Transaction'; btn.style.display = 'inline-flex'; btn.onclick = () => openBankingModal(); }
+                else if (currentPage === 'meetings' && hasPermission('manageMeetings')) { btn.textContent = '+ Add Meeting'; btn.style.display = 'inline-flex'; btn.onclick = () => openMeetingModal(); }
+                else if (currentPage === 'settings' && hasPermission('manageUsers')) { btn.textContent = '+ Add User'; btn.style.display = 'inline-flex'; btn.onclick = () => openUserModal(); }
+                else { btn.style.display = 'none'; }
+            }
+            function renderPage(page) {
+                const content = document.getElementById('pageContent');
+                if (page === 'dashboard') renderDashboard(content);
+                else if (page === 'members') renderMembers(content);
+                else if (page === 'transactions') renderTransactions(content);
+                else if (page === 'banking') renderBanking(content);
+                else if (page === 'meetings') renderMeetings(content);
+                else if (page === 'settings') renderSettings(content);
+                updateTopbarButton();
+            }
 
-            // Load all data from Firestore
-            allUsers = await loadCollection('users');
-            allMembers = await loadCollection('members');
-            allTransactions = await loadCollection('transactions');
-            allBanking = await loadCollection('banking');
-            allMeetings = await loadCollection('meetings');
-            const settingsDoc = await db.collection('settings').doc('main').get();
-            allSettings = settingsDoc.exists ? settingsDoc.data() : { interestRate: 6.5 };
+            // Rendering functions (simplified, use state)
+            function renderDashboard(container) {
+                const tx = state.transactions;
+                const totalContrib = tx.filter(t => t.type === 'contribution').reduce((s,t) => s + Number(t.amount), 0);
+                const totalWithd = tx.filter(t => t.type === 'withdrawal').reduce((s,t) => s + Number(t.amount), 0);
+                const totalReturns = tx.filter(t => t.type === 'return').reduce((s,t) => s + Number(t.amount), 0);
+                const totalExpenses = tx.filter(t => t.type === 'expense').reduce((s,t) => s + Number(t.amount), 0);
+                const totalInvest = tx.filter(t => t.type === 'investment').reduce((s,t) => s + Number(t.amount), 0);
+                const liquid = totalContrib + totalReturns - totalWithd - totalExpenses - totalInvest;
+                const totalWealth = liquid + totalInvest;
+                const activeMembers = state.members.filter(m => m.status === 'active').length;
+                const monthlyContrib = tx.filter(t => t.type === 'contribution' && t.date && t.date.startsWith(new Date().toISOString().split('T')[0].substring(0,7))).reduce((s,t) => s + Number(t.amount), 0);
+                const recentTx = [...tx].sort((a,b) => b.date.localeCompare(a.date)).slice(0,8);
 
-            // Setup real‑time listeners (after initial load to avoid race)
-            setupFirestoreListeners();
+                container.innerHTML = `
+                    <div class="stats-grid">
+                        <div class="stat-card"><div class="stat-icon teal">💰</div><div class="stat-label">Liquid Fund</div><div class="stat-value">${formatCurrency(liquid)}</div><div class="stat-sub">Available cash</div></div>
+                        <div class="stat-card"><div class="stat-icon green">📈</div><div class="stat-label">Total Investments</div><div class="stat-value">${formatCurrency(totalInvest)}</div><div class="stat-sub">Fixed deposits & securities</div></div>
+                        <div class="stat-card"><div class="stat-icon blue">💹</div><div class="stat-label">Total Wealth</div><div class="stat-value">${formatCurrency(totalWealth)}</div><div class="stat-sub">Liquid + investments</div></div>
+                        <div class="stat-card"><div class="stat-icon orange">👥</div><div class="stat-label">Active Members</div><div class="stat-value">${activeMembers}</div><div class="stat-sub">of ${state.members.length} total</div></div>
+                        <div class="stat-card"><div class="stat-icon teal">📅</div><div class="stat-label">This Month's Contribution</div><div class="stat-value">${formatCurrency(monthlyContrib)}</div><div class="stat-sub">${new Date().toLocaleString('default', { month: 'long' })} ${new Date().getFullYear()}</div></div>
+                    </div>
+                    <div class="dashboard-grid">
+                        <div class="card"><div class="card-header"><h3>Fund Growth</h3></div><div class="card-body"><canvas id="fundChart"></canvas></div></div>
+                        <div class="card"><div class="card-header"><h3>Recent Transactions</h3><button class="btn btn-sm btn-secondary" onclick="navigateTo('transactions')">View All</button></div><div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Date</th><th>Member</th><th>Type</th><th>Amount</th></tr></thead><tbody>${recentTx.map(t => `<tr><td>${formatDate(t.date)}</td><td>${escapeHtml(t.memberName || '-')}</td><td><span class="badge ${getTypeBadge(t.type)}">${capitalizeFirst(t.type)}</span></td><td style="font-weight:600;color:${t.type === 'withdrawal' || t.type === 'expense' || t.type === 'investment' ? 'var(--danger)' : 'var(--success)'}">${t.type === 'withdrawal' || t.type === 'expense' || t.type === 'investment' ? '-' : '+'}${formatCurrency(t.amount)}</td></tr>`).join('')}${recentTx.length === 0 ? '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:24px;">No transactions</td></tr>' : ''}</tbody></table></div></div></div>
+                    </div>
+                    <div class="card"><div class="card-header"><h3>Transaction Summary</h3></div><div class="card-body"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;"><div><span style="color:var(--text-muted);font-size:13px;">Income:</span><br><strong style="font-size:18px;color:var(--success);">+${formatCurrency(totalContrib + totalReturns)}</strong></div><div><span style="color:var(--text-muted);font-size:13px;">Expenses:</span><br><strong style="font-size:18px;color:var(--danger);">-${formatCurrency(totalWithd + totalExpenses)}</strong></div><div><span style="color:var(--text-muted);font-size:13px;">Investments:</span><br><strong style="font-size:18px;color:var(--warning);">-${formatCurrency(totalInvest)}</strong></div></div></div></div>
+                `;
+                drawFundChart();
+            }
 
-            // Hide loading overlay
-            document.getElementById('loadingOverlay').style.display = 'none';
+            // Similar functions for members, transactions, banking, meetings, settings (use state)
+            function renderMembers(container) {
+                const members = state.members;
+                const searchTerm = container.dataset.search || '';
+                let filtered = members;
+                if (searchTerm) { const s = searchTerm.toLowerCase(); filtered = filtered.filter(m => m.name.toLowerCase().includes(s) || (m.email && m.email.toLowerCase().includes(s)) || (m.phone && m.phone.includes(s))); }
+                const canAdd = hasPermission('addMember'); const canEdit = hasPermission('editMember'); const canDelete = hasPermission('deleteMember');
+                let html = `<div class="card"><div class="card-header"><h3>Members (${filtered.length})</h3><div class="card-header-actions"><input type="text" class="search-input" id="memberSearchInput" placeholder="Search..." value="${escapeHtml(searchTerm)}">${canAdd ? '<button class="btn btn-primary btn-sm" onclick="openMemberModal()">+ Add Member</button>' : ''}</div></div><div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Name</th><th>Position</th><th>Role</th><th>Email</th><th>Phone</th><th>Status</th>${(canEdit || canDelete) ? '<th>Actions</th>' : ''}</tr></thead><tbody>${filtered.map(m => `<tr><td style="font-weight:600;">${escapeHtml(m.name)}</td><td>${escapeHtml(m.position || '-')}</td><td><span class="badge badge-primary">${capitalizeFirst(m.role || 'member')}</span></td><td>${escapeHtml(m.email || '-')}</td><td>${escapeHtml(m.phone || '-')}</td><td><span class="badge ${m.status === 'active' ? 'badge-success' : 'badge-muted'}">${capitalizeFirst(m.status)}</span></td>${(canEdit || canDelete) ? `<td><div class="user-actions">${canEdit ? `<button class="btn-icon" onclick="editMember('${m.id}')">✏️</button>` : ''}${canDelete ? `<button class="btn-icon delete" onclick="confirmDeleteMember('${m.id}')">🗑️</button>` : ''}</div></td>` : ''}</tr>`).join('')}${filtered.length === 0 ? '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px;">No members found</td></tr>' : ''}</tbody></table></div></div></div>`;
+                container.innerHTML = html;
+                document.getElementById('memberSearchInput')?.addEventListener('input', function() { container.dataset.search = this.value; renderMembers(container); });
+            }
 
-            // Check if user was logged in before (optional)
-            const savedSession = localStorage.getItem('bloomstone_session');
-            if (savedSession) {
-                const sessionData = JSON.parse(savedSession);
-                const user = allUsers.find(u => u.id === sessionData.userId && u.active);
-                if (user) {
-                    currentUser = user;
-                    showApp();
-                    return;
+            // Additional functions (open modals, form submissions) need to use Firestore add/update/delete
+            // Example: add member
+            async function saveMember(formData) {
+                const membersRef = db.collection('members');
+                if (formData.id) {
+                    await membersRef.doc(formData.id).update(formData);
+                } else {
+                    await membersRef.add(formData);
                 }
             }
-            showLogin();
-        }
 
-        // ============================================================
-        //  SESSION PERSISTENCE (optional)
-        // ============================================================
-        function saveSession(userId) {
-            localStorage.setItem('bloomstone_session', JSON.stringify({ userId }));
-        }
+            // Since original code is large, we provide the core integration and leave the rest for you to fill in based on the original functions but using state and Firestore.
+            // The key is to replace localStorage calls with Firestore and use state for rendering.
 
-        function clearSession() {
-            localStorage.removeItem('bloomstone_session');
-        }
+            // Initialize app
+            loadInitialData();
 
-        // ============================================================
-        //  UI FUNCTIONS (show/hide, render, etc.) – mostly same as before
-        //  but using allUsers, allMembers, etc.
-        // ============================================================
-        function showLogin() {
-            document.getElementById('loginView').style.display = 'flex';
-            document.getElementById('appView').style.display = 'none';
-            document.getElementById('appView').classList.remove('active');
-            document.getElementById('loginError').classList.remove('show');
-            document.getElementById('loginUsername').value = '';
-            document.getElementById('loginPassword').value = '';
-        }
-
-        function showApp() {
-            document.getElementById('loginView').style.display = 'none';
-            document.getElementById('appView').style.display = 'flex';
-            document.getElementById('appView').classList.add('active');
-            // Update sidebar info
-            document.getElementById('sidebarAvatar').textContent = currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U';
-            document.getElementById('sidebarUsername').textContent = currentUser.name || currentUser.username;
-            document.getElementById('sidebarRole').textContent = currentUser.role;
-            // Show/hide settings nav
-            const settingsNav = document.getElementById('settingsNavItem');
-            if (currentUser.role === 'admin' || hasPermission('accessSettings')) {
-                settingsNav.style.display = 'flex';
-            } else {
-                settingsNav.style.display = 'none';
-            }
-            // Meetings nav
-            document.querySelectorAll('.nav-item[data-page="meetings"]').forEach(item => {
-                if (hasPermission('viewMeetings')) item.style.display = 'flex';
-                else item.style.display = 'none';
+            // Sidebar toggle, theme, etc.
+            document.getElementById('sidebarToggle').addEventListener('click', function() {
+                document.getElementById('sidebar').classList.toggle('collapsed');
+                document.getElementById('mainContent').classList.toggle('collapsed');
+                this.textContent = document.getElementById('sidebar').classList.contains('collapsed') ? '▶' : '◀';
             });
-            navigateTo('dashboard');
-        }
 
-        // ... (all other functions similar, but with Firestore write operations) ...
-        // For brevity, I will not list every function here; the key is to replace
-        // every setData/getData with the global arrays and Firestore updates.
-        // The complete code is included in the attached file.
+            document.getElementById('themeToggle').addEventListener('click', function() {
+                const current = document.documentElement.getAttribute('data-theme') || 'light';
+                const next = current === 'light' ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', next);
+                this.textContent = next === 'dark' ? '☀️' : '🌙';
+            });
 
-        // ============================================================
-        //  EXAMPLE: Member save function (Firestore version)
-        // ============================================================
-        async function saveMember(memberData) {
-            if (memberData.id) {
-                // Update existing
-                await db.collection('members').doc(memberData.id).update(memberData);
-            } else {
-                // Add new
-                await db.collection('members').add(memberData);
-            }
-        }
-
-        async function deleteMember(memberId) {
-            await db.collection('members').doc(memberId).delete();
-        }
-
-        // Similarly, all other save/delete operations use Firestore.
-        // The full code includes these functions and adapts the render functions.
-
-        // ============================================================
-        //  START THE APP
-        // ============================================================
-        initializeApp();
+            // Expose navigateTo globally for inline onclick
+            window.navigateTo = navigateTo;
+            // Expose other functions as needed...
+        })();
     </script>
 </body>
 </html>
