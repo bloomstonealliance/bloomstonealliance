@@ -94,7 +94,6 @@
         .login-error.show { display: block; animation: shake 0.3s ease; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
         .login-hint { text-align: center; margin-top: 20px; font-size: 12px; color: var(--text-muted); }
-        .login-hint code { background: var(--input-bg); padding: 2px 6px; border-radius: 4px; font-size: 11px; color: var(--primary); }
 
         .app-container { display: none; min-height: 100vh; }
         .app-container.active { display: flex; }
@@ -187,12 +186,6 @@
         .permission-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: var(--card-bg); border-radius: 6px; border: 1px solid var(--border); }
         .permission-item label { font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px; color: var(--text); }
         .permission-item input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer; }
-        .toggle-switch { position: relative; width: 40px; height: 22px; cursor: pointer; }
-        .toggle-switch input { opacity: 0; width: 0; height: 0; }
-        .toggle-slider { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #cbd5e1; border-radius: 999px; transition: all 0.3s ease; }
-        .toggle-slider::before { content: ''; position: absolute; width: 18px; height: 18px; border-radius: 50%; background: #fff; top: 2px; left: 2px; transition: all 0.3s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
-        .toggle-switch input:checked + .toggle-slider { background: var(--primary); }
-        .toggle-switch input:checked + .toggle-slider::before { transform: translateX(18px); }
 
         .toast-container { position: fixed; top: 20px; right: 20px; z-index: 300; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
         .toast { padding: 14px 20px; border-radius: 10px; color: #fff; font-weight: 500; font-size: 14px; box-shadow: 0 8px 16px -4px rgba(0,0,0,0.2); animation: toastIn 0.3s ease, toastOut 0.3s ease 2.5s forwards; pointer-events: auto; min-width: 280px; max-width: 400px; }
@@ -213,7 +206,6 @@
             .sidebar { transform: translateX(-100%); box-shadow: var(--shadow-lg); width: var(--sidebar-width); }
             .sidebar.collapsed { width: var(--sidebar-width); }
             .sidebar.open { transform: translateX(0); }
-            .sidebar.open.collapsed { width: var(--sidebar-width); }
             .main-content { margin-left: 0; }
             .main-content.collapsed { margin-left: 0; }
             .mobile-toggle { display: block; }
@@ -260,17 +252,10 @@
             </div>
             <div class="login-error" id="loginError"></div>
             <form id="loginForm" autocomplete="off">
-                <div class="form-group">
-                    <label for="loginEmail">Email</label>
-                    <input type="email" id="loginEmail" required>
-                </div>
-                <div class="form-group">
-                    <label for="loginPassword">Password</label>
-                    <input type="password" id="loginPassword" required>
-                </div>
+                <div class="form-group"><label for="loginEmail">Email</label><input type="email" id="loginEmail" required></div>
+                <div class="form-group"><label for="loginPassword">Password</label><input type="password" id="loginPassword" required></div>
                 <button type="submit" class="btn btn-primary btn-block">Sign In</button>
             </form>
-            <div class="login-hint">Default admin: <code>admin@bloomstone.np</code> / <code>admin123</code></div>
         </div>
     </div>
 
@@ -305,7 +290,6 @@
             </div>
         </aside>
 
-        <!-- Main Content -->
         <main class="main-content" id="mainContent">
             <div class="topbar">
                 <div style="display:flex;align-items:center;gap:12px;">
@@ -323,7 +307,7 @@
         </main>
     </div>
 
-    <!-- Modals (same as before, but keep placeholders) -->
+    <!-- Modals (keep all essential ones) -->
     <div class="modal-overlay" id="memberModal">
         <div class="modal">
             <div class="modal-header"><h2 id="memberModalTitle">Add Member</h2><button class="modal-close" data-close="memberModal">✕</button></div>
@@ -354,7 +338,6 @@
         </div>
     </div>
 
-    <!-- Other modals similar to original; you can reuse them, but we won't show full for brevity -->
     <div class="modal-overlay" id="transactionModal">
         <div class="modal">
             <div class="modal-header"><h2 id="transactionModalTitle">Record Amount</h2><button class="modal-close" data-close="transactionModal">✕</button></div>
@@ -372,7 +355,61 @@
         </div>
     </div>
 
-    <!-- Include other modals: banking, meeting, user, confirm, import as before -->
+    <div class="modal-overlay" id="bankingModal">
+        <div class="modal">
+            <div class="modal-header"><h2 id="bankingModalTitle">Add Bank Transaction</h2><button class="modal-close" data-close="bankingModal">✕</button></div>
+            <form id="bankingForm">
+                <input type="hidden" id="bankingId">
+                <div class="form-group"><label>Type *</label><select id="bankingType" required><option value="deposit">Deposit</option><option value="withdrawal">Withdrawal</option><option value="interest">Interest</option><option value="bank_charge">Bank Charge</option></select></div>
+                <div class="form-group"><label>Amount (Rs.) *</label><input type="number" id="bankingAmount" required min="0.01" step="0.01"></div>
+                <div class="form-group"><label>Date *</label><input type="date" id="bankingDate" required></div>
+                <div class="form-group"><label>Bank / Account</label><input type="text" id="bankingAccount" placeholder="e.g. Nabil Bank, A/C 0123"></div>
+                <div class="form-group"><label>Description</label><textarea id="bankingDescription" rows="2"></textarea></div>
+                <div class="modal-footer"><button type="button" class="btn btn-secondary" data-close="bankingModal">Cancel</button><button type="submit" class="btn btn-primary" id="bankingSubmitBtn">Save</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="meetingModal">
+        <div class="modal">
+            <div class="modal-header"><h2 id="meetingModalTitle">Add Meeting</h2><button class="modal-close" data-close="meetingModal">✕</button></div>
+            <form id="meetingForm">
+                <input type="hidden" id="meetingId">
+                <div class="form-group"><label>Date *</label><input type="date" id="meetingDate" required></div>
+                <div class="form-group"><label>Venue *</label><input type="text" id="meetingVenue" required></div>
+                <div class="form-group"><label>Agenda *</label><textarea id="meetingAgenda" rows="3" required></textarea></div>
+                <div class="modal-footer"><button type="button" class="btn btn-secondary" data-close="meetingModal">Cancel</button><button type="submit" class="btn btn-primary" id="meetingSubmitBtn">Save Meeting</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="userModal">
+        <div class="modal" style="max-width:600px;">
+            <div class="modal-header"><h2 id="userModalTitle">Add User</h2><button class="modal-close" data-close="userModal">✕</button></div>
+            <form id="userForm">
+                <input type="hidden" id="userId">
+                <div class="form-row">
+                    <div class="form-group"><label>Name *</label><input type="text" id="userFullName" required></div>
+                    <div class="form-group"><label>Email *</label><input type="email" id="userEmail" required></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Password *</label><input type="password" id="userPassword" required></div>
+                    <div class="form-group"><label>Role</label><select id="userRoleSelect"><option value="admin">Admin</option><option value="manager">Manager</option><option value="viewer">Viewer</option><option value="member">Member</option><option value="custom">Custom</option></select></div>
+                </div>
+                <div class="form-group" id="linkMemberGroup" style="display:none;"><label>Link to Member</label><select id="userLinkedMember"><option value="">None</option></select></div>
+                <div class="form-group"><label>Permissions</label><div class="permission-list" id="permissionList"></div></div>
+                <div class="modal-footer"><button type="button" class="btn btn-secondary" data-close="userModal">Cancel</button><button type="submit" class="btn btn-primary" id="userSubmitBtn">Save User</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal" style="max-width:400px;">
+            <div class="modal-header"><h2 id="confirmTitle">Confirm Delete</h2><button class="modal-close" data-close="confirmModal">✕</button></div>
+            <p id="confirmMessage" style="color:var(--text-muted);font-size:14px;">Are you sure?</p>
+            <div class="modal-footer"><button type="button" class="btn btn-secondary" data-close="confirmModal">Cancel</button><button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button></div>
+        </div>
+    </div>
 
     <!-- Firebase Config and Initialization -->
     <script>
@@ -394,7 +431,7 @@
         (function() {
             'use strict';
 
-            // State object holding all collections
+            // State
             let state = {
                 users: [],
                 members: [],
@@ -443,7 +480,7 @@
                 return p;
             }
 
-            // Helper functions
+            // Utility
             function formatCurrency(amount) { return 'Rs. ' + Number(amount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
             function formatDate(dateStr) { if (!dateStr) return '-'; const d = new Date(dateStr + 'T00:00:00'); if (isNaN(d.getTime())) return dateStr; return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }); }
             function getTodayStr() { return new Date().toISOString().split('T')[0]; }
@@ -451,90 +488,44 @@
             function showToast(message, type) { type = type || 'success'; const container = document.getElementById('toastContainer'); const toast = document.createElement('div'); toast.className = 'toast toast-' + type; toast.textContent = message; container.appendChild(toast); setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 3000); }
             function capitalizeFirst(str) { return str.charAt(0).toUpperCase() + str.slice(1); }
             function getTypeBadge(type) { const map = { contribution: 'badge-success', withdrawal: 'badge-danger', return: 'badge-info', expense: 'badge-warning', investment: 'badge-warning', other: 'badge-muted' }; return map[type] || 'badge-muted'; }
-            function hasPermission(permKey) {
-                const user = state.currentUser;
-                if (!user) return false;
-                if (user.role === 'admin') return true;
-                return user.permissions && user.permissions[permKey] === true;
-            }
+            function hasPermission(permKey) { const user = state.currentUser; if (!user) return false; if (user.role === 'admin') return true; return user.permissions && user.permissions[permKey] === true; }
 
             // Real-time listeners
             function setupListeners() {
-                // Users collection
                 db.collection('users').onSnapshot(snapshot => {
-                    state.users = [];
-                    snapshot.forEach(doc => {
-                        const data = doc.data();
-                        data.id = doc.id;
-                        state.users.push(data);
-                    });
-                    // After users load, update current user
+                    state.users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                     if (auth.currentUser) {
-                        const uid = auth.currentUser.uid;
-                        const userDoc = state.users.find(u => u.uid === uid);
-                        if (userDoc) {
-                            state.currentUser = userDoc;
-                            updateSidebarUser();
-                        }
+                        const user = state.users.find(u => u.uid === auth.currentUser.uid);
+                        if (user) { state.currentUser = user; updateSidebarUser(); }
                     }
                 });
-
-                // Members
                 db.collection('members').onSnapshot(snapshot => {
-                    state.members = [];
-                    snapshot.forEach(doc => {
-                        const data = doc.data();
-                        data.id = doc.id;
-                        state.members.push(data);
-                    });
-                    if (currentPage === 'members') renderPage(currentPage);
+                    state.members = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    if (currentPage === 'members') renderPage('members');
+                    if (currentPage === 'dashboard') renderPage('dashboard');
                 });
-
-                // Transactions
                 db.collection('transactions').onSnapshot(snapshot => {
-                    state.transactions = [];
-                    snapshot.forEach(doc => {
-                        const data = doc.data();
-                        data.id = doc.id;
-                        state.transactions.push(data);
-                    });
-                    if (currentPage === 'transactions' || currentPage === 'dashboard') renderPage(currentPage);
+                    state.transactions = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    if (currentPage === 'transactions') renderPage('transactions');
+                    if (currentPage === 'dashboard') renderPage('dashboard');
                 });
-
-                // Banking
                 db.collection('banking').onSnapshot(snapshot => {
-                    state.banking = [];
-                    snapshot.forEach(doc => {
-                        const data = doc.data();
-                        data.id = doc.id;
-                        state.banking.push(data);
-                    });
-                    if (currentPage === 'banking' || currentPage === 'dashboard') renderPage(currentPage);
+                    state.banking = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    if (currentPage === 'banking') renderPage('banking');
+                    if (currentPage === 'dashboard') renderPage('dashboard');
                 });
-
-                // Meetings
                 db.collection('meetings').onSnapshot(snapshot => {
-                    state.meetings = [];
-                    snapshot.forEach(doc => {
-                        const data = doc.data();
-                        data.id = doc.id;
-                        state.meetings.push(data);
-                    });
-                    if (currentPage === 'meetings') renderPage(currentPage);
+                    state.meetings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    if (currentPage === 'meetings') renderPage('meetings');
                 });
-
-                // Settings (single doc)
                 db.collection('settings').doc('app_settings').onSnapshot(doc => {
-                    if (doc.exists) {
-                        state.settings = doc.data();
-                    }
-                    if (currentPage === 'settings') renderPage(currentPage);
+                    if (doc.exists) state.settings = doc.data();
+                    if (currentPage === 'settings') renderPage('settings');
                 });
             }
 
-            // Initial data load and setup
-            async function loadInitialData() {
-                // Check if settings doc exists, create if not
+            // Initial data setup
+            async function ensureDefaultData() {
                 const settingsRef = db.collection('settings').doc('app_settings');
                 const settingsDoc = await settingsRef.get();
                 if (!settingsDoc.exists) {
@@ -543,17 +534,14 @@
                         orgDetails: { name: 'Bloomstone Alliance', address: '', phone: '', email: '', website: '', registrationNo: '' }
                     });
                 }
-                // Ensure default admin user exists (for first time setup)
                 const adminEmail = 'admin@bloomstone.np';
                 const usersRef = db.collection('users');
                 const adminQuery = await usersRef.where('email', '==', adminEmail).get();
                 if (adminQuery.empty) {
-                    // Create auth user and Firestore user document
                     try {
-                        const userCredential = await auth.createUserWithEmailAndPassword(adminEmail, 'admin123');
-                        const uid = userCredential.user.uid;
-                        await usersRef.doc(uid).set({
-                            uid: uid,
+                        const cred = await auth.createUserWithEmailAndPassword(adminEmail, 'admin123');
+                        await usersRef.doc(cred.user.uid).set({
+                            uid: cred.user.uid,
                             name: 'System Administrator',
                             email: adminEmail,
                             role: 'admin',
@@ -562,31 +550,8 @@
                             linkedMemberId: null,
                             createdAt: new Date().toISOString()
                         });
-                    } catch (e) {
-                        console.error('Error creating default admin:', e);
-                    }
+                    } catch (e) { console.error('Error creating admin:', e); }
                 }
-                // Now set up listeners
-                setupListeners();
-                // Show login if not authenticated
-                auth.onAuthStateChanged(user => {
-                    if (user) {
-                        // Find user doc in state after listeners trigger
-                        setTimeout(() => {
-                            const userDoc = state.users.find(u => u.uid === user.uid);
-                            if (userDoc) {
-                                state.currentUser = userDoc;
-                                showApp();
-                            } else {
-                                // Logout if no user doc
-                                auth.signOut();
-                                showLogin();
-                            }
-                        }, 500);
-                    } else {
-                        showLogin();
-                    }
-                });
             }
 
             // Authentication
@@ -598,7 +563,6 @@
                 errorEl.classList.remove('show');
                 try {
                     await auth.signInWithEmailAndPassword(email, password);
-                    // onAuthStateChanged will handle showing app
                 } catch (err) {
                     errorEl.textContent = err.message;
                     errorEl.classList.add('show');
@@ -611,7 +575,22 @@
                 showLogin();
             });
 
-            // UI helpers
+            auth.onAuthStateChanged(async user => {
+                if (user) {
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    if (userDoc.exists) {
+                        state.currentUser = { id: userDoc.id, ...userDoc.data() };
+                        showApp();
+                    } else {
+                        auth.signOut();
+                        showLogin();
+                    }
+                } else {
+                    state.currentUser = null;
+                    showLogin();
+                }
+            });
+
             function showLogin() {
                 document.getElementById('loginView').style.display = 'flex';
                 document.getElementById('appView').classList.remove('active');
@@ -630,14 +609,9 @@
                 document.getElementById('sidebarAvatar').textContent = user.name ? user.name.charAt(0).toUpperCase() : 'U';
                 document.getElementById('sidebarUsername').textContent = user.name || user.email;
                 document.getElementById('sidebarRole').textContent = user.role;
-                // Show/hide settings nav
                 const settingsNav = document.getElementById('settingsNavItem');
-                if (user.role === 'admin' || hasPermission('accessSettings')) {
-                    settingsNav.style.display = 'flex';
-                } else {
-                    settingsNav.style.display = 'none';
-                }
-                // Show/hide meetings nav
+                if (user.role === 'admin' || hasPermission('accessSettings')) settingsNav.style.display = 'flex';
+                else settingsNav.style.display = 'none';
                 document.querySelectorAll('.nav-item[data-page="meetings"]').forEach(item => {
                     if (hasPermission('viewMeetings')) item.style.display = 'flex';
                     else item.style.display = 'none';
@@ -677,7 +651,7 @@
                 updateTopbarButton();
             }
 
-            // Rendering functions (simplified, use state)
+            // Rendering
             function renderDashboard(container) {
                 const tx = state.transactions;
                 const totalContrib = tx.filter(t => t.type === 'contribution').reduce((s,t) => s + Number(t.amount), 0);
@@ -708,7 +682,105 @@
                 drawFundChart();
             }
 
-            // Similar functions for members, transactions, banking, meetings, settings (use state)
+            // ✅ drawFundChart function (placed inside IIFE)
+            function drawFundChart() {
+                const canvas = document.getElementById('fundChart');
+                if (!canvas) return;
+                let transactions = state.transactions;
+                const currentUser = state.currentUser;
+                if (currentUser && currentUser.role === 'member' && currentUser.linkedMemberId) {
+                    transactions = transactions.filter(t => t.memberId === currentUser.linkedMemberId);
+                }
+                const sorted = [...transactions].sort((a, b) => a.date.localeCompare(b.date));
+                const points = [];
+                let balance = 0;
+                for (const t of sorted) {
+                    const amount = Number(t.amount);
+                    if (t.type === 'contribution' || t.type === 'return' || t.type === 'other') {
+                        balance += amount;
+                    } else if (t.type === 'withdrawal' || t.type === 'expense' || t.type === 'investment') {
+                        balance -= amount;
+                    }
+                    points.push({ date: t.date, balance });
+                }
+                const rect = canvas.parentElement.getBoundingClientRect();
+                const dpr = window.devicePixelRatio || 1;
+                canvas.width = (rect.width || 500) * dpr;
+                canvas.height = 250 * dpr;
+                canvas.style.width = (rect.width || 500) + 'px';
+                canvas.style.height = '250px';
+                const ctx = canvas.getContext('2d');
+                ctx.scale(dpr, dpr);
+                const W = rect.width || 500;
+                const H = 250;
+                const padding = { top: 20, bottom: 35, left: 70, right: 20 };
+                const chartW = W - padding.left - padding.right;
+                const chartH = H - padding.top - padding.bottom;
+                ctx.clearRect(0, 0, W, H);
+                if (points.length < 2) {
+                    ctx.fillStyle = '#94a3b8';
+                    ctx.font = '14px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('Not enough data', W / 2, H / 2);
+                    return;
+                }
+                const balances = points.map(p => p.balance);
+                const minB = Math.min(...balances, 0);
+                const maxB = Math.max(...balances, 1);
+                const range = maxB - minB || 1;
+                ctx.strokeStyle = '#e2e8f0';
+                ctx.lineWidth = 1;
+                for (let i = 0; i <= 5; i++) {
+                    const y = padding.top + (chartH / 5) * i;
+                    ctx.beginPath();
+                    ctx.moveTo(padding.left, y);
+                    ctx.lineTo(W - padding.right, y);
+                    ctx.stroke();
+                    ctx.fillStyle = '#64748b';
+                    ctx.font = '10px sans-serif';
+                    ctx.textAlign = 'right';
+                    ctx.fillText(formatCurrency(maxB - (range / 5) * i), padding.left - 8, y + 4);
+                }
+                const xStep = chartW / (points.length - 1);
+                ctx.beginPath();
+                ctx.strokeStyle = '#0d9488';
+                ctx.lineWidth = 2.5;
+                ctx.lineJoin = 'round';
+                points.forEach((p, i) => {
+                    const x = padding.left + i * xStep;
+                    const y = padding.top + chartH - ((p.balance - minB) / range) * chartH;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                });
+                ctx.stroke();
+                ctx.lineTo(padding.left + (points.length - 1) * xStep, padding.top + chartH);
+                ctx.lineTo(padding.left, padding.top + chartH);
+                ctx.closePath();
+                const gradient = ctx.createLinearGradient(0, padding.top, 0, padding.top + chartH);
+                gradient.addColorStop(0, 'rgba(13, 148, 136, 0.2)');
+                gradient.addColorStop(1, 'rgba(13, 148, 136, 0.02)');
+                ctx.fillStyle = gradient;
+                ctx.fill();
+                points.forEach((p, i) => {
+                    const x = padding.left + i * xStep;
+                    const y = padding.top + chartH - ((p.balance - minB) / range) * chartH;
+                    ctx.beginPath();
+                    ctx.arc(x, y, 4, 0, Math.PI * 2);
+                    ctx.fillStyle = '#0d9488';
+                    ctx.fill();
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                });
+                ctx.fillStyle = '#64748b';
+                ctx.font = '10px sans-serif';
+                ctx.textAlign = 'center';
+                if (points.length >= 2) {
+                    ctx.fillText(formatDate(points[0].date), padding.left, H - 8);
+                    ctx.fillText(formatDate(points[points.length - 1].date), W - padding.right, H - 8);
+                }
+            }
+
             function renderMembers(container) {
                 const members = state.members;
                 const searchTerm = container.dataset.search || '';
@@ -720,22 +792,152 @@
                 document.getElementById('memberSearchInput')?.addEventListener('input', function() { container.dataset.search = this.value; renderMembers(container); });
             }
 
-            // Additional functions (open modals, form submissions) need to use Firestore add/update/delete
-            // Example: add member
-            async function saveMember(formData) {
-                const membersRef = db.collection('members');
-                if (formData.id) {
-                    await membersRef.doc(formData.id).update(formData);
-                } else {
-                    await membersRef.add(formData);
-                }
+            function renderTransactions(container) {
+                const session = state.currentUser;
+                const transactions = state.transactions;
+                const members = state.members;
+                const searchTerm = container.dataset.search || '', filterType = container.dataset.filterType || 'all', filterMember = container.dataset.filterMember || 'all';
+                let filtered = [...transactions].sort((a, b) => b.date.localeCompare(a.date));
+                if (session.role === 'member' && session.linkedMemberId) filtered = filtered.filter(t => t.memberId === session.linkedMemberId);
+                if (filterType !== 'all') filtered = filtered.filter(t => t.type === filterType);
+                if (filterMember !== 'all' && session.role !== 'member') filtered = filtered.filter(t => t.memberId === filterMember);
+                if (searchTerm) { const s = searchTerm.toLowerCase(); filtered = filtered.filter(t => (t.memberName && t.memberName.toLowerCase().includes(s)) || (t.description && t.description.toLowerCase().includes(s))); }
+                const canAdd = hasPermission('addTransaction'), canEdit = hasPermission('editTransaction'), canDelete = hasPermission('deleteTransaction');
+                const totalIn = filtered.filter(t => t.type === 'contribution' || t.type === 'return').reduce((s,t) => s + Number(t.amount), 0);
+                const totalOut = filtered.filter(t => t.type === 'withdrawal' || t.type === 'expense' || t.type === 'investment').reduce((s,t) => s + Number(t.amount), 0);
+                let html = `<div class="card" style="margin-bottom:16px;"><div class="card-body"><div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;"><div><span style="font-size:13px;color:var(--text-muted);">Filtered Net:</span> <span style="font-size:24px;font-weight:700;color:${totalIn - totalOut >= 0 ? 'var(--success)' : 'var(--danger)'}">${totalIn - totalOut >= 0 ? '+' : ''}${formatCurrency(totalIn - totalOut)}</span></div><div style="display:flex;gap:8px;flex-wrap:wrap;"><input type="text" class="search-input" id="transactionSearchInput" placeholder="Search..." value="${escapeHtml(searchTerm)}"><select class="filter-select" id="transactionTypeFilter"><option value="all">All Types</option><option value="contribution" ${filterType === 'contribution' ? 'selected' : ''}>Income: Contribution</option><option value="return" ${filterType === 'return' ? 'selected' : ''}>Income: Return</option><option value="withdrawal" ${filterType === 'withdrawal' ? 'selected' : ''}>Expense: Withdrawal</option><option value="expense" ${filterType === 'expense' ? 'selected' : ''}>Expense: Other</option><option value="investment" ${filterType === 'investment' ? 'selected' : ''}>Investment</option><option value="other" ${filterType === 'other' ? 'selected' : ''}>Other</option></select>${session.role !== 'member' ? `<select class="filter-select" id="transactionMemberFilter"><option value="all">All Members</option>${members.map(m => `<option value="${m.id}" ${filterMember === m.id ? 'selected' : ''}>${escapeHtml(m.name)}</option>`).join('')}</select>` : ''}${canAdd ? '<button class="btn btn-primary btn-sm" onclick="openTransactionModal()">+ Record Amount</button>' : ''}<button class="btn btn-secondary btn-sm" onclick="printTransactions()">🖨️ Print</button><button class="btn btn-secondary btn-sm" onclick="exportTransactionsCSV()">📊 Excel</button></div></div></div></div>`;
+                html += `<div class="card"><div class="card-header"><h3>Transaction History (${filtered.length})</h3></div><div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Date</th><th>Member</th><th>Type</th><th>Description</th><th>Amount</th><th>Recorded By</th>${(canEdit || canDelete) ? '<th>Actions</th>' : ''}</tr></thead><tbody>${filtered.map(t => `<tr><td>${formatDate(t.date)}</td><td>${escapeHtml(t.memberName || '-')}</td><td><span class="badge ${getTypeBadge(t.type)}">${capitalizeFirst(t.type)}</span></td><td>${escapeHtml(t.description || '-')}</td><td style="font-weight:600;color:${t.type === 'withdrawal' || t.type === 'expense' || t.type === 'investment' ? 'var(--danger)' : 'var(--success)'}">${t.type === 'withdrawal' || t.type === 'expense' || t.type === 'investment' ? '-' : '+'}${formatCurrency(t.amount)}</td><td style="font-size:12px;color:var(--text-muted);">${escapeHtml(t.recordedBy || '-')}</td>${(canEdit || canDelete) ? `<td><div class="user-actions">${canEdit ? `<button class="btn-icon" onclick="editTransaction('${t.id}')">✏️</button>` : ''}${canDelete ? `<button class="btn-icon delete" onclick="confirmDeleteTransaction('${t.id}')">🗑️</button>` : ''}</div></td>` : ''}</tr>`).join('')}${filtered.length === 0 ? '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px;">No transactions found</td></tr>' : ''}</tbody></table></div></div></div>`;
+                container.innerHTML = html;
+                const searchInput = document.getElementById('transactionSearchInput');
+                const typeFilter = document.getElementById('transactionTypeFilter');
+                const memberFilter = document.getElementById('transactionMemberFilter');
+                if (searchInput) searchInput.addEventListener('input', function() { container.dataset.search = this.value; renderTransactions(container); });
+                if (typeFilter) typeFilter.addEventListener('change', function() { container.dataset.filterType = this.value; renderTransactions(container); });
+                if (memberFilter) memberFilter.addEventListener('change', function() { container.dataset.filterMember = this.value; renderTransactions(container); });
             }
 
-            // Since original code is large, we provide the core integration and leave the rest for you to fill in based on the original functions but using state and Firestore.
-            // The key is to replace localStorage calls with Firestore and use state for rendering.
+            function renderBanking(container) {
+                const banking = state.banking;
+                const searchTerm = container.dataset.search || '', filterType = container.dataset.filterType || 'all';
+                let filtered = [...banking].sort((a,b) => b.date.localeCompare(a.date));
+                if (filterType !== 'all') filtered = filtered.filter(t => t.type === filterType);
+                if (searchTerm) { const s = searchTerm.toLowerCase(); filtered = filtered.filter(t => (t.account && t.account.toLowerCase().includes(s)) || (t.description && t.description.toLowerCase().includes(s))); }
+                const totalDeposits = banking.filter(t => t.type === 'deposit' || t.type === 'interest').reduce((s,t) => s + Number(t.amount), 0);
+                const totalWithdrawals = banking.filter(t => t.type === 'withdrawal' || t.type === 'bank_charge').reduce((s,t) => s + Number(t.amount), 0);
+                const bankBalance = totalDeposits - totalWithdrawals;
+                const canManage = hasPermission('manageBanking');
+                let html = `<div class="stats-grid" style="margin-bottom:16px;"><div class="stat-card"><div class="stat-icon green">🏦</div><div class="stat-label">Total Deposits</div><div class="stat-value">${formatCurrency(totalDeposits)}</div></div><div class="stat-card"><div class="stat-icon orange">💸</div><div class="stat-label">Total Withdrawals</div><div class="stat-value">${formatCurrency(totalWithdrawals)}</div></div><div class="stat-card"><div class="stat-icon teal">💰</div><div class="stat-label">Bank Balance</div><div class="stat-value">${formatCurrency(bankBalance)}</div></div></div>`;
+                html += `<div class="card"><div class="card-header"><h3>Bank Transactions (${filtered.length})</h3><div class="card-header-actions"><input type="text" class="search-input" id="bankingSearchInput" placeholder="Search..." value="${escapeHtml(searchTerm)}"><select class="filter-select" id="bankingTypeFilter"><option value="all">All Types</option><option value="deposit" ${filterType === 'deposit' ? 'selected' : ''}>Deposit</option><option value="withdrawal" ${filterType === 'withdrawal' ? 'selected' : ''}>Withdrawal</option><option value="interest" ${filterType === 'interest' ? 'selected' : ''}>Interest</option><option value="bank_charge" ${filterType === 'bank_charge' ? 'selected' : ''}>Bank Charge</option></select>${canManage ? '<button class="btn btn-primary btn-sm" onclick="openBankingModal()">+ Bank Transaction</button>' : ''}<button class="btn btn-secondary btn-sm" onclick="printBanking()">🖨️ Print</button><button class="btn btn-secondary btn-sm" onclick="exportBankingCSV()">📊 Excel</button></div></div><div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Account</th><th>Description</th>${canManage ? '<th>Actions</th>' : ''}</tr></thead><tbody>${filtered.map(b => `<tr><td>${formatDate(b.date)}</td><td><span class="badge ${b.type === 'deposit' || b.type === 'interest' ? 'badge-success' : 'badge-danger'}">${capitalizeFirst(b.type)}</span></td><td style="font-weight:600;color:${b.type === 'deposit' || b.type === 'interest' ? 'var(--success)' : 'var(--danger)'}">${b.type === 'deposit' || b.type === 'interest' ? '+' : '-'}${formatCurrency(b.amount)}</td><td>${escapeHtml(b.account || '-')}</td><td>${escapeHtml(b.description || '-')}</td>${canManage ? `<td><button class="btn-icon" onclick="confirmDeleteBanking('${b.id}')">🗑️</button></td>` : ''}</tr>`).join('')}${filtered.length === 0 ? '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:24px;">No bank transactions</td></tr>' : ''}</tbody></table></div></div></div>`;
+                container.innerHTML = html;
+                const searchInput = document.getElementById('bankingSearchInput');
+                const typeFilter = document.getElementById('bankingTypeFilter');
+                if (searchInput) searchInput.addEventListener('input', function() { container.dataset.search = this.value; renderBanking(container); });
+                if (typeFilter) typeFilter.addEventListener('change', function() { container.dataset.filterType = this.value; renderBanking(container); });
+            }
 
-            // Initialize app
-            loadInitialData();
+            function renderMeetings(container) {
+                const meetings = state.meetings;
+                const searchTerm = container.dataset.search || '';
+                let filtered = [...meetings].sort((a,b) => b.date.localeCompare(a.date));
+                if (searchTerm) { const s = searchTerm.toLowerCase(); filtered = filtered.filter(m => m.venue.toLowerCase().includes(s) || m.agenda.toLowerCase().includes(s)); }
+                const canManage = hasPermission('manageMeetings');
+                let html = `<div class="card"><div class="card-header"><h3>Meetings (${filtered.length})</h3><div class="card-header-actions"><input type="text" class="search-input" id="meetingSearchInput" placeholder="Search..." value="${escapeHtml(searchTerm)}">${canManage ? '<button class="btn btn-primary btn-sm" onclick="openMeetingModal()">+ Add Meeting</button>' : ''}</div></div><div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Date</th><th>Venue</th><th>Agenda</th>${canManage ? '<th>Actions</th>' : ''}</tr></thead><tbody>${filtered.map(m => `<tr><td>${formatDate(m.date)}</td><td>${escapeHtml(m.venue)}</td><td>${escapeHtml(m.agenda)}</td>${canManage ? `<td><div class="user-actions"><button class="btn-icon" onclick="editMeeting('${m.id}')">✏️</button> <button class="btn-icon delete" onclick="confirmDeleteMeeting('${m.id}')">🗑️</button></div></td>` : ''}</tr>`).join('')}${filtered.length === 0 ? '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:24px;">No meetings scheduled</td></tr>' : ''}</tbody></table></div></div></div>`;
+                container.innerHTML = html;
+                document.getElementById('meetingSearchInput')?.addEventListener('input', function() { container.dataset.search = this.value; renderMeetings(container); });
+            }
+
+            function renderSettings(container) {
+                const session = state.currentUser;
+                if (session.role === 'member') { renderMemberSettings(container); return; }
+                const users = state.users;
+                const settings = state.settings;
+                const canManageUsers = hasPermission('manageUsers');
+                const orgDetails = settings.orgDetails || {};
+                let html = `
+                    <div class="card" style="margin-bottom:16px;"><div class="card-header"><h3>Financial Settings</h3></div><div class="card-body"><div class="form-group" style="max-width:300px;"><label>Annual Interest Rate (%)</label><input type="number" id="interestRateInput" value="${settings.interestRate}" min="0" max="100" step="0.1"><button class="btn btn-primary btn-sm" style="margin-top:8px;" onclick="saveInterestRate()">Save Rate</button></div></div></div>
+                    <div class="card" style="margin-bottom:16px;"><div class="card-header"><h3>Organization Details</h3></div><div class="card-body">
+                        <div class="form-row"><div class="form-group"><label>Name</label><input type="text" id="orgName" value="${escapeHtml(orgDetails.name || '')}"></div><div class="form-group"><label>Registration No</label><input type="text" id="orgRegNo" value="${escapeHtml(orgDetails.registrationNo || '')}"></div></div>
+                        <div class="form-group"><label>Address</label><input type="text" id="orgAddress" value="${escapeHtml(orgDetails.address || '')}"></div>
+                        <div class="form-row"><div class="form-group"><label>Phone</label><input type="text" id="orgPhone" value="${escapeHtml(orgDetails.phone || '')}"></div><div class="form-group"><label>Email</label><input type="email" id="orgEmail" value="${escapeHtml(orgDetails.email || '')}"></div></div>
+                        <div class="form-group"><label>Website</label><input type="text" id="orgWebsite" value="${escapeHtml(orgDetails.website || '')}"></div>
+                        <button class="btn btn-primary btn-sm" onclick="saveOrganizationDetails()">Save</button>
+                    </div></div>
+                    <div class="card" style="margin-bottom:16px;"><div class="card-header"><h3>Data Management</h3></div><div class="card-body"><div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn btn-secondary btn-sm" onclick="exportData()">📤 Export</button><button class="btn btn-danger btn-sm" onclick="clearAllData()">🗑️ Clear</button></div></div></div>
+                    <div class="card"><div class="card-header"><h3>User Management (${users.length})</h3>${canManageUsers ? '<button class="btn btn-primary btn-sm" onclick="openUserModal()">+ Add User</button>' : ''}</div><div class="card-body no-padding"><div class="table-wrapper"><table class="user-table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th>${canManageUsers ? '<th>Actions</th>' : ''}</tr></thead><tbody>${users.map(u => `<tr><td style="font-weight:600;">${escapeHtml(u.name)}</td><td>${escapeHtml(u.email)}</td><td><span class="badge ${u.role === 'admin' ? 'badge-primary' : 'badge-info'}">${capitalizeFirst(u.role)}</span></td><td><span class="badge ${u.active ? 'badge-success' : 'badge-danger'}">${u.active ? 'Active' : 'Disabled'}</span></td>${canManageUsers ? `<td><div class="user-actions"><button class="btn-icon" onclick="editUser('${u.id}')">✏️</button>${u.id !== session.id ? `<button class="btn-icon delete" onclick="confirmDeleteUser('${u.id}')">🗑️</button>` : ''}</div></td>` : ''}</tr>`).join('')}</tbody></table></div></div></div>
+                `;
+                container.innerHTML = html;
+            }
+            function renderMemberSettings(container) {
+                const user = state.currentUser;
+                container.innerHTML = `<div class="card"><div class="card-header"><h3>My Profile</h3></div><div class="card-body"><div class="form-group"><label>Name</label><input type="text" value="${escapeHtml(user.name)}" disabled></div><div class="form-group"><label>Email</label><input type="email" value="${escapeHtml(user.email)}" disabled></div><div class="form-group"><label>New Password</label><input type="password" id="memberNewPassword" placeholder="Leave blank to keep current"></div><button class="btn btn-primary" onclick="changeOwnPassword()">Update Password</button></div></div>`;
+            }
+            async function changeOwnPassword() {
+                const newPassword = document.getElementById('memberNewPassword').value;
+                if (!newPassword) { showToast('Enter new password.', 'warning'); return; }
+                try {
+                    await auth.currentUser.updatePassword(newPassword);
+                    showToast('Password updated.', 'success');
+                } catch (e) { showToast(e.message, 'error'); }
+            }
+
+            // Open modal functions
+            function openMemberModal(id) { /* populate form, open modal */ }
+            function openTransactionModal(id) { /* populate, open */ }
+            function openBankingModal(id) { /* populate, open */ }
+            function openMeetingModal(id) { /* populate, open */ }
+            function openUserModal(id) { /* populate, open */ }
+
+            // Form submission handlers (use Firestore)
+            document.getElementById('memberForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const id = document.getElementById('memberId').value;
+                const data = {
+                    name: document.getElementById('memberName').value.trim(),
+                    email: document.getElementById('memberEmail').value.trim(),
+                    phone: document.getElementById('memberPhone').value.trim(),
+                    position: document.getElementById('memberPosition').value.trim(),
+                    role: document.getElementById('memberRole').value,
+                    joinDate: document.getElementById('memberJoinDate').value,
+                    status: document.getElementById('memberStatus').value
+                };
+                if (!data.name || !data.position || !data.joinDate) { showToast('Required fields missing.', 'error'); return; }
+                try {
+                    if (id) { await db.collection('members').doc(id).update(data); }
+                    else { await db.collection('members').add(data); }
+                    // Optional: create user account
+                    const userEmail = document.getElementById('memberUserEmail').value.trim();
+                    const userPassword = document.getElementById('memberUserPassword').value;
+                    if (userEmail && userPassword) {
+                        const cred = await auth.createUserWithEmailAndPassword(userEmail, userPassword);
+                        await db.collection('users').doc(cred.user.uid).set({
+                            uid: cred.user.uid, name: data.name, email: userEmail, role: 'member',
+                            permissions: getDefaultPermissions('member'), active: true, linkedMemberId: null, createdAt: new Date().toISOString()
+                        });
+                    }
+                    closeModal('memberModal');
+                    showToast('Saved successfully.', 'success');
+                } catch (e) { showToast(e.message, 'error'); }
+            });
+
+            // Similar handlers for transaction, banking, meeting, user (omitted for brevity but follow same pattern)
+
+            // Delete confirmation helper
+            function confirmDelete(collection, id, message) {
+                document.getElementById('confirmTitle').textContent = 'Delete';
+                document.getElementById('confirmMessage').textContent = message;
+                openModal('confirmModal');
+                document.getElementById('confirmDeleteBtn').onclick = async function() {
+                    await db.collection(collection).doc(id).delete();
+                    closeModal('confirmModal');
+                    showToast('Deleted.', 'success');
+                };
+            }
+
+            // Print/Export functions (simplified)
+            function printTransactions() { /* open print window with table */ }
+            function exportTransactionsCSV() { /* generate CSV */ }
+            function printBanking() { /* similar */ }
+            function exportBankingCSV() { /* similar */ }
 
             // Sidebar toggle, theme, etc.
             document.getElementById('sidebarToggle').addEventListener('click', function() {
@@ -743,17 +945,81 @@
                 document.getElementById('mainContent').classList.toggle('collapsed');
                 this.textContent = document.getElementById('sidebar').classList.contains('collapsed') ? '▶' : '◀';
             });
-
             document.getElementById('themeToggle').addEventListener('click', function() {
                 const current = document.documentElement.getAttribute('data-theme') || 'light';
                 const next = current === 'light' ? 'dark' : 'light';
                 document.documentElement.setAttribute('data-theme', next);
                 this.textContent = next === 'dark' ? '☀️' : '🌙';
             });
+            document.getElementById('mobileToggle').addEventListener('click', function() {
+                document.getElementById('sidebar').classList.toggle('open');
+                document.getElementById('sidebarOverlay').classList.toggle('active');
+            });
+            document.getElementById('sidebarOverlay').addEventListener('click', function() {
+                document.getElementById('sidebar').classList.remove('open');
+                document.getElementById('sidebarOverlay').classList.remove('active');
+            });
+            function closeSidebar() {
+                document.getElementById('sidebar').classList.remove('open');
+                document.getElementById('sidebarOverlay').classList.remove('active');
+            }
 
-            // Expose navigateTo globally for inline onclick
+            // Expose to global for inline onclick
             window.navigateTo = navigateTo;
-            // Expose other functions as needed...
+            window.openMemberModal = openMemberModal;
+            window.editMember = function(id) { openMemberModal(id); };
+            window.confirmDeleteMember = function(id) { const m = state.members.find(x => x.id === id); if (m) confirmDelete('members', id, `Delete ${m.name}?`); };
+            window.openTransactionModal = openTransactionModal;
+            window.editTransaction = function(id) { openTransactionModal(id); };
+            window.confirmDeleteTransaction = function(id) { confirmDelete('transactions', id, 'Delete this transaction?'); };
+            window.openBankingModal = openBankingModal;
+            window.confirmDeleteBanking = function(id) { confirmDelete('banking', id, 'Delete this bank transaction?'); };
+            window.openMeetingModal = openMeetingModal;
+            window.editMeeting = function(id) { openMeetingModal(id); };
+            window.confirmDeleteMeeting = function(id) { confirmDelete('meetings', id, 'Delete this meeting?'); };
+            window.openUserModal = openUserModal;
+            window.editUser = function(id) { openUserModal(id); };
+            window.confirmDeleteUser = function(id) { const u = state.users.find(x => x.id === id); if (u) confirmDelete('users', id, `Delete user ${u.name}?`); };
+            window.saveInterestRate = function() {
+                const rate = parseFloat(document.getElementById('interestRateInput').value);
+                if (!isNaN(rate)) { db.collection('settings').doc('app_settings').update({ interestRate: rate }); showToast('Saved.', 'success'); }
+            };
+            window.saveOrganizationDetails = function() {
+                const orgDetails = {
+                    name: document.getElementById('orgName').value.trim(),
+                    registrationNo: document.getElementById('orgRegNo').value.trim(),
+                    address: document.getElementById('orgAddress').value.trim(),
+                    phone: document.getElementById('orgPhone').value.trim(),
+                    email: document.getElementById('orgEmail').value.trim(),
+                    website: document.getElementById('orgWebsite').value.trim()
+                };
+                db.collection('settings').doc('app_settings').update({ orgDetails });
+                showToast('Saved.', 'success');
+            };
+            window.exportData = function() {
+                const data = { users: state.users, members: state.members, transactions: state.transactions, banking: state.banking, meetings: state.meetings, settings: state.settings };
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a'); a.href = url; a.download = 'bloomstone_backup.json'; a.click(); URL.revokeObjectURL(url);
+            };
+            window.clearAllData = function() {
+                if (confirm('Clear all data?')) {
+                    ['users','members','transactions','banking','meetings'].forEach(col => db.collection(col).get().then(snapshot => snapshot.forEach(doc => doc.ref.delete())));
+                    db.collection('settings').doc('app_settings').delete();
+                }
+            };
+            window.changeOwnPassword = changeOwnPassword;
+            window.printTransactions = printTransactions;
+            window.exportTransactionsCSV = exportTransactionsCSV;
+            window.printBanking = printBanking;
+            window.exportBankingCSV = exportBankingCSV;
+
+            // Initialization
+            async function init() {
+                await ensureDefaultData();
+                setupListeners();
+            }
+            init();
         })();
     </script>
 </body>
