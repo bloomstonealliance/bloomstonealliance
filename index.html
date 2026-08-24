@@ -510,15 +510,15 @@
             'use strict';
 
             // ------------------------------------------------------------
-            // Preloaded Data
+            // Preloaded Data (v3 — from latest JSON backup)
             // ------------------------------------------------------------
             const M = {
                 hari: "mem_mt6yg46b0lh85u", sashi: "mem_mt6yifq8qir7tq", rabin: "mem_mt6yjnkojy5vt5",
                 kamal: "mem_mt6ykicbpvv55f", jugal: "mem_mt6ylt6ceyfzcn", rajesh: "mem_mt6yn00tlrcnkb",
                 basanta: "mem_mt6yodnaptftx5", binu: "mem_mt6yrp34pn3ve9"
             };
-            const Q1000 = "1. Monthly Contribution: Rs. 1000\n2. Quarterly Contribution: Rs. 5000";
-            const Q2000 = "1. Monthly Contribution: Rs. 2000\n2. Quarterly Contribution: Rs. 5000";
+            const Q1000 = "a) Monthly Contribution: Rs. 1000\nb) Quarterly Contribution: Rs. 5000";
+            const Q2000 = "a) Monthly Contribution: Rs. 2000\nb) Quarterly Contribution: Rs. 5000";
             const Q2000_INIT = "1. Monthly Contribution: Rs. 2000\n2. Initial Contribution: Rs. 1000 (Remaining Balance)";
             const INIT = "Initial Contribution";
 
@@ -672,12 +672,12 @@
                     { id: "user_mt6zcdembtl8gg", username: "bloomstone", name: "Viewer", passwordHash: "h_yjc1fz_4", role: "viewer", permissions: { viewDashboard: true, viewMembers: true, addMember: false, editMember: false, deleteMember: false, viewTransactions: true, addTransaction: false, editTransaction: false, deleteTransaction: false, viewBanking: true, manageBanking: false, viewMeetings: true, manageMeetings: false, manageUsers: false, accessSettings: false, changeOwnCredential: false }, createdAt: "2026-08-24T08:34:18.718Z", active: true }
                 ],
                 members: [
-                    { id: M.hari, name: "Hari Bahadur Khatri", email: "", phone: "9849485805", position: "President", role: "member", joinDate: "2025-01-01", status: "active" },
-                    { id: M.sashi, name: "Sashi Sigdel", email: "sgsigdel@gmail.com", phone: "9841952941", position: "Secretary", role: "member", joinDate: "2025-01-01", status: "active" },
-                    { id: M.rabin, name: "Rabin Dhewaju", email: "", phone: "9803150613", position: "Treasurer", role: "member", joinDate: "2025-01-01", status: "active" },
-                    { id: M.kamal, name: "Kamal Adhikari", email: "", phone: "9867176498", position: "Assistant Treasurer", role: "member", joinDate: "2025-01-01", status: "active" },
-                    { id: M.jugal, name: "Jugal Kishor Kushwaha", email: "", phone: "9851172257", position: "Advisor", role: "member", joinDate: "2025-01-01", status: "active" },
-                    { id: M.rajesh, name: "Rajesh Karki", email: "", phone: "9860175282", position: "Member", role: "member", joinDate: "2025-01-01", status: "active" },
+                    { id: M.hari, name: "Hari Bahadur Khatri", email: "", phone: "9849485805", position: "President", role: "member", joinDate: "2024-12-01", status: "active" },
+                    { id: M.sashi, name: "Sashi Sigdel", email: "sgsigdel@gmail.com", phone: "9841952941", position: "Secretary", role: "member", joinDate: "2024-12-01", status: "active" },
+                    { id: M.rabin, name: "Rabin Dhewaju", email: "", phone: "9803150613", position: "Treasurer", role: "member", joinDate: "2024-12-01", status: "active" },
+                    { id: M.kamal, name: "Kamal Adhikari", email: "", phone: "9867176498", position: "Assistant Treasurer", role: "member", joinDate: "2024-12-01", status: "active" },
+                    { id: M.jugal, name: "Jugal Kishor Kushwaha", email: "", phone: "9851172257", position: "Advisor", role: "member", joinDate: "2024-12-01", status: "active" },
+                    { id: M.rajesh, name: "Rajesh Karki", email: "", phone: "9860175282", position: "Member", role: "member", joinDate: "2024-12-01", status: "active" },
                     { id: M.basanta, name: "Basanta Lama", email: "", phone: "9840249773", position: "Member", role: "member", joinDate: "2025-12-09", status: "active" },
                     { id: M.binu, name: "Binu Kumar Shrestha", email: "", phone: "9851003705", position: "Member", role: "member", joinDate: "2026-03-11", status: "active" }
                 ],
@@ -702,10 +702,9 @@
             function escapeHtml(str) { if (!str) return ''; const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
             function showToast(message, type) { type = type || 'success'; const container = document.getElementById('toastContainer'); const toast = document.createElement('div'); toast.className = 'toast toast-' + type; toast.textContent = message; container.appendChild(toast); setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 3000); }
 
-            // --- Rich Text Helpers (for Meeting/Announcement details) ---
+            // --- Rich Text Helpers ---
             const RICH_ALLOWED_TAGS = new Set(['B', 'STRONG', 'I', 'EM', 'U', 'BR', 'DIV', 'P', 'UL', 'OL', 'LI']);
             
-            // Sanitize HTML: keep only allowed formatting tags, strip attributes
             function sanitizeRichText(html) {
                 if (!html) return '';
                 try {
@@ -727,18 +726,15 @@
                 }
             }
             
-            // Convert stored value into safe display HTML (handles legacy plain text with \n)
             function formatRichText(value) {
                 if (!value) return '';
                 const hasTags = /<[a-z][\s\S]*>/i.test(value);
                 if (!hasTags) {
-                    // Legacy plain text: escape then convert line breaks
                     return escapeHtml(value).replace(/\n/g, '<br>');
                 }
                 return sanitizeRichText(value);
             }
             
-            // Convert stored value to plain text (for table previews, exports, notifications)
             function richTextToPlain(value) {
                 if (!value) return '';
                 const hasTags = /<[a-z][\s\S]*>/i.test(value);
@@ -778,14 +774,16 @@
             }
 
             function initData() {
-                if (!localStorage.getItem('bloomstone_preload_v2')) {
+                // v3 flag: forces fresh load of the NEW preloaded data (replaces v2/v1 data)
+                if (!localStorage.getItem('bloomstone_preload_v3')) {
                     setData(STORAGE_KEYS.users, INITIAL_DATA.users);
                     setData(STORAGE_KEYS.members, INITIAL_DATA.members);
                     setData(STORAGE_KEYS.transactions, INITIAL_DATA.transactions);
                     setData(STORAGE_KEYS.banking, generateBankingFromTransactions(INITIAL_DATA.transactions, INITIAL_DATA.members));
                     setData(STORAGE_KEYS.meetings, INITIAL_DATA.meetings);
                     setData(STORAGE_KEYS.settings, INITIAL_DATA.settings);
-                    localStorage.setItem('bloomstone_preload_v2', 'true');
+                    localStorage.setItem('bloomstone_preload_v3', 'true');
+                    localStorage.removeItem('bloomstone_preload_v2');
                     localStorage.removeItem('bloomstone_preload_v1');
                     localStorage.removeItem(STORAGE_KEYS.session);
                     setData(STORAGE_KEYS.seenMeetings, INITIAL_DATA.meetings.map(m => m.id));
@@ -1232,7 +1230,6 @@
                 const tbody = document.getElementById('meetTableBody');
                 if (!tbody) return;
                 tbody.innerHTML = filtered.map(m => {
-                    // View option available for everyone (viewer and admin)
                     let actions = `<button class="btn-icon" onclick="viewMeeting('${m.id}')" title="View">👁️</button>`;
                     if (canManage) {
                         actions += `<button class="btn-icon" onclick="openMeetingModal('${m.id}')" title="Edit">✏️</button><button class="btn-icon delete" onclick="deleteMeeting('${m.id}')" title="Delete">🗑️</button>`;
@@ -1245,7 +1242,6 @@
                 }).join('') || `<tr><td colspan="5" style="text-align:center; padding: 30px;">No records found</td></tr>`;
             }
 
-            // View Meeting / Announcement modal
             window.viewMeeting = function(id) {
                 if (!hasPermission('viewMeetings')) { showToast('Permission denied.', 'error'); return; }
                 const m = getData(STORAGE_KEYS.meetings, []).find(x => x.id === id);
@@ -1608,7 +1604,7 @@
                 form.reset();
                 document.getElementById('meetingId').value = '';
                 const detailsEl = document.getElementById('meetingDetails');
-                detailsEl.innerHTML = ''; // Clear rich editor (form.reset doesn't clear contenteditable)
+                detailsEl.innerHTML = '';
                 if (id) {
                     const m = getData(STORAGE_KEYS.meetings, []).find(x => x.id === id);
                     if (m) {
@@ -1616,7 +1612,6 @@
                         document.getElementById('meetingDate').value = m.date;
                         document.getElementById('meetingRecordType').value = m.recordType || 'meeting';
                         document.getElementById('meetingSubject').value = m.subject || m.venue || '';
-                        // Load details into editor (handles legacy plain text with \n)
                         detailsEl.innerHTML = formatRichText(m.details || m.agenda || '');
                         updateMeetingLabels();
                     }
@@ -1640,7 +1635,6 @@
                 e.preventDefault();
                 if (!hasPermission('manageMeetings')) { showToast('Permission denied.', 'error'); return; }
                 const detailsEl = document.getElementById('meetingDetails');
-                // Manual required validation for contenteditable
                 if (!detailsEl.innerText.trim()) {
                     const isMeeting = document.getElementById('meetingRecordType').value === 'meeting';
                     showToast('Please enter the ' + (isMeeting ? 'agenda' : 'details') + '.', 'error');
