@@ -55,6 +55,26 @@
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--primary); background: var(--card-bg); box-shadow: 0 0 0 4px rgba(13,148,136,0.12); }
         .form-group textarea { resize: vertical; min-height: 80px; }
         
+        /* Rich Text Editor */
+        .rich-toolbar { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; flex-wrap: wrap; }
+        .rich-btn { padding: 4px 12px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); border-radius: 6px; cursor: pointer; font-size: 13px; font-family: inherit; transition: all var(--transition); line-height: 1.4; }
+        .rich-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--card-bg); }
+        .rich-hint { font-size: 11px; color: var(--text-muted); margin-left: auto; }
+        .rich-editor { min-height: 110px; max-height: 220px; overflow-y: auto; padding: 12px 16px; border: 2px solid var(--border); border-radius: var(--radius-sm); font-size: 14px; color: var(--text); background: var(--input-bg); font-family: inherit; line-height: 1.7; outline: none; transition: all var(--transition); word-break: break-word; }
+        .rich-editor:focus { border-color: var(--primary); background: var(--card-bg); box-shadow: 0 0 0 4px rgba(13,148,136,0.12); }
+        .rich-editor:empty:before { content: attr(data-placeholder); color: var(--text-muted); pointer-events: none; }
+        .rich-editor b, .rich-editor strong { font-weight: 700; }
+        .rich-editor ul, .rich-editor ol { padding-left: 22px; margin: 6px 0; }
+        
+        /* View Modal */
+        .view-meta { background: var(--input-bg); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 16px; display: flex; flex-direction: column; gap: 10px; }
+        .view-meta-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 14px; }
+        .view-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-muted); font-weight: 700; }
+        .view-details-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-muted); font-weight: 700; margin-bottom: 6px; }
+        .rich-content { background: var(--input-bg); border-radius: var(--radius-sm); padding: 16px; line-height: 1.8; word-break: break-word; font-size: 14px; }
+        .rich-content b, .rich-content strong { font-weight: 700; }
+        .rich-content ul, .rich-content ol { padding-left: 22px; margin: 6px 0; }
+        
         /* Buttons */
         .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; transition: all var(--transition); text-decoration: none; letter-spacing: 0.3px; font-family: inherit; white-space: nowrap; }
         .btn-primary { background: linear-gradient(135deg, #0d9488, #0f766e); color: #fff; box-shadow: 0 4px 14px rgba(13,148,136,0.35); }
@@ -127,7 +147,7 @@
         .notif-dropdown.active { display: block; animation: notifIn 0.25s ease; }
         @keyframes notifIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
         .notif-dropdown-header { padding: 14px 16px; border-bottom: 1px solid var(--border); font-weight: 700; font-size: 14px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--card-bg); z-index: 1; }
-        .notif-item { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; gap: 12px; align-items: flex-start; transition: background 0.15s ease; }
+        .notif-item { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; gap: 12px; align-items: flex-start; transition: background 0.15s ease; cursor: pointer; }
         .notif-item:last-child { border-bottom: none; }
         .notif-item:hover { background: var(--hover-bg); }
         .notif-item .notif-item-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
@@ -262,6 +282,7 @@
             .card-header h3 { margin-bottom: 8px; }
             .toast { min-width: auto; max-width: calc(100vw - 40px); }
             .notif-dropdown { width: 280px; }
+            .rich-hint { display: none; }
         }
         @media (max-width: 480px) { 
             .stats-grid { grid-template-columns: 1fr; } 
@@ -413,9 +434,27 @@
                 <div class="form-group"><label>Record Type *</label><select id="meetingRecordType" required><option value="meeting">Meeting</option><option value="announcement">Announcement</option></select></div>
                 <div class="form-group"><label>Date *</label><input type="date" id="meetingDate" required></div>
                 <div class="form-group"><label id="meetingSubjectLabel">Venue *</label><input type="text" id="meetingSubject" required></div>
-                <div class="form-group"><label id="meetingDetailsLabel">Agenda *</label><textarea id="meetingDetails" rows="3" required></textarea></div>
+                <div class="form-group">
+                    <label id="meetingDetailsLabel">Agenda *</label>
+                    <div class="rich-toolbar">
+                        <button type="button" class="rich-btn" onmousedown="event.preventDefault()" onclick="document.execCommand('bold')" title="Bold"><b>B</b></button>
+                        <button type="button" class="rich-btn" onmousedown="event.preventDefault()" onclick="document.execCommand('italic')" title="Italic"><i>I</i></button>
+                        <button type="button" class="rich-btn" onmousedown="event.preventDefault()" onclick="document.execCommand('insertUnorderedList')" title="Bullet List">• List</button>
+                        <button type="button" class="rich-btn" onmousedown="event.preventDefault()" onclick="document.execCommand('insertOrderedList')" title="Numbered List">1. List</button>
+                        <span class="rich-hint">Enter = new line</span>
+                    </div>
+                    <div id="meetingDetails" class="rich-editor" contenteditable="true" data-placeholder="Type here... Select text and press B to make it bold"></div>
+                </div>
                 <div class="modal-footer"><button type="button" class="btn btn-secondary" data-close="meetingModal">Cancel</button><button type="submit" class="btn btn-primary" id="meetingSubmitBtn">Save</button></div>
             </form>
+        </div>
+    </div>
+
+    <!-- View Meeting / Announcement Modal -->
+    <div class="modal-overlay" id="viewMeetingModal">
+        <div class="modal">
+            <div class="modal-header"><h2 id="viewMeetingTitle">View Record</h2><button class="modal-close" data-close="viewMeetingModal">✕</button></div>
+            <div id="viewMeetingBody"></div>
         </div>
     </div>
 
@@ -663,6 +702,53 @@
             function escapeHtml(str) { if (!str) return ''; const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
             function showToast(message, type) { type = type || 'success'; const container = document.getElementById('toastContainer'); const toast = document.createElement('div'); toast.className = 'toast toast-' + type; toast.textContent = message; container.appendChild(toast); setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 3000); }
 
+            // --- Rich Text Helpers (for Meeting/Announcement details) ---
+            const RICH_ALLOWED_TAGS = new Set(['B', 'STRONG', 'I', 'EM', 'U', 'BR', 'DIV', 'P', 'UL', 'OL', 'LI']);
+            
+            // Sanitize HTML: keep only allowed formatting tags, strip attributes
+            function sanitizeRichText(html) {
+                if (!html) return '';
+                try {
+                    const doc = new DOMParser().parseFromString(html, 'text/html');
+                    doc.body.querySelectorAll('*').forEach(el => {
+                        if (!RICH_ALLOWED_TAGS.has(el.tagName)) {
+                            const parent = el.parentNode;
+                            if (parent) {
+                                while (el.firstChild) parent.insertBefore(el.firstChild, el);
+                                parent.removeChild(el);
+                            }
+                        } else {
+                            [...el.attributes].forEach(a => el.removeAttribute(a.name));
+                        }
+                    });
+                    return doc.body.innerHTML;
+                } catch (e) {
+                    return escapeHtml(html);
+                }
+            }
+            
+            // Convert stored value into safe display HTML (handles legacy plain text with \n)
+            function formatRichText(value) {
+                if (!value) return '';
+                const hasTags = /<[a-z][\s\S]*>/i.test(value);
+                if (!hasTags) {
+                    // Legacy plain text: escape then convert line breaks
+                    return escapeHtml(value).replace(/\n/g, '<br>');
+                }
+                return sanitizeRichText(value);
+            }
+            
+            // Convert stored value to plain text (for table previews, exports, notifications)
+            function richTextToPlain(value) {
+                if (!value) return '';
+                const hasTags = /<[a-z][\s\S]*>/i.test(value);
+                if (!hasTags) return value.replace(/\s+/g, ' ').trim();
+                try {
+                    const doc = new DOMParser().parseFromString(value, 'text/html');
+                    return (doc.body.textContent || '').replace(/\s+/g, ' ').trim();
+                } catch (e) { return value; }
+            }
+
             const STORAGE_KEYS = { users: 'bloomstone_users', members: 'bloomstone_members', transactions: 'bloomstone_transactions', banking: 'bloomstone_banking', meetings: 'bloomstone_meetings', settings: 'bloomstone_settings', session: 'bloomstone_session', theme: 'bloomstone_theme', seenMeetings: 'bloomstone_seen_meetings' };
             function getData(key, defaultVal) { try { const raw = localStorage.getItem(key); if (raw === null) return defaultVal; return JSON.parse(raw); } catch (e) { console.error(e); return defaultVal; } }
             function setData(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); return true; } catch (e) { console.error(e); showToast('Failed to save data.', 'error'); return false; } }
@@ -702,7 +788,6 @@
                     localStorage.setItem('bloomstone_preload_v2', 'true');
                     localStorage.removeItem('bloomstone_preload_v1');
                     localStorage.removeItem(STORAGE_KEYS.session);
-                    // Mark all preloaded (existing) meetings/announcements as seen so they don't appear as notifications
                     setData(STORAGE_KEYS.seenMeetings, INITIAL_DATA.meetings.map(m => m.id));
                 } else {
                     let users = getData(STORAGE_KEYS.users, null);
@@ -711,7 +796,6 @@
                     for (const k of emptyCollections) { if (getData(STORAGE_KEYS[k], null) === null) setData(STORAGE_KEYS[k], []); }
                     let settings = getData(STORAGE_KEYS.settings, null);
                     if (!settings) setData(STORAGE_KEYS.settings, INITIAL_DATA.settings);
-                    // Initialize seen list if missing (mark all existing records as seen)
                     if (getData(STORAGE_KEYS.seenMeetings, null) === null) {
                         setData(STORAGE_KEYS.seenMeetings, getData(STORAGE_KEYS.meetings, []).map(m => m.id));
                     }
@@ -757,7 +841,7 @@
                 dd.innerHTML = '<div class="notif-dropdown-header">🔔 Notifications<span style="font-size:11px; color:var(--text-muted); font-weight:500;">Latest 10</span></div>' + meetings.map(m => {
                     const isAnn = (m.recordType || 'meeting') === 'announcement';
                     const subject = m.subject || m.venue || '';
-                    const details = m.details || m.agenda || '';
+                    const details = richTextToPlain(m.details || m.agenda || '');
                     return `<div class="notif-item" onclick="navigateTo('meetings')">
                         <div class="notif-item-icon ${isAnn ? 'announcement' : 'meeting'}">${isAnn ? '📢' : '📅'}</div>
                         <div style="flex:1; min-width:0;">
@@ -775,14 +859,12 @@
                 dd.classList.toggle('active');
                 if (!wasActive) {
                     renderNotifDropdown();
-                    // Mark all as read after viewing
                     setTimeout(function() {
                         markAllMeetingsSeen();
                         updateNotifBadge();
                     }, 600);
                 }
             });
-            // Close dropdown when clicking outside
             document.addEventListener('click', function(e) {
                 const dd = document.getElementById('notifDropdown');
                 const wrap = document.getElementById('notifWrap');
@@ -1101,7 +1183,7 @@
                     const matchSearch = !search || (b.description || '').toLowerCase().includes(search) || (b.account || '').toLowerCase().includes(search);
                     const matchType = !type || b.type === type;
                     return matchSearch && matchType;
-                }).sort((a, b) => new Date(b.date) - new Date(a.date)); // Most recent first
+                }).sort((a, b) => new Date(b.date) - new Date(a.date));
             }
 
             function renderBankTableBody() {
@@ -1138,7 +1220,7 @@
                 const search = document.getElementById('meetSearchInput')?.value.toLowerCase() || '';
                 return meetings.filter(m => {
                     const subject = m.subject || m.venue || '';
-                    const details = m.details || m.agenda || '';
+                    const details = richTextToPlain(m.details || m.agenda || '');
                     const matchSearch = !search || subject.toLowerCase().includes(search) || details.toLowerCase().includes(search);
                     return matchSearch;
                 }).sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -1150,18 +1232,45 @@
                 const tbody = document.getElementById('meetTableBody');
                 if (!tbody) return;
                 tbody.innerHTML = filtered.map(m => {
-                    let actions = '';
-                    if (!canManage) {
-                        actions = '<span class="badge badge-muted">View Only</span>';
-                    } else {
-                        actions = `<button class="btn-icon" onclick="openMeetingModal('${m.id}')">✏️</button><button class="btn-icon delete" onclick="deleteMeeting('${m.id}')">🗑️</button>`;
+                    // View option available for everyone (viewer and admin)
+                    let actions = `<button class="btn-icon" onclick="viewMeeting('${m.id}')" title="View">👁️</button>`;
+                    if (canManage) {
+                        actions += `<button class="btn-icon" onclick="openMeetingModal('${m.id}')" title="Edit">✏️</button><button class="btn-icon delete" onclick="deleteMeeting('${m.id}')" title="Delete">🗑️</button>`;
                     }
                     const recordType = m.recordType || 'meeting';
                     const subject = m.subject || m.venue || '';
-                    const details = m.details || m.agenda || '';
-                    return `<tr><td>${formatDate(m.date)}</td><td><span class="badge ${recordType === 'announcement' ? 'badge-info' : 'badge-primary'}">${recordType}</span></td><td>${escapeHtml(subject)}</td><td>${escapeHtml(details)}</td><td><div class="user-actions">${actions}</div></td></tr>`;
+                    const detailsPlain = richTextToPlain(m.details || m.agenda || '');
+                    const truncated = detailsPlain.length > 60 ? detailsPlain.substring(0, 60) + '…' : detailsPlain;
+                    return `<tr><td>${formatDate(m.date)}</td><td><span class="badge ${recordType === 'announcement' ? 'badge-info' : 'badge-primary'}">${recordType}</span></td><td>${escapeHtml(subject)}</td><td style="max-width: 260px;">${escapeHtml(truncated)}</td><td><div class="user-actions">${actions}</div></td></tr>`;
                 }).join('') || `<tr><td colspan="5" style="text-align:center; padding: 30px;">No records found</td></tr>`;
             }
+
+            // View Meeting / Announcement modal
+            window.viewMeeting = function(id) {
+                if (!hasPermission('viewMeetings')) { showToast('Permission denied.', 'error'); return; }
+                const m = getData(STORAGE_KEYS.meetings, []).find(x => x.id === id);
+                if (!m) { showToast('Record not found.', 'error'); return; }
+                const isAnn = (m.recordType || 'meeting') === 'announcement';
+                const subject = m.subject || m.venue || '';
+                const details = m.details || m.agenda || '';
+                document.getElementById('viewMeetingTitle').textContent = isAnn ? '📢 Announcement' : '📅 Meeting';
+                document.getElementById('viewMeetingBody').innerHTML = `
+                    <div class="view-meta">
+                        <div class="view-meta-row"><span class="view-label">Type</span><span class="badge ${isAnn ? 'badge-info' : 'badge-primary'}">${isAnn ? 'Announcement' : 'Meeting'}</span></div>
+                        <div class="view-meta-row"><span class="view-label">Date</span><span style="font-weight:600;">${formatDate(m.date)}</span></div>
+                        <div class="view-meta-row"><span class="view-label">${isAnn ? 'Title' : 'Venue'}</span><span style="font-weight:600; text-align:right;">${escapeHtml(subject)}</span></div>
+                    </div>
+                    <div>
+                        <div class="view-details-label">${isAnn ? 'Details' : 'Agenda'}</div>
+                        <div class="rich-content">${formatRichText(details)}</div>
+                    </div>
+                    <div class="modal-footer" style="border-top:none; padding-top:16px;">
+                        ${hasPermission('manageMeetings') ? `<button type="button" class="btn btn-outline" onclick="closeModal('viewMeetingModal'); openMeetingModal('${m.id}');">✏️ Edit</button>` : ''}
+                        <button type="button" class="btn btn-secondary" data-close="viewMeetingModal">Close</button>
+                    </div>
+                `;
+                openModal('viewMeetingModal');
+            };
 
             function renderSettings() {
                 const settings = getData(STORAGE_KEYS.settings, {});
@@ -1304,13 +1413,13 @@
             window.exportMeetingsExcel = function() {
                 const filtered = getFilteredMeetings();
                 const headers = ['Date', 'Type', 'Subject (Venue/Title)', 'Details (Agenda/Desc)'];
-                const rows = filtered.map(m => [m.date, m.recordType || 'meeting', m.subject || m.venue || '', m.details || m.agenda || '']);
+                const rows = filtered.map(m => [m.date, m.recordType || 'meeting', m.subject || m.venue || '', richTextToPlain(m.details || m.agenda || '')]);
                 exportToExcel('Meetings_Announcements.csv', headers, rows);
             };
             window.printMeetings = function() {
                 const filtered = getFilteredMeetings();
                 const headers = ['Date', 'Type', 'Subject (Venue/Title)', 'Details (Agenda/Desc)'];
-                const rows = filtered.map(m => [formatDate(m.date), m.recordType || 'meeting', m.subject || m.venue || '', m.details || m.agenda || '']);
+                const rows = filtered.map(m => [formatDate(m.date), m.recordType || 'meeting', m.subject || m.venue || '', richTextToPlain(m.details || m.agenda || '')]);
                 printRecords('Meetings & Announcements', headers, rows);
             };
 
@@ -1492,12 +1601,14 @@
                 });
             };
 
-            // --- Meeting & Announcement ---
+            // --- Meeting & Announcement (with Rich Text editor) ---
             window.openMeetingModal = function(id = null) {
                 if (!hasPermission('manageMeetings')) { showToast('Permission denied.', 'error'); return; }
                 const form = document.getElementById('meetingForm');
                 form.reset();
                 document.getElementById('meetingId').value = '';
+                const detailsEl = document.getElementById('meetingDetails');
+                detailsEl.innerHTML = ''; // Clear rich editor (form.reset doesn't clear contenteditable)
                 if (id) {
                     const m = getData(STORAGE_KEYS.meetings, []).find(x => x.id === id);
                     if (m) {
@@ -1505,7 +1616,8 @@
                         document.getElementById('meetingDate').value = m.date;
                         document.getElementById('meetingRecordType').value = m.recordType || 'meeting';
                         document.getElementById('meetingSubject').value = m.subject || m.venue || '';
-                        document.getElementById('meetingDetails').value = m.details || m.agenda || '';
+                        // Load details into editor (handles legacy plain text with \n)
+                        detailsEl.innerHTML = formatRichText(m.details || m.agenda || '');
                         updateMeetingLabels();
                     }
                 } else { 
@@ -1527,6 +1639,14 @@
             document.getElementById('meetingForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 if (!hasPermission('manageMeetings')) { showToast('Permission denied.', 'error'); return; }
+                const detailsEl = document.getElementById('meetingDetails');
+                // Manual required validation for contenteditable
+                if (!detailsEl.innerText.trim()) {
+                    const isMeeting = document.getElementById('meetingRecordType').value === 'meeting';
+                    showToast('Please enter the ' + (isMeeting ? 'agenda' : 'details') + '.', 'error');
+                    detailsEl.focus();
+                    return;
+                }
                 const id = document.getElementById('meetingId').value;
                 let meetings = getData(STORAGE_KEYS.meetings, []);
                 const meetingData = { 
@@ -1534,7 +1654,7 @@
                     date: document.getElementById('meetingDate').value,
                     recordType: document.getElementById('meetingRecordType').value,
                     subject: document.getElementById('meetingSubject').value,
-                    details: document.getElementById('meetingDetails').value,
+                    details: sanitizeRichText(detailsEl.innerHTML),
                     createdAt: new Date().toISOString()
                 };
                 if (id) { 
@@ -1547,7 +1667,7 @@
                 closeModal('meetingModal');
                 showToast('Record saved!', 'success');
                 renderMeetTableBody();
-                updateNotifBadge(); // Update bell badge for new record
+                updateNotifBadge();
             });
             window.deleteMeeting = function(id) { 
                 if (!hasPermission('manageMeetings')) { showToast('Permission denied.', 'error'); return; }
@@ -1555,7 +1675,7 @@
                     let meetings = getData(STORAGE_KEYS.meetings, []).filter(m => m.id !== id); 
                     setData(STORAGE_KEYS.meetings, meetings); 
                     renderMeetTableBody();
-                    updateNotifBadge(); // Refresh badge after deletion
+                    updateNotifBadge();
                 });
             };
 
@@ -1702,7 +1822,6 @@
                         const requiredKeys = ['users', 'members', 'transactions', 'banking', 'meetings', 'settings'];
                         for (let key of requiredKeys) { if (!data[key] && key !== 'settings') { throw new Error(`Invalid backup file: Missing '${key}'`); } }
                         setData(STORAGE_KEYS.users, data.users); setData(STORAGE_KEYS.members, data.members); setData(STORAGE_KEYS.transactions, data.transactions); setData(STORAGE_KEYS.banking, data.banking); setData(STORAGE_KEYS.meetings, data.meetings); setData(STORAGE_KEYS.settings, data.settings);
-                        // Mark restored meetings as seen to avoid notification flood
                         setData(STORAGE_KEYS.seenMeetings, (data.meetings || []).map(m => m.id));
                         showToast('Backup restored successfully! Reloading...', 'success');
                         closeModal('importModal');
@@ -1725,7 +1844,7 @@
                     document.getElementById('sidebarAvatar').textContent = session.name.charAt(0).toUpperCase();
                     document.getElementById('sidebarUsername').textContent = session.name;
                     document.getElementById('sidebarRole').textContent = session.role;
-                    updateNotifBadge(); // Refresh bell badge on login
+                    updateNotifBadge();
                     navigateTo('dashboard');
                 } else { showLogin(); }
             }
