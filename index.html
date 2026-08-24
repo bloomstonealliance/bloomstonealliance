@@ -116,6 +116,27 @@
         .page-content { padding: 24px 32px; max-width: 1400px; min-width: 0; }
         .mobile-toggle { display: none; background: transparent; border: none; font-size: 24px; cursor: pointer; color: var(--text); padding: 4px; }
         
+        /* Notification Bell */
+        .notif-wrap { position: relative; }
+        .notif-btn { position: relative; }
+        .notif-badge { position: absolute; top: -7px; right: -7px; background: #ef4444; color: #fff; font-size: 10px; font-weight: 700; min-width: 18px; height: 18px; border-radius: 999px; display: none; align-items: center; justify-content: center; padding: 0 4px; box-shadow: 0 2px 6px rgba(239,68,68,0.5); border: 2px solid var(--card-bg); }
+        .notif-badge.show { display: flex; animation: badgePulse 2s infinite; }
+        @keyframes badgePulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+        .notif-dropdown { position: absolute; top: calc(100% + 12px); right: 0; background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius-sm); box-shadow: var(--shadow-xl); width: 320px; max-width: calc(100vw - 32px); max-height: 420px; overflow-y: auto; z-index: 150; display: none; scrollbar-width: none; -ms-overflow-style: none; }
+        .notif-dropdown::-webkit-scrollbar { display: none; }
+        .notif-dropdown.active { display: block; animation: notifIn 0.25s ease; }
+        @keyframes notifIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+        .notif-dropdown-header { padding: 14px 16px; border-bottom: 1px solid var(--border); font-weight: 700; font-size: 14px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--card-bg); z-index: 1; }
+        .notif-item { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; gap: 12px; align-items: flex-start; transition: background 0.15s ease; }
+        .notif-item:last-child { border-bottom: none; }
+        .notif-item:hover { background: var(--hover-bg); }
+        .notif-item .notif-item-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+        .notif-item .notif-item-icon.meeting { background: var(--primary-light); }
+        .notif-item .notif-item-icon.announcement { background: var(--info-bg); }
+        .notif-item-title { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
+        .notif-item-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+        .notif-empty { padding: 32px 16px; text-align: center; color: var(--text-muted); font-size: 13px; }
+        
         /* Cards & Stats */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
         .stat-card { background: var(--card-bg); border-radius: var(--radius); padding: 20px 24px; box-shadow: var(--shadow); transition: all var(--transition); border: 1px solid var(--border); position: relative; overflow: hidden; }
@@ -240,6 +261,7 @@
             .card-header { flex-direction: column; align-items: stretch; }
             .card-header h3 { margin-bottom: 8px; }
             .toast { min-width: auto; max-width: calc(100vw - 40px); }
+            .notif-dropdown { width: 280px; }
         }
         @media (max-width: 480px) { 
             .stats-grid { grid-template-columns: 1fr; } 
@@ -312,6 +334,10 @@
                 </div>
                 <div class="topbar-actions">
                     <span class="date-display" id="dateDisplay"></span>
+                    <div class="notif-wrap" id="notifWrap">
+                        <button class="btn btn-secondary btn-sm notif-btn" id="notifBtn" title="Notifications">🔔<span class="notif-badge" id="notifBadge"></span></button>
+                        <div class="notif-dropdown" id="notifDropdown"></div>
+                    </div>
                     <button class="btn btn-secondary btn-sm" id="themeToggle" title="Toggle dark/light mode">🌙</button>
                     <button class="btn btn-primary btn-sm" id="topbarAddBtn">+ Add Record</button>
                 </div>
@@ -445,8 +471,7 @@
             'use strict';
 
             // ------------------------------------------------------------
-            // Preloaded Data (NEW - from user JSON backup)
-            // Member ID shortcuts & common descriptions for compactness
+            // Preloaded Data
             // ------------------------------------------------------------
             const M = {
                 hari: "mem_mt6yg46b0lh85u", sashi: "mem_mt6yifq8qir7tq", rabin: "mem_mt6yjnkojy5vt5",
@@ -458,7 +483,6 @@
             const Q2000_INIT = "1. Monthly Contribution: Rs. 2000\n2. Initial Contribution: Rs. 1000 (Remaining Balance)";
             const INIT = "Initial Contribution";
 
-            // [id, member, amount, date, description] — all type "contribution"
             const TXN_ROWS = [
                 ["txn_mt755emq7rla6q", M.jugal, 10000, "2024-12-01", INIT],
                 ["txn_mt7563atgt87ic", M.rajesh, 10000, "2024-12-01", INIT],
@@ -639,7 +663,7 @@
             function escapeHtml(str) { if (!str) return ''; const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
             function showToast(message, type) { type = type || 'success'; const container = document.getElementById('toastContainer'); const toast = document.createElement('div'); toast.className = 'toast toast-' + type; toast.textContent = message; container.appendChild(toast); setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 3000); }
 
-            const STORAGE_KEYS = { users: 'bloomstone_users', members: 'bloomstone_members', transactions: 'bloomstone_transactions', banking: 'bloomstone_banking', meetings: 'bloomstone_meetings', settings: 'bloomstone_settings', session: 'bloomstone_session', theme: 'bloomstone_theme' };
+            const STORAGE_KEYS = { users: 'bloomstone_users', members: 'bloomstone_members', transactions: 'bloomstone_transactions', banking: 'bloomstone_banking', meetings: 'bloomstone_meetings', settings: 'bloomstone_settings', session: 'bloomstone_session', theme: 'bloomstone_theme', seenMeetings: 'bloomstone_seen_meetings' };
             function getData(key, defaultVal) { try { const raw = localStorage.getItem(key); if (raw === null) return defaultVal; return JSON.parse(raw); } catch (e) { console.error(e); return defaultVal; } }
             function setData(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); return true; } catch (e) { console.error(e); showToast('Failed to save data.', 'error'); return false; } }
 
@@ -651,7 +675,6 @@
             ];
             function getDefaultPermissions(role) { const p = {}; ALL_PERMISSIONS.forEach(perm => p[perm.key] = false); if (role === 'admin') { ALL_PERMISSIONS.forEach(perm => p[perm.key] = true); } else if (role === 'manager') { p.viewDashboard = true; p.viewMembers = true; p.addMember = true; p.editMember = true; p.viewTransactions = true; p.addTransaction = true; p.editTransaction = true; p.viewBanking = true; p.manageBanking = true; p.viewMeetings = true; p.manageMeetings = true; } else if (role === 'viewer') { p.viewDashboard = true; p.viewMembers = true; p.viewTransactions = true; p.viewBanking = true; p.viewMeetings = true; } else if (role === 'member') { p.viewDashboard = true; p.viewMembers = true; p.viewTransactions = true; p.viewBanking = true; p.viewMeetings = true; p.accessSettings = true; p.changeOwnCredential = true; } return p; }
 
-            // Generate auto-adjusted banking records from transactions (matches JSON pattern exactly)
             function generateBankingFromTransactions(transactions, members) {
                 return transactions.map(t => {
                     const member = members.find(m => m.id === t.memberId);
@@ -669,7 +692,6 @@
             }
 
             function initData() {
-                // v2 flag: forces fresh load of the NEW preloaded data (replaces old v1 data)
                 if (!localStorage.getItem('bloomstone_preload_v2')) {
                     setData(STORAGE_KEYS.users, INITIAL_DATA.users);
                     setData(STORAGE_KEYS.members, INITIAL_DATA.members);
@@ -679,7 +701,9 @@
                     setData(STORAGE_KEYS.settings, INITIAL_DATA.settings);
                     localStorage.setItem('bloomstone_preload_v2', 'true');
                     localStorage.removeItem('bloomstone_preload_v1');
-                    localStorage.removeItem(STORAGE_KEYS.session); // clear any stale session from old users
+                    localStorage.removeItem(STORAGE_KEYS.session);
+                    // Mark all preloaded (existing) meetings/announcements as seen so they don't appear as notifications
+                    setData(STORAGE_KEYS.seenMeetings, INITIAL_DATA.meetings.map(m => m.id));
                 } else {
                     let users = getData(STORAGE_KEYS.users, null);
                     if (!users || users.length === 0) setData(STORAGE_KEYS.users, INITIAL_DATA.users);
@@ -687,6 +711,10 @@
                     for (const k of emptyCollections) { if (getData(STORAGE_KEYS[k], null) === null) setData(STORAGE_KEYS[k], []); }
                     let settings = getData(STORAGE_KEYS.settings, null);
                     if (!settings) setData(STORAGE_KEYS.settings, INITIAL_DATA.settings);
+                    // Initialize seen list if missing (mark all existing records as seen)
+                    if (getData(STORAGE_KEYS.seenMeetings, null) === null) {
+                        setData(STORAGE_KEYS.seenMeetings, getData(STORAGE_KEYS.meetings, []).map(m => m.id));
+                    }
                 }
             }
 
@@ -697,6 +725,71 @@
             function setSession(userId) { const users = getData(STORAGE_KEYS.users, []); const user = users.find(u => u.id === userId); if (!user) return null; const session = { userId: user.id, loginAt: new Date().toISOString() }; setData(STORAGE_KEYS.session, session); return session; }
             function clearSession() { localStorage.removeItem(STORAGE_KEYS.session); }
             function hasPermission(permKey) { const session = getSession(); if (!session) return false; if (session.role === 'admin') return true; return session.permissions && session.permissions[permKey] === true; }
+
+            // ------------------------------------------------------------
+            // Notification Bell Logic
+            // ------------------------------------------------------------
+            function getUnreadMeetingCount() {
+                const seen = getData(STORAGE_KEYS.seenMeetings, []);
+                return getData(STORAGE_KEYS.meetings, []).filter(m => !seen.includes(m.id)).length;
+            }
+            function markAllMeetingsSeen() {
+                setData(STORAGE_KEYS.seenMeetings, getData(STORAGE_KEYS.meetings, []).map(m => m.id));
+            }
+            function updateNotifBadge() {
+                const badge = document.getElementById('notifBadge');
+                if (!badge) return;
+                const count = getUnreadMeetingCount();
+                badge.textContent = count > 9 ? '9+' : String(count);
+                badge.classList.toggle('show', count > 0);
+            }
+            function renderNotifDropdown() {
+                const dd = document.getElementById('notifDropdown');
+                if (!dd) return;
+                const meetings = getData(STORAGE_KEYS.meetings, []).slice().sort((a, b) => {
+                    const ad = a.createdAt || a.date || ''; const bd = b.createdAt || b.date || '';
+                    return new Date(bd) - new Date(ad);
+                }).slice(0, 10);
+                if (!meetings.length) {
+                    dd.innerHTML = '<div class="notif-dropdown-header">🔔 Notifications</div><div class="notif-empty">No meetings or announcements yet</div>';
+                    return;
+                }
+                dd.innerHTML = '<div class="notif-dropdown-header">🔔 Notifications<span style="font-size:11px; color:var(--text-muted); font-weight:500;">Latest 10</span></div>' + meetings.map(m => {
+                    const isAnn = (m.recordType || 'meeting') === 'announcement';
+                    const subject = m.subject || m.venue || '';
+                    const details = m.details || m.agenda || '';
+                    return `<div class="notif-item" onclick="navigateTo('meetings')">
+                        <div class="notif-item-icon ${isAnn ? 'announcement' : 'meeting'}">${isAnn ? '📢' : '📅'}</div>
+                        <div style="flex:1; min-width:0;">
+                            <div class="notif-item-title">${escapeHtml(subject)}</div>
+                            <div class="notif-item-sub">${isAnn ? 'Announcement' : 'Meeting'} • ${formatDate(m.date)}</div>
+                            <div class="notif-item-sub" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(details)}</div>
+                        </div>
+                    </div>`;
+                }).join('');
+            }
+            document.getElementById('notifBtn').addEventListener('click', function(e) {
+                e.stopPropagation();
+                const dd = document.getElementById('notifDropdown');
+                const wasActive = dd.classList.contains('active');
+                dd.classList.toggle('active');
+                if (!wasActive) {
+                    renderNotifDropdown();
+                    // Mark all as read after viewing
+                    setTimeout(function() {
+                        markAllMeetingsSeen();
+                        updateNotifBadge();
+                    }, 600);
+                }
+            });
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                const dd = document.getElementById('notifDropdown');
+                const wrap = document.getElementById('notifWrap');
+                if (dd && dd.classList.contains('active') && wrap && !wrap.contains(e.target)) {
+                    dd.classList.remove('active');
+                }
+            });
 
             // ------------------------------------------------------------
             // Theme & Sidebar
@@ -728,7 +821,7 @@
             // ------------------------------------------------------------
             let currentPage = 'dashboard';
             let txnPage = 0;
-            function navigateTo(page) {
+            window.navigateTo = function(page) {
                 const session = getSession();
                 if (!session) { showLogin(); return; }
                 if (page === 'settings' && !hasPermission('accessSettings') && session.role !== 'admin') { showToast('Access denied.', 'error'); return; }
@@ -861,7 +954,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Name</th><th>Position</th><th>Role</th><th>Join Date</th><th>Status</th><th>Actions</th></tr></thead><tbody id="memberTableBody"></tbody></table></div></div>
+                        <div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Name</th><th>Position</th><th>Contact No.</th><th>Join Date</th><th>Status</th><th>Actions</th></tr></thead><tbody id="memberTableBody"></tbody></table></div></div>
                     </div>
                 `;
                 document.getElementById('memberSearchInput').addEventListener('input', renderMemberTableBody);
@@ -897,7 +990,7 @@
                         if (canEdit) actions += `<button class="btn-icon" onclick="openMemberModal('${m.id}')">✏️</button>`;
                         if (canDelete) actions += `<button class="btn-icon delete" onclick="deleteMember('${m.id}')">🗑️</button>`;
                     }
-                    return `<tr><td>${escapeHtml(m.name)}</td><td>${escapeHtml(m.position)}</td><td><span class="badge badge-primary">${m.role}</span></td><td>${formatDate(m.joinDate)}</td><td><span class="badge ${m.status === 'active' ? 'badge-success' : 'badge-danger'}">${m.status}</span></td><td><div class="user-actions">${actions}</div></td></tr>`;
+                    return `<tr><td>${escapeHtml(m.name)}</td><td>${escapeHtml(m.position)}</td><td style="white-space:nowrap;">${escapeHtml(m.phone || '-')}</td><td>${formatDate(m.joinDate)}</td><td><span class="badge ${m.status === 'active' ? 'badge-success' : 'badge-danger'}">${m.status}</span></td><td><div class="user-actions">${actions}</div></td></tr>`;
                 }).join('') || `<tr><td colspan="6" style="text-align:center; padding: 30px;">No members found</td></tr>`;
             }
 
@@ -1008,7 +1101,7 @@
                     const matchSearch = !search || (b.description || '').toLowerCase().includes(search) || (b.account || '').toLowerCase().includes(search);
                     const matchType = !type || b.type === type;
                     return matchSearch && matchType;
-                });
+                }).sort((a, b) => new Date(b.date) - new Date(a.date)); // Most recent first
             }
 
             function renderBankTableBody() {
@@ -1169,8 +1262,8 @@
             };
             window.printMembers = function() {
                 const filtered = getFilteredMembers();
-                const headers = ['Name', 'Position', 'Role', 'Join Date', 'Status'];
-                const rows = filtered.map(m => [m.name, m.position, m.role, formatDate(m.joinDate), m.status]);
+                const headers = ['Name', 'Position', 'Contact No.', 'Join Date', 'Status'];
+                const rows = filtered.map(m => [m.name, m.position, m.phone || '-', formatDate(m.joinDate), m.status]);
                 printRecords('Members List', headers, rows);
             };
 
@@ -1441,13 +1534,20 @@
                     date: document.getElementById('meetingDate').value,
                     recordType: document.getElementById('meetingRecordType').value,
                     subject: document.getElementById('meetingSubject').value,
-                    details: document.getElementById('meetingDetails').value
+                    details: document.getElementById('meetingDetails').value,
+                    createdAt: new Date().toISOString()
                 };
-                if (id) { const idx = meetings.findIndex(m => m.id === id); if (idx > -1) meetings[idx] = { ...meetings[idx], ...meetingData }; } else { meetings.push(meetingData); }
+                if (id) { 
+                    const idx = meetings.findIndex(m => m.id === id); 
+                    if (idx > -1) meetings[idx] = { ...meetings[idx], ...meetingData, createdAt: meetings[idx].createdAt || meetingData.createdAt }; 
+                } else { 
+                    meetings.push(meetingData); 
+                }
                 setData(STORAGE_KEYS.meetings, meetings);
                 closeModal('meetingModal');
                 showToast('Record saved!', 'success');
                 renderMeetTableBody();
+                updateNotifBadge(); // Update bell badge for new record
             });
             window.deleteMeeting = function(id) { 
                 if (!hasPermission('manageMeetings')) { showToast('Permission denied.', 'error'); return; }
@@ -1455,6 +1555,7 @@
                     let meetings = getData(STORAGE_KEYS.meetings, []).filter(m => m.id !== id); 
                     setData(STORAGE_KEYS.meetings, meetings); 
                     renderMeetTableBody();
+                    updateNotifBadge(); // Refresh badge after deletion
                 });
             };
 
@@ -1601,6 +1702,8 @@
                         const requiredKeys = ['users', 'members', 'transactions', 'banking', 'meetings', 'settings'];
                         for (let key of requiredKeys) { if (!data[key] && key !== 'settings') { throw new Error(`Invalid backup file: Missing '${key}'`); } }
                         setData(STORAGE_KEYS.users, data.users); setData(STORAGE_KEYS.members, data.members); setData(STORAGE_KEYS.transactions, data.transactions); setData(STORAGE_KEYS.banking, data.banking); setData(STORAGE_KEYS.meetings, data.meetings); setData(STORAGE_KEYS.settings, data.settings);
+                        // Mark restored meetings as seen to avoid notification flood
+                        setData(STORAGE_KEYS.seenMeetings, (data.meetings || []).map(m => m.id));
                         showToast('Backup restored successfully! Reloading...', 'success');
                         closeModal('importModal');
                         setTimeout(() => { window.location.reload(); }, 1500);
@@ -1622,6 +1725,7 @@
                     document.getElementById('sidebarAvatar').textContent = session.name.charAt(0).toUpperCase();
                     document.getElementById('sidebarUsername').textContent = session.name;
                     document.getElementById('sidebarRole').textContent = session.role;
+                    updateNotifBadge(); // Refresh bell badge on login
                     navigateTo('dashboard');
                 } else { showLogin(); }
             }
