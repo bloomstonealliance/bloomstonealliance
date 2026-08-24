@@ -144,6 +144,7 @@
         table td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text); }
         table tbody tr { transition: background 0.15s ease; }
         table tbody tr:hover { background: var(--hover-bg); }
+        table tfoot td { padding: 12px 16px; border-top: 2px solid var(--border); font-weight: 700; color: var(--text); background: var(--table-header-bg); }
         .badge { display: inline-block; padding: 4px 12px; border-radius: 999px; font-size: 11px; font-weight: 600; letter-spacing: 0.3px; }
         .badge-success { background: var(--success-bg); color: var(--success); }
         .badge-danger { background: var(--danger-bg); color: var(--danger); }
@@ -204,6 +205,10 @@
         .card-header-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; width: 100%; }
         .filters-row { display: flex; gap: 8px; flex-wrap: wrap; width: 100%; margin-bottom: 12px; }
         .filters-row .search-input, .filters-row .filter-select { flex: 1 1 150px; max-width: none; }
+        
+        /* Pagination */
+        .pagination { display: flex; justify-content: center; align-items: center; gap: 12px; padding: 16px; border-top: 1px solid var(--border); }
+        .pagination-info { font-size: 13px; color: var(--text-muted); }
         
         /* FAB */
         .fab { display: none; position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 18px; background: linear-gradient(135deg, #0d9488, #0f766e); color: white; border: none; font-size: 28px; box-shadow: 0 8px 24px rgba(13, 148, 136, 0.4); z-index: 60; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; align-items: center; justify-content: center; }
@@ -283,7 +288,7 @@
                 <button class="nav-item" data-page="members"><span class="nav-icon">👥</span> <span>Members</span></button>
                 <button class="nav-item" data-page="transactions"><span class="nav-icon">💰</span> <span>Amount Records</span></button>
                 <button class="nav-item" data-page="banking"><span class="nav-icon">🏦</span> <span>Banking</span></button>
-                <button class="nav-item" data-page="meetings"><span class="nav-icon">📅</span> <span>Meetings</span></button>
+                <button class="nav-item" data-page="meetings"><span class="nav-icon">📅</span> <span>Meeting & Announcement</span></button>
                 <div class="nav-label">Administration</div>
                 <button class="nav-item" data-page="settings" id="settingsNavItem"><span class="nav-icon">⚙️</span> <span>Settings</span></button>
             </nav>
@@ -337,13 +342,6 @@
                     <div class="form-group"><label>Join Date *</label><input type="date" id="memberJoinDate" required></div>
                     <div class="form-group"><label>Status</label><select id="memberStatus"><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
                 </div>
-                <div class="form-group" style="margin-top:16px; border-top:1px solid var(--border); padding-top:16px;">
-                    <label style="font-weight:600;">User Account (optional)</label>
-                    <div class="form-row">
-                        <div class="form-group"><label>Username</label><input type="text" id="memberUserUsername" placeholder="e.g. adaeze"></div>
-                        <div class="form-group"><label>Password</label><input type="password" id="memberUserPassword" placeholder="Password"></div>
-                    </div>
-                </div>
                 <div class="modal-footer"><button type="button" class="btn btn-secondary" data-close="memberModal">Cancel</button><button type="submit" class="btn btn-primary" id="memberSubmitBtn">Save Member</button></div>
             </form>
         </div>
@@ -386,10 +384,11 @@
             <div class="modal-header"><h2 id="meetingModalTitle">Add Meeting</h2><button class="modal-close" data-close="meetingModal">✕</button></div>
             <form id="meetingForm">
                 <input type="hidden" id="meetingId">
+                <div class="form-group"><label>Record Type *</label><select id="meetingRecordType" required><option value="meeting">Meeting</option><option value="announcement">Announcement</option></select></div>
                 <div class="form-group"><label>Date *</label><input type="date" id="meetingDate" required></div>
-                <div class="form-group"><label>Venue *</label><input type="text" id="meetingVenue" required></div>
-                <div class="form-group"><label>Agenda *</label><textarea id="meetingAgenda" rows="3" required></textarea></div>
-                <div class="modal-footer"><button type="button" class="btn btn-secondary" data-close="meetingModal">Cancel</button><button type="submit" class="btn btn-primary" id="meetingSubmitBtn">Save Meeting</button></div>
+                <div class="form-group"><label id="meetingSubjectLabel">Venue *</label><input type="text" id="meetingSubject" required></div>
+                <div class="form-group"><label id="meetingDetailsLabel">Agenda *</label><textarea id="meetingDetails" rows="3" required></textarea></div>
+                <div class="modal-footer"><button type="button" class="btn btn-secondary" data-close="meetingModal">Cancel</button><button type="submit" class="btn btn-primary" id="meetingSubmitBtn">Save</button></div>
             </form>
         </div>
     </div>
@@ -449,40 +448,2562 @@
             // Preloaded Data
             // ------------------------------------------------------------
             const INITIAL_DATA = {
-                "users": [
-                    { "id": "admin_mt5x09k5p9w6m8", "username": "admin", "passwordHash": "h_6quw9w_8", "name": "System Administrator", "role": "admin", "permissions": { "viewDashboard": true, "viewMembers": true, "addMember": true, "editMember": true, "deleteMember": true, "viewTransactions": true, "addTransaction": true, "editTransaction": true, "deleteTransaction": true, "viewBanking": true, "manageBanking": true, "viewMeetings": true, "manageMeetings": true, "manageUsers": true, "accessSettings": true, "changeOwnCredential": true }, "createdAt": "2026-08-23T14:41:08.453Z", "active": true },
-                    { "id": "user_mt6yugght66rlo", "username": "hari", "name": "Hari Bahadur Khatri", "passwordHash": "h_ef0v8f_7", "role": "viewer", "permissions": { "viewDashboard": true, "viewMembers": true, "addMember": false, "editMember": false, "deleteMember": false, "viewTransactions": true, "addTransaction": false, "editTransaction": false, "deleteTransaction": false, "viewBanking": true, "manageBanking": false, "viewMeetings": true, "manageMeetings": false, "manageUsers": false, "accessSettings": false, "changeOwnCredential": false }, "createdAt": "2026-08-24T08:20:22.865Z", "active": true },
-                    { "id": "user_mt6z9mtqpva8uv", "username": "sashi", "name": "Sashi Sigdel", "passwordHash": "h_pi7c9f_8", "role": "viewer", "permissions": { "viewDashboard": true, "viewMembers": true, "addMember": false, "editMember": false, "deleteMember": false, "viewTransactions": true, "addTransaction": false, "editTransaction": false, "deleteTransaction": false, "viewBanking": true, "manageBanking": false, "viewMeetings": true, "manageMeetings": false, "manageUsers": false, "accessSettings": false, "changeOwnCredential": false }, "createdAt": "2026-08-24T08:32:10.958Z", "active": true },
-                    { "id": "user_mt6za5xe132aq4", "username": "rabin", "name": "Rabin Dhewaju", "passwordHash": "h_k04alj_8", "role": "viewer", "permissions": { "viewDashboard": true, "viewMembers": true, "addMember": false, "editMember": false, "deleteMember": false, "viewTransactions": true, "addTransaction": false, "editTransaction": false, "deleteTransaction": false, "viewBanking": true, "manageBanking": false, "viewMeetings": true, "manageMeetings": false, "manageUsers": false, "accessSettings": false, "changeOwnCredential": false }, "createdAt": "2026-08-24T08:32:35.714Z", "active": true },
-                    { "id": "user_mt6zaq4zibrskq", "username": "jugal", "name": "Jugal Kishor Kushwaha", "passwordHash": "h_wdh5vy_8", "role": "viewer", "permissions": { "viewDashboard": true, "viewMembers": true, "addMember": false, "editMember": false, "deleteMember": false, "viewTransactions": true, "addTransaction": false, "editTransaction": false, "deleteTransaction": false, "viewBanking": true, "manageBanking": false, "viewMeetings": true, "manageMeetings": false, "manageUsers": false, "accessSettings": false, "changeOwnCredential": false }, "createdAt": "2026-08-24T08:33:01.907Z", "active": true },
-                    { "id": "user_mt6zbdu6csak4w", "username": "rajesh", "name": "Rajesh Karki", "passwordHash": "h_bnweuw_9", "role": "viewer", "permissions": { "viewDashboard": true, "viewMembers": true, "addMember": false, "editMember": false, "deleteMember": false, "viewTransactions": true, "addTransaction": false, "editTransaction": false, "deleteTransaction": false, "viewBanking": true, "manageBanking": false, "viewMeetings": true, "manageMeetings": false, "manageUsers": false, "accessSettings": false, "changeOwnCredential": false }, "createdAt": "2026-08-24T08:33:32.622Z", "active": true },
-                    { "id": "user_mt6zbvdpr3wdl2", "username": "basanta", "name": "Basanta Lama", "passwordHash": "h_g60nhx_10", "role": "viewer", "permissions": { "viewDashboard": true, "viewMembers": true, "addMember": false, "editMember": false, "deleteMember": false, "viewTransactions": true, "addTransaction": false, "editTransaction": false, "deleteTransaction": false, "viewBanking": true, "manageBanking": false, "viewMeetings": true, "manageMeetings": false, "manageUsers": false, "accessSettings": false, "changeOwnCredential": false }, "createdAt": "2026-08-24T08:33:55.357Z", "active": true },
-                    { "id": "user_mt6zcdembtl8gg", "username": "binu", "name": "Binu Kumar Shrestha", "passwordHash": "h_xfn5t5_7", "role": "viewer", "permissions": { "viewDashboard": true, "viewMembers": true, "addMember": false, "editMember": false, "deleteMember": false, "viewTransactions": true, "addTransaction": false, "editTransaction": false, "deleteTransaction": false, "viewBanking": true, "manageBanking": false, "viewMeetings": true, "manageMeetings": false, "manageUsers": false, "accessSettings": false, "changeOwnCredential": false }, "createdAt": "2026-08-24T08:34:18.718Z", "active": true }
-                ],
-                "members": [
-                    { "id": "mem_mt6yg46b0lh85u", "name": "Hari Bahadur Khatri", "email": "", "phone": "9849485805", "position": "President", "role": "member", "joinDate": "2025-01-01", "status": "active" },
-                    { "id": "mem_mt6yifq8qir7tq", "name": "Sashi Sigdel", "email": "sgsigdel@gmail.com", "phone": "9841952941", "position": "Secretary ", "role": "member", "joinDate": "2025-01-01", "status": "active" },
-                    { "id": "mem_mt6yjnkojy5vt5", "name": "Rabin Dhewaju", "email": "", "phone": "9803150613", "position": "Treasurer", "role": "member", "joinDate": "2025-01-01", "status": "active" },
-                    { "id": "mem_mt6ykicbpvv55f", "name": "Kamal Adhikari", "email": "", "phone": "9867176498", "position": "Assistant Treasurer", "role": "member", "joinDate": "2025-01-01", "status": "active" },
-                    { "id": "mem_mt6ylt6ceyfzcn", "name": "Jugal Kishor Kushwaha", "email": "", "phone": "9851172257", "position": "Advisor", "role": "member", "joinDate": "2025-01-01", "status": "active" },
-                    { "id": "mem_mt6yn00tlrcnkb", "name": "Rajesh Karki", "email": "", "phone": "9860175282", "position": "Member", "role": "member", "joinDate": "2025-01-01", "status": "active" },
-                    { "id": "mem_mt6yodnaptftx5", "name": "Basanta Lama", "email": "", "phone": "9840249773", "position": "Member", "role": "member", "joinDate": "2025-12-09", "status": "active" },
-                    { "id": "mem_mt6yrp34pn3ve9", "name": "Binu Kumar Shrestha", "email": "", "phone": "9851003705", "position": "Member", "role": "member", "joinDate": "2026-03-11", "status": "active" }
-                ],
-                "transactions": [],
-                "banking": [],
-                "meetings": [],
-                "settings": {
-                    "interestRate": 10,
-                    "orgDetails": {
-                        "name": "Bloomstone Alliance",
-                        "address": "Kathmandu, Nepal",
-                        "phone": "01-XXXXXXX",
-                        "email": "info@bloomstone.np",
-                        "website": "www.bloomstone.np",
-                        "registrationNo": "12345"
-                    }
-                }
+  "users": [
+    {
+      "id": "admin_mt5x09k5p9w6m8",
+      "username": "admin",
+      "passwordHash": "h_6quw9w_8",
+      "name": "System Administrator",
+      "role": "admin",
+      "permissions": {
+        "viewDashboard": true,
+        "viewMembers": true,
+        "addMember": true,
+        "editMember": true,
+        "deleteMember": true,
+        "viewTransactions": true,
+        "addTransaction": true,
+        "editTransaction": true,
+        "deleteTransaction": true,
+        "viewBanking": true,
+        "manageBanking": true,
+        "viewMeetings": true,
+        "manageMeetings": true,
+        "manageUsers": true,
+        "accessSettings": true,
+        "changeOwnCredential": true
+      },
+      "createdAt": "2026-08-23T14:41:08.453Z",
+      "active": true
+    },
+    {
+      "id": "user_mt6zcdembtl8gg",
+      "username": "bloomstone",
+      "name": "Viewer",
+      "passwordHash": "h_yjc1fz_4",
+      "role": "viewer",
+      "permissions": {
+        "viewDashboard": true,
+        "viewMembers": true,
+        "addMember": false,
+        "editMember": false,
+        "deleteMember": false,
+        "viewTransactions": true,
+        "addTransaction": false,
+        "editTransaction": false,
+        "deleteTransaction": false,
+        "viewBanking": true,
+        "manageBanking": false,
+        "viewMeetings": true,
+        "manageMeetings": false,
+        "manageUsers": false,
+        "accessSettings": false,
+        "changeOwnCredential": false
+      },
+      "createdAt": "2026-08-24T08:34:18.718Z",
+      "active": true
+    }
+  ],
+  "members": [
+    {
+      "id": "mem_mt6yg46b0lh85u",
+      "name": "Hari Bahadur Khatri",
+      "email": "",
+      "phone": "9849485805",
+      "position": "President",
+      "role": "member",
+      "joinDate": "2025-01-01",
+      "status": "active"
+    },
+    {
+      "id": "mem_mt6yifq8qir7tq",
+      "name": "Sashi Sigdel",
+      "email": "sgsigdel@gmail.com",
+      "phone": "9841952941",
+      "position": "Secretary ",
+      "role": "member",
+      "joinDate": "2025-01-01",
+      "status": "active"
+    },
+    {
+      "id": "mem_mt6yjnkojy5vt5",
+      "name": "Rabin Dhewaju",
+      "email": "",
+      "phone": "9803150613",
+      "position": "Treasurer",
+      "role": "member",
+      "joinDate": "2025-01-01",
+      "status": "active"
+    },
+    {
+      "id": "mem_mt6ykicbpvv55f",
+      "name": "Kamal Adhikari",
+      "email": "",
+      "phone": "9867176498",
+      "position": "Assistant Treasurer",
+      "role": "member",
+      "joinDate": "2025-01-01",
+      "status": "active"
+    },
+    {
+      "id": "mem_mt6ylt6ceyfzcn",
+      "name": "Jugal Kishor Kushwaha",
+      "email": "",
+      "phone": "9851172257",
+      "position": "Advisor",
+      "role": "member",
+      "joinDate": "2025-01-01",
+      "status": "active"
+    },
+    {
+      "id": "mem_mt6yn00tlrcnkb",
+      "name": "Rajesh Karki",
+      "email": "",
+      "phone": "9860175282",
+      "position": "Member",
+      "role": "member",
+      "joinDate": "2025-01-01",
+      "status": "active"
+    },
+    {
+      "id": "mem_mt6yodnaptftx5",
+      "name": "Basanta Lama",
+      "email": "",
+      "phone": "9840249773",
+      "position": "Member",
+      "role": "member",
+      "joinDate": "2025-12-09",
+      "status": "active"
+    },
+    {
+      "id": "mem_mt6yrp34pn3ve9",
+      "name": "Binu Kumar Shrestha",
+      "email": "",
+      "phone": "9851003705",
+      "position": "Member",
+      "role": "member",
+      "joinDate": "2026-03-11",
+      "status": "active"
+    }
+  ],
+  "transactions": [
+    {
+      "id": "txn_mt755emq7rla6q",
+      "memberId": "mem_mt6ylt6ceyfzcn",
+      "type": "contribution",
+      "amount": 10000,
+      "date": "2024-12-01",
+      "description": "Initial Contribution"
+    },
+    {
+      "id": "txn_mt7563atgt87ic",
+      "memberId": "mem_mt6yn00tlrcnkb",
+      "type": "contribution",
+      "amount": 10000,
+      "date": "2024-12-01",
+      "description": "Initial Contribution"
+    },
+    {
+      "id": "txn_mt756s6tqvsk5r",
+      "memberId": "mem_mt6ykicbpvv55f",
+      "type": "contribution",
+      "amount": 10000,
+      "date": "2024-12-01",
+      "description": "Initial Contribution"
+    },
+    {
+      "id": "txn_mt757eru4kf5s9",
+      "memberId": "mem_mt6yg46b0lh85u",
+      "type": "contribution",
+      "amount": 10000,
+      "date": "2024-12-01",
+      "description": "Initial Contribution"
+    },
+    {
+      "id": "txn_mt75809jtvjcqx",
+      "memberId": "mem_mt6yjnkojy5vt5",
+      "type": "contribution",
+      "amount": 10000,
+      "date": "2024-12-01",
+      "description": "Initial Contribution"
+    },
+    {
+      "id": "txn_mt758m3hk0hqyk",
+      "memberId": "mem_mt6yifq8qir7tq",
+      "type": "contribution",
+      "amount": 10000,
+      "date": "2024-12-02",
+      "description": "Initial Contribution"
+    },
+    {
+      "id": "txn_mt759delp7drc7",
+      "memberId": "mem_mt6yg46b0lh85u",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-01-01",
+      "description": ""
+    },
+    {
+      "id": "txn_mt75a2da4s6m1f",
+      "memberId": "mem_mt6yifq8qir7tq",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-01-01",
+      "description": ""
+    },
+    {
+      "id": "txn_mt75ah35ggx3ok",
+      "memberId": "mem_mt6yn00tlrcnkb",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-01-01",
+      "description": ""
+    },
+    {
+      "id": "txn_mt75ax3nlfm8i4",
+      "memberId": "mem_mt6ylt6ceyfzcn",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-01-03",
+      "description": ""
+    },
+    {
+      "id": "txn_mt75bb1t430x86",
+      "memberId": "mem_mt6ykicbpvv55f",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-01-03",
+      "description": ""
+    },
+    {
+      "id": "txn_mt75bsnejsm19n",
+      "memberId": "mem_mt6yjnkojy5vt5",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-01-04",
+      "description": ""
+    },
+    {
+      "id": "txn_mt75g6g2vtymoa",
+      "memberId": "mem_mt6yn00tlrcnkb",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-01-31",
+      "description": "Contribution of February "
+    },
+    {
+      "id": "txn_mt75glk8gp4r16",
+      "memberId": "mem_mt6yifq8qir7tq",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-02-02",
+      "description": ""
+    },
+    {
+      "id": "txn_mt75h249oixcm1",
+      "memberId": "mem_mt6yg46b0lh85u",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-02-02",
+      "description": ""
+    },
+    {
+      "id": "txn_mt75htyfvkc1td",
+      "memberId": "mem_mt6ykicbpvv55f",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-02-02",
+      "description": ""
+    },
+    {
+      "id": "txn_mt75im5yw1w3rs",
+      "memberId": "mem_mt6ylt6ceyfzcn",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-02-02",
+      "description": ""
+    },
+    {
+      "id": "txn_mt75j7i10ztu92",
+      "memberId": "mem_mt6yjnkojy5vt5",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-02-06",
+      "description": ""
+    },
+    {
+      "id": "txn_mt75k2bwoaanbd",
+      "memberId": "mem_mt6yg46b0lh85u",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-03-01",
+      "description": ""
+    },
+    {
+      "id": "txn_mt75kj3tt54o3x",
+      "memberId": "mem_mt6yifq8qir7tq",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-03-01",
+      "description": ""
+    },
+    {
+      "id": "txn_mt75qnp4ca6b1o",
+      "memberId": "mem_mt6yn00tlrcnkb",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-03-03",
+      "description": ""
+    },
+    {
+      "id": "txn_mt75r37ddoxz17",
+      "memberId": "mem_mt6yjnkojy5vt5",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-03-03",
+      "description": ""
+    },
+    {
+      "id": "txn_mt75rhlci16i60",
+      "memberId": "mem_mt6ylt6ceyfzcn",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-03-06",
+      "description": ""
+    },
+    {
+      "id": "txn_mt75sct0q7ospu",
+      "memberId": "mem_mt6ykicbpvv55f",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-03-06",
+      "description": ""
+    },
+    {
+      "id": "txn_mt75tyk76h3ss8",
+      "memberId": "mem_mt6yg46b0lh85u",
+      "type": "contribution",
+      "amount": 6000,
+      "date": "2025-04-04",
+      "description": "1. Monthly Contribution: Rs. 1000\n2. Quarterly Contribution: Rs. 5000 "
+    },
+    {
+      "id": "txn_mt75vc8vy04ybf",
+      "memberId": "mem_mt6yifq8qir7tq",
+      "type": "contribution",
+      "amount": 6000,
+      "date": "2025-04-04",
+      "description": "1. Monthly Contribution: Rs. 1000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt75vqboj4ukqm",
+      "memberId": "mem_mt6ylt6ceyfzcn",
+      "type": "contribution",
+      "amount": 6000,
+      "date": "2025-04-04",
+      "description": "1. Monthly Contribution: Rs. 1000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt75wc8vwnddp8",
+      "memberId": "mem_mt6yn00tlrcnkb",
+      "type": "contribution",
+      "amount": 6000,
+      "date": "2025-04-05",
+      "description": "1. Monthly Contribution: Rs. 1000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt75x2kuh8ja9a",
+      "memberId": "mem_mt6ykicbpvv55f",
+      "type": "contribution",
+      "amount": 6000,
+      "date": "2025-04-07",
+      "description": "1. Monthly Contribution: Rs. 1000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt75xhb3fzgdnt",
+      "memberId": "mem_mt6yjnkojy5vt5",
+      "type": "contribution",
+      "amount": 6000,
+      "date": "2025-04-07",
+      "description": "1. Monthly Contribution: Rs. 1000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt787t9ap1hi4w",
+      "memberId": "mem_mt6yifq8qir7tq",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-05-02",
+      "description": ""
+    },
+    {
+      "id": "txn_mt7888e7varpvy",
+      "memberId": "mem_mt6yn00tlrcnkb",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-05-02",
+      "description": ""
+    },
+    {
+      "id": "txn_mt788l535k5jrb",
+      "memberId": "mem_mt6ylt6ceyfzcn",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-05-02",
+      "description": ""
+    },
+    {
+      "id": "txn_mt78x5bqke1j1s",
+      "memberId": "mem_mt6yjnkojy5vt5",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-05-06",
+      "description": ""
+    },
+    {
+      "id": "txn_mt78xqmzch7bsr",
+      "memberId": "mem_mt6yg46b0lh85u",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-05-07",
+      "description": ""
+    },
+    {
+      "id": "txn_mt78y4vp6aki9o",
+      "memberId": "mem_mt6ykicbpvv55f",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-05-09",
+      "description": ""
+    },
+    {
+      "id": "txn_mt78yk15r79rko",
+      "memberId": "mem_mt6yg46b0lh85u",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-05-09",
+      "description": ""
+    },
+    {
+      "id": "txn_mt78z1b7085rdt",
+      "memberId": "mem_mt6ykicbpvv55f",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-06-01",
+      "description": ""
+    },
+    {
+      "id": "txn_mt78zjrnhakl2z",
+      "memberId": "mem_mt6yifq8qir7tq",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-06-01",
+      "description": ""
+    },
+    {
+      "id": "txn_mt7901s36xnycu",
+      "memberId": "mem_mt6yn00tlrcnkb",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-06-01",
+      "description": ""
+    },
+    {
+      "id": "txn_mt790n5nxr5k6q",
+      "memberId": "mem_mt6yjnkojy5vt5",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-06-06",
+      "description": ""
+    },
+    {
+      "id": "txn_mt7910hksr1hp2",
+      "memberId": "mem_mt6ylt6ceyfzcn",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-06-07",
+      "description": ""
+    },
+    {
+      "id": "txn_mt791qtxojwsh5",
+      "memberId": "mem_mt6yg46b0lh85u",
+      "type": "contribution",
+      "amount": 6000,
+      "date": "2025-07-01",
+      "description": "1. Monthly Contribution: Rs. 1000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt7925tj448pzy",
+      "memberId": "mem_mt6yifq8qir7tq",
+      "type": "contribution",
+      "amount": 6000,
+      "date": "2025-07-02",
+      "description": "1. Monthly Contribution: Rs. 1000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt792l0q94h688",
+      "memberId": "mem_mt6ylt6ceyfzcn",
+      "type": "contribution",
+      "amount": 6000,
+      "date": "2025-07-03",
+      "description": "1. Monthly Contribution: Rs. 1000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt7930ab47tatk",
+      "memberId": "mem_mt6yn00tlrcnkb",
+      "type": "contribution",
+      "amount": 6000,
+      "date": "2025-07-04",
+      "description": "1. Monthly Contribution: Rs. 1000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt793kvea3rd24",
+      "memberId": "mem_mt6yjnkojy5vt5",
+      "type": "contribution",
+      "amount": 6000,
+      "date": "2025-07-06",
+      "description": "1. Monthly Contribution: Rs. 1000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt7940ttlwbkaj",
+      "memberId": "mem_mt6ykicbpvv55f",
+      "type": "contribution",
+      "amount": 6000,
+      "date": "2025-07-07",
+      "description": "1. Monthly Contribution: Rs. 1000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt794l485lxtue",
+      "memberId": "mem_mt6yifq8qir7tq",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-08-01",
+      "description": ""
+    },
+    {
+      "id": "txn_mt7951b2gcdoa6",
+      "memberId": "mem_mt6yn00tlrcnkb",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-08-03",
+      "description": ""
+    },
+    {
+      "id": "txn_mt795cff2mctmt",
+      "memberId": "mem_mt6yg46b0lh85u",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-08-06",
+      "description": ""
+    },
+    {
+      "id": "txn_mt79645jgp28t3",
+      "memberId": "mem_mt6ylt6ceyfzcn",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-08-06",
+      "description": ""
+    },
+    {
+      "id": "txn_mt797o2exu3ym5",
+      "memberId": "mem_mt6yjnkojy5vt5",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-08-07",
+      "description": ""
+    },
+    {
+      "id": "txn_mt7982x1ipi4tq",
+      "memberId": "mem_mt6ykicbpvv55f",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-08-07",
+      "description": ""
+    },
+    {
+      "id": "txn_mt798hxl8no5kc",
+      "memberId": "mem_mt6yifq8qir7tq",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-09-02",
+      "description": ""
+    },
+    {
+      "id": "txn_mt798vjsk557oe",
+      "memberId": "mem_mt6ylt6ceyfzcn",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-09-02",
+      "description": ""
+    },
+    {
+      "id": "txn_mt799ltqaauwjz",
+      "memberId": "mem_mt6yg46b0lh85u",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-09-02",
+      "description": ""
+    },
+    {
+      "id": "txn_mt79a0126271re",
+      "memberId": "mem_mt6yn00tlrcnkb",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-09-07",
+      "description": ""
+    },
+    {
+      "id": "txn_mt79b7du29o25x",
+      "memberId": "mem_mt6yjnkojy5vt5",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-09-07",
+      "description": ""
+    },
+    {
+      "id": "txn_mt79bjx81ynr0s",
+      "memberId": "mem_mt6ykicbpvv55f",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-09-07",
+      "description": ""
+    },
+    {
+      "id": "txn_mt79c3e7xdos74",
+      "memberId": "mem_mt6ylt6ceyfzcn",
+      "type": "contribution",
+      "amount": 6000,
+      "date": "2025-10-05",
+      "description": "1. Monthly Contribution: Rs. 1000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt79cji01x0rfb",
+      "memberId": "mem_mt6yg46b0lh85u",
+      "type": "contribution",
+      "amount": 6000,
+      "date": "2025-10-06",
+      "description": "1. Monthly Contribution: Rs. 1000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt79d13mh2zju8",
+      "memberId": "mem_mt6yifq8qir7tq",
+      "type": "contribution",
+      "amount": 6000,
+      "date": "2025-10-07",
+      "description": "1. Monthly Contribution: Rs. 1000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt79dfqblxif3z",
+      "memberId": "mem_mt6ykicbpvv55f",
+      "type": "contribution",
+      "amount": 6000,
+      "date": "2025-10-07",
+      "description": "1. Monthly Contribution: Rs. 1000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt79dtlclf8kg1",
+      "memberId": "mem_mt6yjnkojy5vt5",
+      "type": "contribution",
+      "amount": 6000,
+      "date": "2025-10-07",
+      "description": "1. Monthly Contribution: Rs. 1000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt79ek61a4ypy7",
+      "memberId": "mem_mt6yn00tlrcnkb",
+      "type": "contribution",
+      "amount": 6000,
+      "date": "2025-10-08",
+      "description": "1. Monthly Contribution: Rs. 1000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt79f2kc7zads1",
+      "memberId": "mem_mt6yifq8qir7tq",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-11-03",
+      "description": ""
+    },
+    {
+      "id": "txn_mt79fctmbucnq1",
+      "memberId": "mem_mt6yg46b0lh85u",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-11-03",
+      "description": ""
+    },
+    {
+      "id": "txn_mt79fn1ceb6bbe",
+      "memberId": "mem_mt6ykicbpvv55f",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-11-03",
+      "description": ""
+    },
+    {
+      "id": "txn_mt79g35gr7bm72",
+      "memberId": "mem_mt6ylt6ceyfzcn",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-11-03",
+      "description": ""
+    },
+    {
+      "id": "txn_mt79gfjxirvtup",
+      "memberId": "mem_mt6yn00tlrcnkb",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-11-06",
+      "description": ""
+    },
+    {
+      "id": "txn_mt79gt5a86mkt7",
+      "memberId": "mem_mt6yjnkojy5vt5",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-11-11",
+      "description": ""
+    },
+    {
+      "id": "txn_mt79hcp06dzsih",
+      "memberId": "mem_mt6yg46b0lh85u",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-12-01",
+      "description": ""
+    },
+    {
+      "id": "txn_mt79hp6togdgus",
+      "memberId": "mem_mt6ylt6ceyfzcn",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-12-02",
+      "description": ""
+    },
+    {
+      "id": "txn_mt79hzfpdle1nd",
+      "memberId": "mem_mt6yifq8qir7tq",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-12-03",
+      "description": ""
+    },
+    {
+      "id": "txn_mt79inryigvpgo",
+      "memberId": "mem_mt6ykicbpvv55f",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-12-07",
+      "description": ""
+    },
+    {
+      "id": "txn_mt79izquq4jtsz",
+      "memberId": "mem_mt6yjnkojy5vt5",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-12-08",
+      "description": ""
+    },
+    {
+      "id": "txn_mt79jgfqe9xf1m",
+      "memberId": "mem_mt6yn00tlrcnkb",
+      "type": "contribution",
+      "amount": 1000,
+      "date": "2025-12-08",
+      "description": ""
+    },
+    {
+      "id": "txn_mt79kin2jps38v",
+      "memberId": "mem_mt6yodnaptftx5",
+      "type": "contribution",
+      "amount": 36000,
+      "date": "2025-12-08",
+      "description": "Initial Contribution"
+    },
+    {
+      "id": "txn_mt79l7q40csrb0",
+      "memberId": "mem_mt6yifq8qir7tq",
+      "type": "contribution",
+      "amount": 6000,
+      "date": "2026-01-01",
+      "description": "1. Monthly Contribution: Rs. 1000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt79lmafsea5gz",
+      "memberId": "mem_mt6yg46b0lh85u",
+      "type": "contribution",
+      "amount": 6000,
+      "date": "2026-01-01",
+      "description": "1. Monthly Contribution: Rs. 1000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt79m3e4rzl8jg",
+      "memberId": "mem_mt6yn00tlrcnkb",
+      "type": "contribution",
+      "amount": 6000,
+      "date": "2026-01-01",
+      "description": "1. Monthly Contribution: Rs. 1000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt79mqaz3x74xo",
+      "memberId": "mem_mt6ylt6ceyfzcn",
+      "type": "contribution",
+      "amount": 6000,
+      "date": "2026-01-05",
+      "description": "1. Monthly Contribution: Rs. 1000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt79n6ithexvte",
+      "memberId": "mem_mt6yodnaptftx5",
+      "type": "contribution",
+      "amount": 6000,
+      "date": "2026-01-06",
+      "description": "1. Monthly Contribution: Rs. 1000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt79nqjxnag2z6",
+      "memberId": "mem_mt6yjnkojy5vt5",
+      "type": "contribution",
+      "amount": 6000,
+      "date": "2026-01-07",
+      "description": "1. Monthly Contribution: Rs. 1000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt79o45w55j4q5",
+      "memberId": "mem_mt6ykicbpvv55f",
+      "type": "contribution",
+      "amount": 6000,
+      "date": "2026-01-07",
+      "description": "1. Monthly Contribution: Rs. 1000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt79p933bz4smu",
+      "memberId": "mem_mt6yg46b0lh85u",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-02-01",
+      "description": ""
+    },
+    {
+      "id": "txn_mt79pl5kb8cizc",
+      "memberId": "mem_mt6yn00tlrcnkb",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-02-01",
+      "description": ""
+    },
+    {
+      "id": "txn_mt79pwlcoixd69",
+      "memberId": "mem_mt6yifq8qir7tq",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-02-01",
+      "description": ""
+    },
+    {
+      "id": "txn_mt79r52a3ml5s0",
+      "memberId": "mem_mt6yodnaptftx5",
+      "type": "contribution",
+      "amount": 3000,
+      "date": "2026-02-02",
+      "description": "1. Monthly Contribution: Rs. 2000\n2. Initial Contribution: Rs. 1000 (Remaining Balance)"
+    },
+    {
+      "id": "txn_mt79rjevanbsf1",
+      "memberId": "mem_mt6ylt6ceyfzcn",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-02-05",
+      "description": ""
+    },
+    {
+      "id": "txn_mt79rwfvop6aek",
+      "memberId": "mem_mt6ykicbpvv55f",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-02-06",
+      "description": ""
+    },
+    {
+      "id": "txn_mt79s82lwq8av3",
+      "memberId": "mem_mt6yjnkojy5vt5",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-02-06",
+      "description": ""
+    },
+    {
+      "id": "txn_mt79sm01m0i61e",
+      "memberId": "mem_mt6yg46b0lh85u",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-03-01",
+      "description": ""
+    },
+    {
+      "id": "txn_mt79t0qvwbf5z1",
+      "memberId": "mem_mt6ylt6ceyfzcn",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-03-01",
+      "description": ""
+    },
+    {
+      "id": "txn_mt79tg14z1nm4h",
+      "memberId": "mem_mt6yn00tlrcnkb",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-03-03",
+      "description": ""
+    },
+    {
+      "id": "txn_mt79tsakxzfblf",
+      "memberId": "mem_mt6ykicbpvv55f",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-03-04",
+      "description": ""
+    },
+    {
+      "id": "txn_mt79ud023sa4f9",
+      "memberId": "mem_mt6yifq8qir7tq",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-03-04",
+      "description": ""
+    },
+    {
+      "id": "txn_mt79uqfcirolkp",
+      "memberId": "mem_mt6yodnaptftx5",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-03-07",
+      "description": ""
+    },
+    {
+      "id": "txn_mt79v4iqijl85s",
+      "memberId": "mem_mt6yjnkojy5vt5",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-03-07",
+      "description": ""
+    },
+    {
+      "id": "txn_mt79vyrtkhqbh3",
+      "memberId": "mem_mt6yrp34pn3ve9",
+      "type": "contribution",
+      "amount": 47000,
+      "date": "2026-03-14",
+      "description": "Initial Contribution"
+    },
+    {
+      "id": "txn_mt79wmsto4r58b",
+      "memberId": "mem_mt6yg46b0lh85u",
+      "type": "contribution",
+      "amount": 7000,
+      "date": "2026-04-01",
+      "description": "1. Monthly Contribution: Rs. 2000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt79x44kjetkvh",
+      "memberId": "mem_mt6yifq8qir7tq",
+      "type": "contribution",
+      "amount": 7000,
+      "date": "2026-04-01",
+      "description": "1. Monthly Contribution: Rs. 2000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt79xqn94i8wdd",
+      "memberId": "mem_mt6yrp34pn3ve9",
+      "type": "contribution",
+      "amount": 7000,
+      "date": "2026-04-02",
+      "description": "1. Monthly Contribution: Rs. 2000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt79y3t6ndiy3j",
+      "memberId": "mem_mt6yn00tlrcnkb",
+      "type": "contribution",
+      "amount": 7000,
+      "date": "2026-04-03",
+      "description": "1. Monthly Contribution: Rs. 2000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt79yozylvzo5o",
+      "memberId": "mem_mt6ylt6ceyfzcn",
+      "type": "contribution",
+      "amount": 7000,
+      "date": "2026-04-03",
+      "description": "1. Monthly Contribution: Rs. 2000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt79yzyt1de8sz",
+      "memberId": "mem_mt6ykicbpvv55f",
+      "type": "contribution",
+      "amount": 7000,
+      "date": "2026-04-05",
+      "description": "1. Monthly Contribution: Rs. 2000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt79zdrn2w8z0m",
+      "memberId": "mem_mt6yodnaptftx5",
+      "type": "contribution",
+      "amount": 7000,
+      "date": "2026-04-05",
+      "description": "1. Monthly Contribution: Rs. 2000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt79zsen24o5d3",
+      "memberId": "mem_mt6yjnkojy5vt5",
+      "type": "contribution",
+      "amount": 7000,
+      "date": "2026-04-07",
+      "description": "1. Monthly Contribution: Rs. 2000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt7a0lahszs360",
+      "memberId": "mem_mt6yifq8qir7tq",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-05-01",
+      "description": ""
+    },
+    {
+      "id": "txn_mt7a0tt1e8p05o",
+      "memberId": "mem_mt6yg46b0lh85u",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-05-01",
+      "description": ""
+    },
+    {
+      "id": "txn_mt7a15xft0iuzk",
+      "memberId": "mem_mt6yn00tlrcnkb",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-05-01",
+      "description": ""
+    },
+    {
+      "id": "txn_mt7a1gy3ciqspw",
+      "memberId": "mem_mt6ylt6ceyfzcn",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-05-01",
+      "description": ""
+    },
+    {
+      "id": "txn_mt7a1tokp9y120",
+      "memberId": "mem_mt6yrp34pn3ve9",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-05-05",
+      "description": ""
+    },
+    {
+      "id": "txn_mt7a296z6gzxj4",
+      "memberId": "mem_mt6yodnaptftx5",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-05-07",
+      "description": ""
+    },
+    {
+      "id": "txn_mt7a2moksdni2p",
+      "memberId": "mem_mt6ykicbpvv55f",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-05-07",
+      "description": ""
+    },
+    {
+      "id": "txn_mt7a2x4od9c39r",
+      "memberId": "mem_mt6yjnkojy5vt5",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-05-07",
+      "description": ""
+    },
+    {
+      "id": "txn_mt7a3d2n3l0nn2",
+      "memberId": "mem_mt6yn00tlrcnkb",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-06-01",
+      "description": ""
+    },
+    {
+      "id": "txn_mt7a3o6gcznv7n",
+      "memberId": "mem_mt6yrp34pn3ve9",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-06-01",
+      "description": ""
+    },
+    {
+      "id": "txn_mt7a44zs0d1mvs",
+      "memberId": "mem_mt6ylt6ceyfzcn",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-06-02",
+      "description": ""
+    },
+    {
+      "id": "txn_mt7a4er2h8wkaf",
+      "memberId": "mem_mt6yifq8qir7tq",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-06-02",
+      "description": ""
+    },
+    {
+      "id": "txn_mt7a5wu5cr8w31",
+      "memberId": "mem_mt6yjnkojy5vt5",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-06-08",
+      "description": ""
+    },
+    {
+      "id": "txn_mt7a6a95d33zi4",
+      "memberId": "mem_mt6yodnaptftx5",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-06-08",
+      "description": ""
+    },
+    {
+      "id": "txn_mt7a6l2c0z1poa",
+      "memberId": "mem_mt6ykicbpvv55f",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-06-08",
+      "description": ""
+    },
+    {
+      "id": "txn_mt7a6x2g98xzfj",
+      "memberId": "mem_mt6yg46b0lh85u",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-06-08",
+      "description": ""
+    },
+    {
+      "id": "txn_mt7a7jvkijdd4i",
+      "memberId": "mem_mt6yrp34pn3ve9",
+      "type": "contribution",
+      "amount": 7000,
+      "date": "2026-07-05",
+      "description": "1. Monthly Contribution: Rs. 2000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt7bjhv9hiishw",
+      "memberId": "mem_mt6yn00tlrcnkb",
+      "type": "contribution",
+      "amount": 7000,
+      "date": "2026-07-06",
+      "description": "1. Monthly Contribution: Rs. 2000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt7bjzbi0sh55g",
+      "memberId": "mem_mt6yifq8qir7tq",
+      "type": "contribution",
+      "amount": 7000,
+      "date": "2026-07-06",
+      "description": "1. Monthly Contribution: Rs. 2000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt7bkc00bsxkk1",
+      "memberId": "mem_mt6ykicbpvv55f",
+      "type": "contribution",
+      "amount": 7000,
+      "date": "2026-07-06",
+      "description": "1. Monthly Contribution: Rs. 2000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt7bkukqxxogdl",
+      "memberId": "mem_mt6yg46b0lh85u",
+      "type": "contribution",
+      "amount": 7000,
+      "date": "2026-07-07",
+      "description": "1. Monthly Contribution: Rs. 2000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt7bl5buelfgie",
+      "memberId": "mem_mt6ylt6ceyfzcn",
+      "type": "contribution",
+      "amount": 7000,
+      "date": "2026-07-07",
+      "description": "1. Monthly Contribution: Rs. 2000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt7bll2w9r8gml",
+      "memberId": "mem_mt6yodnaptftx5",
+      "type": "contribution",
+      "amount": 7000,
+      "date": "2026-07-07",
+      "description": "1. Monthly Contribution: Rs. 2000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt7blwiqq9ec74",
+      "memberId": "mem_mt6yjnkojy5vt5",
+      "type": "contribution",
+      "amount": 7000,
+      "date": "2026-07-09",
+      "description": "1. Monthly Contribution: Rs. 2000\n2. Quarterly Contribution: Rs. 5000"
+    },
+    {
+      "id": "txn_mt7bmy0icwgs2c",
+      "memberId": "mem_mt6ykicbpvv55f",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-08-01",
+      "description": ""
+    },
+    {
+      "id": "txn_mt7bn93kza0vcp",
+      "memberId": "mem_mt6yg46b0lh85u",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-08-01",
+      "description": ""
+    },
+    {
+      "id": "txn_mt7bnkuix10208",
+      "memberId": "mem_mt6yn00tlrcnkb",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-08-04",
+      "description": ""
+    },
+    {
+      "id": "txn_mt7bnvgtifs096",
+      "memberId": "mem_mt6yifq8qir7tq",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-08-04",
+      "description": ""
+    },
+    {
+      "id": "txn_mt7bo824n5k465",
+      "memberId": "mem_mt6yrp34pn3ve9",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-08-04",
+      "description": ""
+    },
+    {
+      "id": "txn_mt7boimd245pt6",
+      "memberId": "mem_mt6ylt6ceyfzcn",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-08-06",
+      "description": ""
+    },
+    {
+      "id": "txn_mt7bot0uqip7g5",
+      "memberId": "mem_mt6yodnaptftx5",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-08-07",
+      "description": ""
+    },
+    {
+      "id": "txn_mt7bp1k88glaha",
+      "memberId": "mem_mt6yjnkojy5vt5",
+      "type": "contribution",
+      "amount": 2000,
+      "date": "2026-08-07",
+      "description": ""
+    }
+  ],
+  "banking": [
+    {
+      "id": "bank_auto_txn_mt759delp7drc7",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-01-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Hari Bahadur Khatri",
+      "linkedTxnId": "txn_mt759delp7drc7"
+    },
+    {
+      "id": "bank_auto_txn_mt75a2da4s6m1f",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-01-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Sashi Sigdel",
+      "linkedTxnId": "txn_mt75a2da4s6m1f"
+    },
+    {
+      "id": "bank_auto_txn_mt75ah35ggx3ok",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-01-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rajesh Karki",
+      "linkedTxnId": "txn_mt75ah35ggx3ok"
+    },
+    {
+      "id": "bank_auto_txn_mt75g6g2vtymoa",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-01-31",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rajesh Karki",
+      "linkedTxnId": "txn_mt75g6g2vtymoa"
+    },
+    {
+      "id": "bank_auto_txn_mt75glk8gp4r16",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-02-02",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Sashi Sigdel",
+      "linkedTxnId": "txn_mt75glk8gp4r16"
+    },
+    {
+      "id": "bank_auto_txn_mt75h249oixcm1",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-02-02",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Hari Bahadur Khatri",
+      "linkedTxnId": "txn_mt75h249oixcm1"
+    },
+    {
+      "id": "bank_auto_txn_mt75htyfvkc1td",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-02-02",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Kamal Adhikari",
+      "linkedTxnId": "txn_mt75htyfvkc1td"
+    },
+    {
+      "id": "bank_auto_txn_mt75im5yw1w3rs",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-02-02",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Jugal Kishor Kushwaha",
+      "linkedTxnId": "txn_mt75im5yw1w3rs"
+    },
+    {
+      "id": "bank_auto_txn_mt75j7i10ztu92",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-02-06",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rabin Dhewaju",
+      "linkedTxnId": "txn_mt75j7i10ztu92"
+    },
+    {
+      "id": "bank_auto_txn_mt75k2bwoaanbd",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-03-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Hari Bahadur Khatri",
+      "linkedTxnId": "txn_mt75k2bwoaanbd"
+    },
+    {
+      "id": "bank_auto_txn_mt75kj3tt54o3x",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-03-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Sashi Sigdel",
+      "linkedTxnId": "txn_mt75kj3tt54o3x"
+    },
+    {
+      "id": "bank_auto_txn_mt755emq7rla6q",
+      "type": "deposit",
+      "amount": 10000,
+      "date": "2024-12-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Jugal Kishor Kushwaha",
+      "linkedTxnId": "txn_mt755emq7rla6q"
+    },
+    {
+      "id": "bank_auto_txn_mt7563atgt87ic",
+      "type": "deposit",
+      "amount": 10000,
+      "date": "2024-12-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rajesh Karki",
+      "linkedTxnId": "txn_mt7563atgt87ic"
+    },
+    {
+      "id": "bank_auto_txn_mt756s6tqvsk5r",
+      "type": "deposit",
+      "amount": 10000,
+      "date": "2024-12-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Kamal Adhikari",
+      "linkedTxnId": "txn_mt756s6tqvsk5r"
+    },
+    {
+      "id": "bank_auto_txn_mt757eru4kf5s9",
+      "type": "deposit",
+      "amount": 10000,
+      "date": "2024-12-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Hari Bahadur Khatri",
+      "linkedTxnId": "txn_mt757eru4kf5s9"
+    },
+    {
+      "id": "bank_auto_txn_mt75809jtvjcqx",
+      "type": "deposit",
+      "amount": 10000,
+      "date": "2024-12-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rabin Dhewaju",
+      "linkedTxnId": "txn_mt75809jtvjcqx"
+    },
+    {
+      "id": "bank_auto_txn_mt758m3hk0hqyk",
+      "type": "deposit",
+      "amount": 10000,
+      "date": "2024-12-02",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Sashi Sigdel",
+      "linkedTxnId": "txn_mt758m3hk0hqyk"
+    },
+    {
+      "id": "bank_auto_txn_mt75ax3nlfm8i4",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-01-03",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Jugal Kishor Kushwaha",
+      "linkedTxnId": "txn_mt75ax3nlfm8i4"
+    },
+    {
+      "id": "bank_auto_txn_mt75bb1t430x86",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-01-03",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Kamal Adhikari",
+      "linkedTxnId": "txn_mt75bb1t430x86"
+    },
+    {
+      "id": "bank_auto_txn_mt75bsnejsm19n",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-01-04",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rabin Dhewaju",
+      "linkedTxnId": "txn_mt75bsnejsm19n"
+    },
+    {
+      "id": "bank_auto_txn_mt75qnp4ca6b1o",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-03-03",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rajesh Karki",
+      "linkedTxnId": "txn_mt75qnp4ca6b1o"
+    },
+    {
+      "id": "bank_auto_txn_mt75r37ddoxz17",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-03-03",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rabin Dhewaju",
+      "linkedTxnId": "txn_mt75r37ddoxz17"
+    },
+    {
+      "id": "bank_auto_txn_mt75rhlci16i60",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-03-06",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Jugal Kishor Kushwaha",
+      "linkedTxnId": "txn_mt75rhlci16i60"
+    },
+    {
+      "id": "bank_auto_txn_mt75sct0q7ospu",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-03-06",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Kamal Adhikari",
+      "linkedTxnId": "txn_mt75sct0q7ospu"
+    },
+    {
+      "id": "bank_auto_txn_mt75tyk76h3ss8",
+      "type": "deposit",
+      "amount": 6000,
+      "date": "2025-04-04",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Hari Bahadur Khatri",
+      "linkedTxnId": "txn_mt75tyk76h3ss8"
+    },
+    {
+      "id": "bank_auto_txn_mt75vc8vy04ybf",
+      "type": "deposit",
+      "amount": 6000,
+      "date": "2025-04-04",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Sashi Sigdel",
+      "linkedTxnId": "txn_mt75vc8vy04ybf"
+    },
+    {
+      "id": "bank_auto_txn_mt75vqboj4ukqm",
+      "type": "deposit",
+      "amount": 6000,
+      "date": "2025-04-04",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Jugal Kishor Kushwaha",
+      "linkedTxnId": "txn_mt75vqboj4ukqm"
+    },
+    {
+      "id": "bank_auto_txn_mt75wc8vwnddp8",
+      "type": "deposit",
+      "amount": 6000,
+      "date": "2025-04-05",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rajesh Karki",
+      "linkedTxnId": "txn_mt75wc8vwnddp8"
+    },
+    {
+      "id": "bank_auto_txn_mt75x2kuh8ja9a",
+      "type": "deposit",
+      "amount": 6000,
+      "date": "2025-04-07",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Kamal Adhikari",
+      "linkedTxnId": "txn_mt75x2kuh8ja9a"
+    },
+    {
+      "id": "bank_auto_txn_mt75xhb3fzgdnt",
+      "type": "deposit",
+      "amount": 6000,
+      "date": "2025-04-07",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rabin Dhewaju",
+      "linkedTxnId": "txn_mt75xhb3fzgdnt"
+    },
+    {
+      "id": "bank_auto_txn_mt787t9ap1hi4w",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-05-02",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Sashi Sigdel",
+      "linkedTxnId": "txn_mt787t9ap1hi4w"
+    },
+    {
+      "id": "bank_auto_txn_mt7888e7varpvy",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-05-02",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rajesh Karki",
+      "linkedTxnId": "txn_mt7888e7varpvy"
+    },
+    {
+      "id": "bank_auto_txn_mt788l535k5jrb",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-05-02",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Jugal Kishor Kushwaha",
+      "linkedTxnId": "txn_mt788l535k5jrb"
+    },
+    {
+      "id": "bank_auto_txn_mt78x5bqke1j1s",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-05-06",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rabin Dhewaju",
+      "linkedTxnId": "txn_mt78x5bqke1j1s"
+    },
+    {
+      "id": "bank_auto_txn_mt78xqmzch7bsr",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-05-07",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Hari Bahadur Khatri",
+      "linkedTxnId": "txn_mt78xqmzch7bsr"
+    },
+    {
+      "id": "bank_auto_txn_mt78y4vp6aki9o",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-05-09",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Kamal Adhikari",
+      "linkedTxnId": "txn_mt78y4vp6aki9o"
+    },
+    {
+      "id": "bank_auto_txn_mt78yk15r79rko",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-05-09",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Hari Bahadur Khatri",
+      "linkedTxnId": "txn_mt78yk15r79rko"
+    },
+    {
+      "id": "bank_auto_txn_mt78z1b7085rdt",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-06-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Kamal Adhikari",
+      "linkedTxnId": "txn_mt78z1b7085rdt"
+    },
+    {
+      "id": "bank_auto_txn_mt78zjrnhakl2z",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-06-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Sashi Sigdel",
+      "linkedTxnId": "txn_mt78zjrnhakl2z"
+    },
+    {
+      "id": "bank_auto_txn_mt7901s36xnycu",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-06-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rajesh Karki",
+      "linkedTxnId": "txn_mt7901s36xnycu"
+    },
+    {
+      "id": "bank_auto_txn_mt790n5nxr5k6q",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-06-06",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rabin Dhewaju",
+      "linkedTxnId": "txn_mt790n5nxr5k6q"
+    },
+    {
+      "id": "bank_auto_txn_mt7910hksr1hp2",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-06-07",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Jugal Kishor Kushwaha",
+      "linkedTxnId": "txn_mt7910hksr1hp2"
+    },
+    {
+      "id": "bank_auto_txn_mt791qtxojwsh5",
+      "type": "deposit",
+      "amount": 6000,
+      "date": "2025-07-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Hari Bahadur Khatri",
+      "linkedTxnId": "txn_mt791qtxojwsh5"
+    },
+    {
+      "id": "bank_auto_txn_mt7925tj448pzy",
+      "type": "deposit",
+      "amount": 6000,
+      "date": "2025-07-02",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Sashi Sigdel",
+      "linkedTxnId": "txn_mt7925tj448pzy"
+    },
+    {
+      "id": "bank_auto_txn_mt792l0q94h688",
+      "type": "deposit",
+      "amount": 6000,
+      "date": "2025-07-03",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Jugal Kishor Kushwaha",
+      "linkedTxnId": "txn_mt792l0q94h688"
+    },
+    {
+      "id": "bank_auto_txn_mt7930ab47tatk",
+      "type": "deposit",
+      "amount": 6000,
+      "date": "2025-07-04",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rajesh Karki",
+      "linkedTxnId": "txn_mt7930ab47tatk"
+    },
+    {
+      "id": "bank_auto_txn_mt793kvea3rd24",
+      "type": "deposit",
+      "amount": 6000,
+      "date": "2025-07-06",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rabin Dhewaju",
+      "linkedTxnId": "txn_mt793kvea3rd24"
+    },
+    {
+      "id": "bank_auto_txn_mt7940ttlwbkaj",
+      "type": "deposit",
+      "amount": 6000,
+      "date": "2025-07-07",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Kamal Adhikari",
+      "linkedTxnId": "txn_mt7940ttlwbkaj"
+    },
+    {
+      "id": "bank_auto_txn_mt794l485lxtue",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-08-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Sashi Sigdel",
+      "linkedTxnId": "txn_mt794l485lxtue"
+    },
+    {
+      "id": "bank_auto_txn_mt7951b2gcdoa6",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-08-03",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rajesh Karki",
+      "linkedTxnId": "txn_mt7951b2gcdoa6"
+    },
+    {
+      "id": "bank_auto_txn_mt795cff2mctmt",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-08-06",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Hari Bahadur Khatri",
+      "linkedTxnId": "txn_mt795cff2mctmt"
+    },
+    {
+      "id": "bank_auto_txn_mt79645jgp28t3",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-08-06",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Jugal Kishor Kushwaha",
+      "linkedTxnId": "txn_mt79645jgp28t3"
+    },
+    {
+      "id": "bank_auto_txn_mt797o2exu3ym5",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-08-07",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rabin Dhewaju",
+      "linkedTxnId": "txn_mt797o2exu3ym5"
+    },
+    {
+      "id": "bank_auto_txn_mt7982x1ipi4tq",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-08-07",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Kamal Adhikari",
+      "linkedTxnId": "txn_mt7982x1ipi4tq"
+    },
+    {
+      "id": "bank_auto_txn_mt798hxl8no5kc",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-09-02",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Sashi Sigdel",
+      "linkedTxnId": "txn_mt798hxl8no5kc"
+    },
+    {
+      "id": "bank_auto_txn_mt798vjsk557oe",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-09-02",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Jugal Kishor Kushwaha",
+      "linkedTxnId": "txn_mt798vjsk557oe"
+    },
+    {
+      "id": "bank_auto_txn_mt799ltqaauwjz",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-09-02",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Hari Bahadur Khatri",
+      "linkedTxnId": "txn_mt799ltqaauwjz"
+    },
+    {
+      "id": "bank_auto_txn_mt79a0126271re",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-09-07",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rajesh Karki",
+      "linkedTxnId": "txn_mt79a0126271re"
+    },
+    {
+      "id": "bank_auto_txn_mt79b7du29o25x",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-09-07",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rabin Dhewaju",
+      "linkedTxnId": "txn_mt79b7du29o25x"
+    },
+    {
+      "id": "bank_auto_txn_mt79bjx81ynr0s",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-09-07",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Kamal Adhikari",
+      "linkedTxnId": "txn_mt79bjx81ynr0s"
+    },
+    {
+      "id": "bank_auto_txn_mt79c3e7xdos74",
+      "type": "deposit",
+      "amount": 6000,
+      "date": "2025-10-05",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Jugal Kishor Kushwaha",
+      "linkedTxnId": "txn_mt79c3e7xdos74"
+    },
+    {
+      "id": "bank_auto_txn_mt79cji01x0rfb",
+      "type": "deposit",
+      "amount": 6000,
+      "date": "2025-10-06",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Hari Bahadur Khatri",
+      "linkedTxnId": "txn_mt79cji01x0rfb"
+    },
+    {
+      "id": "bank_auto_txn_mt79d13mh2zju8",
+      "type": "deposit",
+      "amount": 6000,
+      "date": "2025-10-07",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Sashi Sigdel",
+      "linkedTxnId": "txn_mt79d13mh2zju8"
+    },
+    {
+      "id": "bank_auto_txn_mt79dfqblxif3z",
+      "type": "deposit",
+      "amount": 6000,
+      "date": "2025-10-07",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Kamal Adhikari",
+      "linkedTxnId": "txn_mt79dfqblxif3z"
+    },
+    {
+      "id": "bank_auto_txn_mt79dtlclf8kg1",
+      "type": "deposit",
+      "amount": 6000,
+      "date": "2025-10-07",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rabin Dhewaju",
+      "linkedTxnId": "txn_mt79dtlclf8kg1"
+    },
+    {
+      "id": "bank_auto_txn_mt79ek61a4ypy7",
+      "type": "deposit",
+      "amount": 6000,
+      "date": "2025-10-08",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rajesh Karki",
+      "linkedTxnId": "txn_mt79ek61a4ypy7"
+    },
+    {
+      "id": "bank_auto_txn_mt79f2kc7zads1",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-11-03",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Sashi Sigdel",
+      "linkedTxnId": "txn_mt79f2kc7zads1"
+    },
+    {
+      "id": "bank_auto_txn_mt79fctmbucnq1",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-11-03",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Hari Bahadur Khatri",
+      "linkedTxnId": "txn_mt79fctmbucnq1"
+    },
+    {
+      "id": "bank_auto_txn_mt79fn1ceb6bbe",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-11-03",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Kamal Adhikari",
+      "linkedTxnId": "txn_mt79fn1ceb6bbe"
+    },
+    {
+      "id": "bank_auto_txn_mt79g35gr7bm72",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-11-03",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Jugal Kishor Kushwaha",
+      "linkedTxnId": "txn_mt79g35gr7bm72"
+    },
+    {
+      "id": "bank_auto_txn_mt79gfjxirvtup",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-11-06",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rajesh Karki",
+      "linkedTxnId": "txn_mt79gfjxirvtup"
+    },
+    {
+      "id": "bank_auto_txn_mt79gt5a86mkt7",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-11-11",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rabin Dhewaju",
+      "linkedTxnId": "txn_mt79gt5a86mkt7"
+    },
+    {
+      "id": "bank_auto_txn_mt79hcp06dzsih",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-12-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Hari Bahadur Khatri",
+      "linkedTxnId": "txn_mt79hcp06dzsih"
+    },
+    {
+      "id": "bank_auto_txn_mt79hp6togdgus",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-12-02",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Jugal Kishor Kushwaha",
+      "linkedTxnId": "txn_mt79hp6togdgus"
+    },
+    {
+      "id": "bank_auto_txn_mt79hzfpdle1nd",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-12-03",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Sashi Sigdel",
+      "linkedTxnId": "txn_mt79hzfpdle1nd"
+    },
+    {
+      "id": "bank_auto_txn_mt79inryigvpgo",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-12-07",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Kamal Adhikari",
+      "linkedTxnId": "txn_mt79inryigvpgo"
+    },
+    {
+      "id": "bank_auto_txn_mt79izquq4jtsz",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-12-08",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rabin Dhewaju",
+      "linkedTxnId": "txn_mt79izquq4jtsz"
+    },
+    {
+      "id": "bank_auto_txn_mt79jgfqe9xf1m",
+      "type": "deposit",
+      "amount": 1000,
+      "date": "2025-12-08",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rajesh Karki",
+      "linkedTxnId": "txn_mt79jgfqe9xf1m"
+    },
+    {
+      "id": "bank_auto_txn_mt79kin2jps38v",
+      "type": "deposit",
+      "amount": 36000,
+      "date": "2025-12-08",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Basanta Lama",
+      "linkedTxnId": "txn_mt79kin2jps38v"
+    },
+    {
+      "id": "bank_auto_txn_mt79l7q40csrb0",
+      "type": "deposit",
+      "amount": 6000,
+      "date": "2026-01-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Sashi Sigdel",
+      "linkedTxnId": "txn_mt79l7q40csrb0"
+    },
+    {
+      "id": "bank_auto_txn_mt79lmafsea5gz",
+      "type": "deposit",
+      "amount": 6000,
+      "date": "2026-01-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Hari Bahadur Khatri",
+      "linkedTxnId": "txn_mt79lmafsea5gz"
+    },
+    {
+      "id": "bank_auto_txn_mt79m3e4rzl8jg",
+      "type": "deposit",
+      "amount": 6000,
+      "date": "2026-01-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rajesh Karki",
+      "linkedTxnId": "txn_mt79m3e4rzl8jg"
+    },
+    {
+      "id": "bank_auto_txn_mt79mqaz3x74xo",
+      "type": "deposit",
+      "amount": 6000,
+      "date": "2026-01-05",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Jugal Kishor Kushwaha",
+      "linkedTxnId": "txn_mt79mqaz3x74xo"
+    },
+    {
+      "id": "bank_auto_txn_mt79n6ithexvte",
+      "type": "deposit",
+      "amount": 6000,
+      "date": "2026-01-06",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Basanta Lama",
+      "linkedTxnId": "txn_mt79n6ithexvte"
+    },
+    {
+      "id": "bank_auto_txn_mt79o45w55j4q5",
+      "type": "deposit",
+      "amount": 6000,
+      "date": "2026-01-07",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Kamal Adhikari",
+      "linkedTxnId": "txn_mt79o45w55j4q5"
+    },
+    {
+      "id": "bank_auto_txn_mt79nqjxnag2z6",
+      "type": "deposit",
+      "amount": 6000,
+      "date": "2026-01-07",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rabin Dhewaju",
+      "linkedTxnId": "txn_mt79nqjxnag2z6"
+    },
+    {
+      "id": "bank_auto_txn_mt79p933bz4smu",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-02-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Hari Bahadur Khatri",
+      "linkedTxnId": "txn_mt79p933bz4smu"
+    },
+    {
+      "id": "bank_auto_txn_mt79pl5kb8cizc",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-02-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rajesh Karki",
+      "linkedTxnId": "txn_mt79pl5kb8cizc"
+    },
+    {
+      "id": "bank_auto_txn_mt79pwlcoixd69",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-02-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Sashi Sigdel",
+      "linkedTxnId": "txn_mt79pwlcoixd69"
+    },
+    {
+      "id": "bank_auto_txn_mt79r52a3ml5s0",
+      "type": "deposit",
+      "amount": 3000,
+      "date": "2026-02-02",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Basanta Lama",
+      "linkedTxnId": "txn_mt79r52a3ml5s0"
+    },
+    {
+      "id": "bank_auto_txn_mt79rjevanbsf1",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-02-05",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Jugal Kishor Kushwaha",
+      "linkedTxnId": "txn_mt79rjevanbsf1"
+    },
+    {
+      "id": "bank_auto_txn_mt79rwfvop6aek",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-02-06",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Kamal Adhikari",
+      "linkedTxnId": "txn_mt79rwfvop6aek"
+    },
+    {
+      "id": "bank_auto_txn_mt79s82lwq8av3",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-02-06",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rabin Dhewaju",
+      "linkedTxnId": "txn_mt79s82lwq8av3"
+    },
+    {
+      "id": "bank_auto_txn_mt79sm01m0i61e",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-03-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Hari Bahadur Khatri",
+      "linkedTxnId": "txn_mt79sm01m0i61e"
+    },
+    {
+      "id": "bank_auto_txn_mt79t0qvwbf5z1",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-03-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Jugal Kishor Kushwaha",
+      "linkedTxnId": "txn_mt79t0qvwbf5z1"
+    },
+    {
+      "id": "bank_auto_txn_mt79tg14z1nm4h",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-03-03",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rajesh Karki",
+      "linkedTxnId": "txn_mt79tg14z1nm4h"
+    },
+    {
+      "id": "bank_auto_txn_mt79tsakxzfblf",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-03-04",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Kamal Adhikari",
+      "linkedTxnId": "txn_mt79tsakxzfblf"
+    },
+    {
+      "id": "bank_auto_txn_mt79ud023sa4f9",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-03-04",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Sashi Sigdel",
+      "linkedTxnId": "txn_mt79ud023sa4f9"
+    },
+    {
+      "id": "bank_auto_txn_mt79uqfcirolkp",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-03-07",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Basanta Lama",
+      "linkedTxnId": "txn_mt79uqfcirolkp"
+    },
+    {
+      "id": "bank_auto_txn_mt79v4iqijl85s",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-03-07",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rabin Dhewaju",
+      "linkedTxnId": "txn_mt79v4iqijl85s"
+    },
+    {
+      "id": "bank_auto_txn_mt79vyrtkhqbh3",
+      "type": "deposit",
+      "amount": 47000,
+      "date": "2026-03-14",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Binu Kumar Shrestha",
+      "linkedTxnId": "txn_mt79vyrtkhqbh3"
+    },
+    {
+      "id": "bank_auto_txn_mt79wmsto4r58b",
+      "type": "deposit",
+      "amount": 7000,
+      "date": "2026-04-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Hari Bahadur Khatri",
+      "linkedTxnId": "txn_mt79wmsto4r58b"
+    },
+    {
+      "id": "bank_auto_txn_mt79x44kjetkvh",
+      "type": "deposit",
+      "amount": 7000,
+      "date": "2026-04-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Sashi Sigdel",
+      "linkedTxnId": "txn_mt79x44kjetkvh"
+    },
+    {
+      "id": "bank_auto_txn_mt79xqn94i8wdd",
+      "type": "deposit",
+      "amount": 7000,
+      "date": "2026-04-02",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Binu Kumar Shrestha",
+      "linkedTxnId": "txn_mt79xqn94i8wdd"
+    },
+    {
+      "id": "bank_auto_txn_mt79y3t6ndiy3j",
+      "type": "deposit",
+      "amount": 7000,
+      "date": "2026-04-03",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rajesh Karki",
+      "linkedTxnId": "txn_mt79y3t6ndiy3j"
+    },
+    {
+      "id": "bank_auto_txn_mt79yozylvzo5o",
+      "type": "deposit",
+      "amount": 7000,
+      "date": "2026-04-03",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Jugal Kishor Kushwaha",
+      "linkedTxnId": "txn_mt79yozylvzo5o"
+    },
+    {
+      "id": "bank_auto_txn_mt79yzyt1de8sz",
+      "type": "deposit",
+      "amount": 7000,
+      "date": "2026-04-05",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Kamal Adhikari",
+      "linkedTxnId": "txn_mt79yzyt1de8sz"
+    },
+    {
+      "id": "bank_auto_txn_mt79zdrn2w8z0m",
+      "type": "deposit",
+      "amount": 7000,
+      "date": "2026-04-05",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Basanta Lama",
+      "linkedTxnId": "txn_mt79zdrn2w8z0m"
+    },
+    {
+      "id": "bank_auto_txn_mt79zsen24o5d3",
+      "type": "deposit",
+      "amount": 7000,
+      "date": "2026-04-07",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rabin Dhewaju",
+      "linkedTxnId": "txn_mt79zsen24o5d3"
+    },
+    {
+      "id": "bank_auto_txn_mt7a0lahszs360",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-05-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Sashi Sigdel",
+      "linkedTxnId": "txn_mt7a0lahszs360"
+    },
+    {
+      "id": "bank_auto_txn_mt7a0tt1e8p05o",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-05-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Hari Bahadur Khatri",
+      "linkedTxnId": "txn_mt7a0tt1e8p05o"
+    },
+    {
+      "id": "bank_auto_txn_mt7a15xft0iuzk",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-05-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rajesh Karki",
+      "linkedTxnId": "txn_mt7a15xft0iuzk"
+    },
+    {
+      "id": "bank_auto_txn_mt7a1gy3ciqspw",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-05-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Jugal Kishor Kushwaha",
+      "linkedTxnId": "txn_mt7a1gy3ciqspw"
+    },
+    {
+      "id": "bank_auto_txn_mt7a1tokp9y120",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-05-05",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Binu Kumar Shrestha",
+      "linkedTxnId": "txn_mt7a1tokp9y120"
+    },
+    {
+      "id": "bank_auto_txn_mt7a296z6gzxj4",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-05-07",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Basanta Lama",
+      "linkedTxnId": "txn_mt7a296z6gzxj4"
+    },
+    {
+      "id": "bank_auto_txn_mt7a2moksdni2p",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-05-07",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Kamal Adhikari",
+      "linkedTxnId": "txn_mt7a2moksdni2p"
+    },
+    {
+      "id": "bank_auto_txn_mt7a2x4od9c39r",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-05-07",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rabin Dhewaju",
+      "linkedTxnId": "txn_mt7a2x4od9c39r"
+    },
+    {
+      "id": "bank_auto_txn_mt7a3d2n3l0nn2",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-06-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rajesh Karki",
+      "linkedTxnId": "txn_mt7a3d2n3l0nn2"
+    },
+    {
+      "id": "bank_auto_txn_mt7a3o6gcznv7n",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-06-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Binu Kumar Shrestha",
+      "linkedTxnId": "txn_mt7a3o6gcznv7n"
+    },
+    {
+      "id": "bank_auto_txn_mt7a44zs0d1mvs",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-06-02",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Jugal Kishor Kushwaha",
+      "linkedTxnId": "txn_mt7a44zs0d1mvs"
+    },
+    {
+      "id": "bank_auto_txn_mt7a4er2h8wkaf",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-06-02",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Sashi Sigdel",
+      "linkedTxnId": "txn_mt7a4er2h8wkaf"
+    },
+    {
+      "id": "bank_auto_txn_mt7a5wu5cr8w31",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-06-08",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rabin Dhewaju",
+      "linkedTxnId": "txn_mt7a5wu5cr8w31"
+    },
+    {
+      "id": "bank_auto_txn_mt7a6a95d33zi4",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-06-08",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Basanta Lama",
+      "linkedTxnId": "txn_mt7a6a95d33zi4"
+    },
+    {
+      "id": "bank_auto_txn_mt7a6l2c0z1poa",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-06-08",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Kamal Adhikari",
+      "linkedTxnId": "txn_mt7a6l2c0z1poa"
+    },
+    {
+      "id": "bank_auto_txn_mt7a6x2g98xzfj",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-06-08",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Hari Bahadur Khatri",
+      "linkedTxnId": "txn_mt7a6x2g98xzfj"
+    },
+    {
+      "id": "bank_auto_txn_mt7a7jvkijdd4i",
+      "type": "deposit",
+      "amount": 7000,
+      "date": "2026-07-05",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Binu Kumar Shrestha",
+      "linkedTxnId": "txn_mt7a7jvkijdd4i"
+    },
+    {
+      "id": "bank_auto_txn_mt7bjhv9hiishw",
+      "type": "deposit",
+      "amount": 7000,
+      "date": "2026-07-06",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rajesh Karki",
+      "linkedTxnId": "txn_mt7bjhv9hiishw"
+    },
+    {
+      "id": "bank_auto_txn_mt7bjzbi0sh55g",
+      "type": "deposit",
+      "amount": 7000,
+      "date": "2026-07-06",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Sashi Sigdel",
+      "linkedTxnId": "txn_mt7bjzbi0sh55g"
+    },
+    {
+      "id": "bank_auto_txn_mt7bkc00bsxkk1",
+      "type": "deposit",
+      "amount": 7000,
+      "date": "2026-07-06",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Kamal Adhikari",
+      "linkedTxnId": "txn_mt7bkc00bsxkk1"
+    },
+    {
+      "id": "bank_auto_txn_mt7bkukqxxogdl",
+      "type": "deposit",
+      "amount": 7000,
+      "date": "2026-07-07",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Hari Bahadur Khatri",
+      "linkedTxnId": "txn_mt7bkukqxxogdl"
+    },
+    {
+      "id": "bank_auto_txn_mt7bl5buelfgie",
+      "type": "deposit",
+      "amount": 7000,
+      "date": "2026-07-07",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Jugal Kishor Kushwaha",
+      "linkedTxnId": "txn_mt7bl5buelfgie"
+    },
+    {
+      "id": "bank_auto_txn_mt7bll2w9r8gml",
+      "type": "deposit",
+      "amount": 7000,
+      "date": "2026-07-07",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Basanta Lama",
+      "linkedTxnId": "txn_mt7bll2w9r8gml"
+    },
+    {
+      "id": "bank_auto_txn_mt7blwiqq9ec74",
+      "type": "deposit",
+      "amount": 7000,
+      "date": "2026-07-09",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rabin Dhewaju",
+      "linkedTxnId": "txn_mt7blwiqq9ec74"
+    },
+    {
+      "id": "bank_auto_txn_mt7bmy0icwgs2c",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-08-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Kamal Adhikari",
+      "linkedTxnId": "txn_mt7bmy0icwgs2c"
+    },
+    {
+      "id": "bank_auto_txn_mt7bn93kza0vcp",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-08-01",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Hari Bahadur Khatri",
+      "linkedTxnId": "txn_mt7bn93kza0vcp"
+    },
+    {
+      "id": "bank_auto_txn_mt7bnkuix10208",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-08-04",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rajesh Karki",
+      "linkedTxnId": "txn_mt7bnkuix10208"
+    },
+    {
+      "id": "bank_auto_txn_mt7bnvgtifs096",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-08-04",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Sashi Sigdel",
+      "linkedTxnId": "txn_mt7bnvgtifs096"
+    },
+    {
+      "id": "bank_auto_txn_mt7bo824n5k465",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-08-04",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Binu Kumar Shrestha",
+      "linkedTxnId": "txn_mt7bo824n5k465"
+    },
+    {
+      "id": "bank_auto_txn_mt7bot0uqip7g5",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-08-07",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Basanta Lama",
+      "linkedTxnId": "txn_mt7bot0uqip7g5"
+    },
+    {
+      "id": "bank_auto_txn_mt7bp1k88glaha",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-08-07",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Rabin Dhewaju",
+      "linkedTxnId": "txn_mt7bp1k88glaha"
+    },
+    {
+      "id": "bank_auto_txn_mt7boimd245pt6",
+      "type": "deposit",
+      "amount": 2000,
+      "date": "2026-08-06",
+      "account": "Auto-adjusted",
+      "description": "Auto: contribution for Jugal Kishor Kushwaha",
+      "linkedTxnId": "txn_mt7boimd245pt6"
+    }
+  ],
+  "meetings": [],
+  "settings": {
+    "interestRate": 10,
+    "orgDetails": {
+      "name": "Bloomstone Alliance",
+      "address": "Kathmandu, Nepal",
+      "phone": "01-XXXXXXX",
+      "email": "info@bloomstone.np",
+      "website": "www.bloomstone.np",
+      "registrationNo": "12345"
+    }
+  },
+  "meta": {
+    "exportDate": "2026-08-24T14:42:49.856Z",
+    "version": "1.0"
+  }
+}
             };
 
             // ------------------------------------------------------------
@@ -504,7 +3025,7 @@
             // Permissions & Init Data
             // ------------------------------------------------------------
             const ALL_PERMISSIONS = [
-                { key: 'viewDashboard', label: 'View Dashboard' }, { key: 'viewMembers', label: 'View Members' }, { key: 'addMember', label: 'Add Member' }, { key: 'editMember', label: 'Edit Member' }, { key: 'deleteMember', label: 'Delete Member' }, { key: 'viewTransactions', label: 'View Amount Records' }, { key: 'addTransaction', label: 'Record Income/Expense/Investment' }, { key: 'editTransaction', label: 'Edit Transaction' }, { key: 'deleteTransaction', label: 'Delete Transaction' }, { key: 'viewBanking', label: 'View Banking' }, { key: 'manageBanking', label: 'Manage Banking' }, { key: 'viewMeetings', label: 'View Meetings' }, { key: 'manageMeetings', label: 'Manage Meetings' }, { key: 'manageUsers', label: 'Manage Users' }, { key: 'accessSettings', label: 'Access Settings' }, { key: 'changeOwnCredential', label: 'Change Own Credential' }
+                { key: 'viewDashboard', label: 'View Dashboard' }, { key: 'viewMembers', label: 'View Members' }, { key: 'addMember', label: 'Add Member' }, { key: 'editMember', label: 'Edit Member' }, { key: 'deleteMember', label: 'Delete Member' }, { key: 'viewTransactions', label: 'View Amount Records' }, { key: 'addTransaction', label: 'Record Income/Expense/Investment' }, { key: 'editTransaction', label: 'Edit Transaction' }, { key: 'deleteTransaction', label: 'Delete Transaction' }, { key: 'viewBanking', label: 'View Banking' }, { key: 'manageBanking', label: 'Manage Banking' }, { key: 'viewMeetings', label: 'View Meetings & Announcements' }, { key: 'manageMeetings', label: 'Manage Meetings & Announcements' }, { key: 'manageUsers', label: 'Manage Users' }, { key: 'accessSettings', label: 'Access Settings' }, { key: 'changeOwnCredential', label: 'Change Own Credential' }
             ];
             function getDefaultPermissions(role) { const p = {}; ALL_PERMISSIONS.forEach(perm => p[perm.key] = false); if (role === 'admin') { ALL_PERMISSIONS.forEach(perm => p[perm.key] = true); } else if (role === 'manager') { p.viewDashboard = true; p.viewMembers = true; p.addMember = true; p.editMember = true; p.viewTransactions = true; p.addTransaction = true; p.editTransaction = true; p.viewBanking = true; p.manageBanking = true; p.viewMeetings = true; p.manageMeetings = true; } else if (role === 'viewer') { p.viewDashboard = true; p.viewMembers = true; p.viewTransactions = true; p.viewBanking = true; p.viewMeetings = true; } else if (role === 'member') { p.viewDashboard = true; p.viewMembers = true; p.viewTransactions = true; p.viewBanking = true; p.viewMeetings = true; p.accessSettings = true; p.changeOwnCredential = true; } return p; }
             function initData() {
@@ -563,6 +3084,7 @@
             // Navigation & Rendering
             // ------------------------------------------------------------
             let currentPage = 'dashboard';
+            let txnPage = 0; // Pagination state for transactions
             function navigateTo(page) {
                 const session = getSession();
                 if (!session) { showLogin(); return; }
@@ -573,11 +3095,12 @@
                 if (page === 'transactions' && !hasPermission('viewTransactions')) { showToast('Access denied.', 'error'); return; }
 
                 currentPage = page;
+                if (page !== 'transactions') txnPage = 0; // Reset pagination if leaving transactions
                 document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
                 const activeNav = document.querySelector(`.nav-item[data-page="${page}"]`);
                 if (activeNav) activeNav.classList.add('active');
                 
-                const titles = { dashboard: 'Dashboard', members: 'Members', transactions: 'Amount Records', banking: 'Banking', meetings: 'Meetings', settings: 'Settings' };
+                const titles = { dashboard: 'Dashboard', members: 'Members', transactions: 'Amount Records', banking: 'Banking', meetings: 'Meeting & Announcement', settings: 'Settings' };
                 document.getElementById('pageTitle').textContent = titles[page] || 'Dashboard';
                 closeSidebar();
 
@@ -614,6 +3137,20 @@
                 let totalIncome = 0, totalExpense = 0;
                 transactions.forEach(t => { if (t.type === 'contribution' || t.type === 'return') totalIncome += Number(t.amount); else totalExpense += Number(t.amount); });
                 const bankBalance = banking.reduce((acc, b) => b.type === 'deposit' || b.type === 'interest' ? acc + Number(b.amount) : acc - Number(b.amount), 0);
+                
+                // Calculate individual member contributions
+                const contributionsByMember = {};
+                transactions.forEach(t => {
+                    if (t.type === 'contribution') {
+                        contributionsByMember[t.memberId] = (contributionsByMember[t.memberId] || 0) + Number(t.amount);
+                    }
+                });
+                
+                const memberContributions = members.map(m => ({
+                    name: m.name,
+                    total: contributionsByMember[m.id] || 0
+                })).sort((a, b) => b.total - a.total); // Sort descending
+
                 const content = document.getElementById('pageContent');
                 content.innerHTML = `
                     <div class="stats-grid">
@@ -623,8 +3160,44 @@
                         <div class="stat-card"><div class="stat-icon blue">🏦</div><div class="stat-label">Bank Balance</div><div class="stat-value">${formatCurrency(bankBalance)}</div><div class="stat-sub">All accounts</div></div>
                     </div>
                     <div class="dashboard-grid">
-                        <div class="card"><div class="card-header"><h3>Recent Transactions</h3></div><div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Member</th><th>Type</th><th>Amount</th><th>Date</th></tr></thead><tbody>${transactions.slice(-5).reverse().map(t => { const m = members.find(mem => mem.id === t.memberId); return `<tr><td>${m ? escapeHtml(m.name) : 'Unknown'}</td><td><span class="badge badge-info">${t.type}</span></td><td>${formatCurrency(t.amount)}</td><td>${formatDate(t.date)}</td></tr>`; }).join('') || `<tr><td colspan="4" style="text-align:center; padding: 30px;">No transactions yet</td></tr>`}</tbody></table></div></div></div>
-                        <div class="card"><div class="card-header"><h3>Fund Growth</h3></div><div class="card-body"><canvas id="fundChart"></canvas><p style="text-align:center; color:var(--text-muted); margin-top:10px;">Chart requires Chart.js (not included in this demo)</p></div></div>
+                        <div class="card">
+                            <div class="card-header"><h3>Recent Transactions</h3></div>
+                            <div class="card-body no-padding">
+                                <div class="table-wrapper" style="max-height: 400px; overflow-y: auto;">
+                                    <table>
+                                        <thead>
+                                            <tr><th>Member</th><th>Type</th><th>Amount</th><th>Date</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            ${transactions.slice(-5).reverse().map(t => { 
+                                                const m = members.find(mem => mem.id === t.memberId); 
+                                                return `<tr><td>${m ? escapeHtml(m.name) : 'Unknown'}</td><td><span class="badge badge-info">${t.type}</span></td><td>${formatCurrency(t.amount)}</td><td>${formatDate(t.date)}</td></tr>`; 
+                                            }).join('') || `<tr><td colspan="4" style="text-align:center; padding: 30px;">No transactions yet</td></tr>`}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header"><h3>Member Contributions</h3></div>
+                            <div class="card-body no-padding">
+                                <div class="table-wrapper" style="max-height: 400px; overflow-y: auto;">
+                                    <table>
+                                        <thead>
+                                            <tr><th>Member Name</th><th style="text-align: right;">Total Contributed</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            ${memberContributions.map(mc => `
+                                                <tr>
+                                                    <td>${escapeHtml(mc.name)}</td>
+                                                    <td style="text-align: right; font-weight: 600;">${formatCurrency(mc.total)}</td>
+                                                </tr>
+                                            `).join('') || `<tr><td colspan="2" style="text-align:center; padding: 30px;">No members found</td></tr>`}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 `;
             }
@@ -700,11 +3273,11 @@
                 const canAdd = hasPermission('addTransaction');
                 const content = document.getElementById('pageContent');
                 content.innerHTML = `
-                    <div class="card"><div class="card-header"><h3>Amount Records</h3><div class="card-header-actions"><div class="filters-row"><input type="text" class="search-input" placeholder="Search desc..." id="txnSearchInput"><select class="filter-select" id="txnTypeFilter"><option value="">All Types</option>${types.map(t => `<option value="${t}">${t}</option>`).join('')}</select><select class="filter-select" id="txnMemberFilter"><option value="">All Members</option>${members.map(m => `<option value="${m.id}">${escapeHtml(m.name)}</option>`).join('')}</select></div><div style="display: flex; gap: 8px; flex-wrap: wrap;"><button class="btn btn-secondary btn-sm" onclick="exportTransactionsExcel()">📥 Excel</button><button class="btn btn-secondary btn-sm" onclick="printTransactions()">🖨️ Print</button>${canAdd ? `<button class="btn btn-primary btn-sm" onclick="openTransactionModal()">+ Record Amount</button>` : ''}</div></div></div><div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Member</th><th>Type</th><th>Amount</th><th>Date</th><th>Description</th><th>Actions</th></tr></thead><tbody id="txnTableBody"></tbody></table></div></div></div>
+                    <div class="card"><div class="card-header"><h3>Amount Records</h3><div class="card-header-actions"><div class="filters-row"><input type="text" class="search-input" placeholder="Search desc..." id="txnSearchInput"><select class="filter-select" id="txnTypeFilter"><option value="">All Types</option>${types.map(t => `<option value="${t}">${t}</option>`).join('')}</select><select class="filter-select" id="txnMemberFilter"><option value="">All Members</option>${members.map(m => `<option value="${m.id}">${escapeHtml(m.name)}</option>`).join('')}</select></div><div style="display: flex; gap: 8px; flex-wrap: wrap;"><button class="btn btn-secondary btn-sm" onclick="exportTransactionsExcel()">📥 Excel</button><button class="btn btn-secondary btn-sm" onclick="printTransactions()">🖨️ Print</button>${canAdd ? `<button class="btn btn-primary btn-sm" onclick="openTransactionModal()">+ Record Amount</button>` : ''}</div></div></div><div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Member</th><th>Type</th><th>Amount</th><th>Date</th><th>Description</th><th>Actions</th></tr></thead><tbody id="txnTableBody"></tbody><tfoot id="txnTableFooter"></tfoot></table></div><div class="pagination" id="txnPagination"></div></div></div>
                 `;
-                document.getElementById('txnSearchInput').addEventListener('input', renderTxnTableBody);
-                document.getElementById('txnTypeFilter').addEventListener('change', renderTxnTableBody);
-                document.getElementById('txnMemberFilter').addEventListener('change', renderTxnTableBody);
+                document.getElementById('txnSearchInput').addEventListener('input', () => { txnPage = 0; renderTxnTableBody(); });
+                document.getElementById('txnTypeFilter').addEventListener('change', () => { txnPage = 0; renderTxnTableBody(); });
+                document.getElementById('txnMemberFilter').addEventListener('change', () => { txnPage = 0; renderTxnTableBody(); });
                 renderTxnTableBody();
             }
 
@@ -718,7 +3291,7 @@
                     const matchType = !type || t.type === type;
                     const matchMember = !memberId || t.memberId === memberId;
                     return matchSearch && matchType && matchMember;
-                });
+                }).sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by date descending
             }
 
             function renderTxnTableBody() {
@@ -727,8 +3300,23 @@
                 const canEdit = hasPermission('editTransaction');
                 const canDelete = hasPermission('deleteTransaction');
                 const tbody = document.getElementById('txnTableBody');
+                const tfoot = document.getElementById('txnTableFooter');
+                const paginationDiv = document.getElementById('txnPagination');
                 if (!tbody) return;
-                tbody.innerHTML = filtered.map(t => { 
+                
+                const totalAmount = filtered.reduce((sum, t) => sum + Number(t.amount), 0);
+                tfoot.innerHTML = `<tr><td colspan="2">Total Amount</td><td>${formatCurrency(totalAmount)}</td><td colspan="3"></td></tr>`;
+                
+                const pageSize = 20;
+                const totalPages = Math.ceil(filtered.length / pageSize);
+                if (txnPage >= totalPages && totalPages > 0) txnPage = totalPages - 1;
+                if (txnPage < 0) txnPage = 0;
+                
+                const startIdx = txnPage * pageSize;
+                const endIdx = startIdx + pageSize;
+                const pageItems = filtered.slice(startIdx, endIdx);
+                
+                tbody.innerHTML = pageItems.map(t => { 
                     const m = members.find(mem => mem.id === t.memberId);
                     let actions = '';
                     if (!canEdit && !canDelete) {
@@ -739,14 +3327,38 @@
                     }
                     return `<tr><td>${m ? escapeHtml(m.name) : 'Unknown'}</td><td><span class="badge badge-info">${t.type}</span></td><td>${formatCurrency(t.amount)}</td><td>${formatDate(t.date)}</td><td>${escapeHtml(t.description)}</td><td><div class="user-actions">${actions}</div></td></tr>`; 
                 }).join('') || `<tr><td colspan="6" style="text-align:center; padding: 30px;">No transactions found</td></tr>`;
+                
+                let pagHtml = '';
+                if (totalPages > 1) {
+                    if (txnPage > 0) pagHtml += `<button class="btn btn-secondary btn-sm" onclick="changeTxnPage(${txnPage - 1})">Previous</button>`;
+                    pagHtml += `<span class="pagination-info">Page ${txnPage + 1} of ${totalPages}</span>`;
+                    if (txnPage < totalPages - 1) pagHtml += `<button class="btn btn-secondary btn-sm" onclick="changeTxnPage(${txnPage + 1})">Next</button>`;
+                }
+                paginationDiv.innerHTML = pagHtml;
             }
+            
+            window.changeTxnPage = function(newPage) { txnPage = newPage; renderTxnTableBody(); };
 
             function renderBanking() {
                 const banking = getData(STORAGE_KEYS.banking, []);
                 const types = [...new Set(banking.map(b => b.type))].sort();
                 const canAdd = hasPermission('manageBanking');
+                
+                // Calculate Stats
+                let totalDeposit = 0, totalWithdraw = 0;
+                banking.forEach(b => {
+                    if (b.type === 'deposit' || b.type === 'interest') totalDeposit += Number(b.amount);
+                    else totalWithdraw += Number(b.amount);
+                });
+                const netBalance = totalDeposit - totalWithdraw;
+                
                 const content = document.getElementById('pageContent');
                 content.innerHTML = `
+                    <div class="stats-grid">
+                        <div class="stat-card"><div class="stat-icon teal">💰</div><div class="stat-label">Net Balance</div><div class="stat-value">${formatCurrency(netBalance)}</div><div class="stat-sub">Current Balance</div></div>
+                        <div class="stat-card"><div class="stat-icon green">📈</div><div class="stat-label">Total Deposit</div><div class="stat-value">${formatCurrency(totalDeposit)}</div><div class="stat-sub">Deposits & Interest</div></div>
+                        <div class="stat-card"><div class="stat-icon orange">📉</div><div class="stat-label">Total Withdraw</div><div class="stat-value">${formatCurrency(totalWithdraw)}</div><div class="stat-sub">Withdrawals & Charges</div></div>
+                    </div>
                     <div class="card"><div class="card-header"><h3>Bank Transactions</h3><div class="card-header-actions"><div class="filters-row"><input type="text" class="search-input" placeholder="Search desc/acct..." id="bankSearchInput"><select class="filter-select" id="bankTypeFilter"><option value="">All Types</option>${types.map(t => `<option value="${t}">${t}</option>`).join('')}</select></div><div style="display: flex; gap: 8px; flex-wrap: wrap;"><button class="btn btn-secondary btn-sm" onclick="exportBankingExcel()">📥 Excel</button><button class="btn btn-secondary btn-sm" onclick="printBanking()">🖨️ Print</button>${canAdd ? `<button class="btn btn-primary btn-sm" onclick="openBankingModal()">+ Add Bank Record</button>` : ''}</div></div></div><div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Type</th><th>Amount</th><th>Date</th><th>Bank</th><th>Description</th><th>Actions</th></tr></thead><tbody id="bankTableBody"></tbody></table></div></div></div>
                 `;
                 document.getElementById('bankSearchInput').addEventListener('input', renderBankTableBody);
@@ -788,7 +3400,7 @@
                 const canAdd = hasPermission('manageMeetings');
                 const content = document.getElementById('pageContent');
                 content.innerHTML = `
-                    <div class="card"><div class="card-header"><h3>Meetings</h3><div class="card-header-actions"><div class="filters-row"><input type="text" class="search-input" placeholder="Search venue/agenda..." id="meetSearchInput"></div><div style="display: flex; gap: 8px; flex-wrap: wrap;"><button class="btn btn-secondary btn-sm" onclick="exportMeetingsExcel()">📥 Excel</button><button class="btn btn-secondary btn-sm" onclick="printMeetings()">🖨️ Print</button>${canAdd ? `<button class="btn btn-primary btn-sm" onclick="openMeetingModal()">+ Add Meeting</button>` : ''}</div></div></div><div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Date</th><th>Venue</th><th>Agenda</th><th>Actions</th></tr></thead><tbody id="meetTableBody"></tbody></table></div></div></div>
+                    <div class="card"><div class="card-header"><h3>Meeting & Announcement</h3><div class="card-header-actions"><div class="filters-row"><input type="text" class="search-input" placeholder="Search subject/details..." id="meetSearchInput"></div><div style="display: flex; gap: 8px; flex-wrap: wrap;"><button class="btn btn-secondary btn-sm" onclick="exportMeetingsExcel()">📥 Excel</button><button class="btn btn-secondary btn-sm" onclick="printMeetings()">🖨️ Print</button>${canAdd ? `<button class="btn btn-primary btn-sm" onclick="openMeetingModal()">+ Add Record</button>` : ''}</div></div></div><div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Date</th><th>Type</th><th>Subject (Venue/Title)</th><th>Details (Agenda/Desc)</th><th>Actions</th></tr></thead><tbody id="meetTableBody"></tbody></table></div></div></div>
                 `;
                 document.getElementById('meetSearchInput').addEventListener('input', renderMeetTableBody);
                 renderMeetTableBody();
@@ -798,9 +3410,11 @@
                 let meetings = getData(STORAGE_KEYS.meetings, []);
                 const search = document.getElementById('meetSearchInput')?.value.toLowerCase() || '';
                 return meetings.filter(m => {
-                    const matchSearch = !search || (m.venue || '').toLowerCase().includes(search) || (m.agenda || '').toLowerCase().includes(search);
+                    const subject = m.subject || m.venue || '';
+                    const details = m.details || m.agenda || '';
+                    const matchSearch = !search || subject.toLowerCase().includes(search) || details.toLowerCase().includes(search);
                     return matchSearch;
-                });
+                }).sort((a, b) => new Date(b.date) - new Date(a.date));
             }
 
             function renderMeetTableBody() {
@@ -815,8 +3429,11 @@
                     } else {
                         actions = `<button class="btn-icon" onclick="openMeetingModal('${m.id}')">✏️</button><button class="btn-icon delete" onclick="deleteMeeting('${m.id}')">🗑️</button>`;
                     }
-                    return `<tr><td>${formatDate(m.date)}</td><td>${escapeHtml(m.venue)}</td><td>${escapeHtml(m.agenda)}</td><td><div class="user-actions">${actions}</div></td></tr>`;
-                }).join('') || `<tr><td colspan="4" style="text-align:center; padding: 30px;">No meetings found</td></tr>`;
+                    const recordType = m.recordType || 'meeting';
+                    const subject = m.subject || m.venue || '';
+                    const details = m.details || m.agenda || '';
+                    return `<tr><td>${formatDate(m.date)}</td><td><span class="badge ${recordType === 'announcement' ? 'badge-info' : 'badge-primary'}">${recordType}</span></td><td>${escapeHtml(subject)}</td><td>${escapeHtml(details)}</td><td><div class="user-actions">${actions}</div></td></tr>`;
+                }).join('') || `<tr><td colspan="5" style="text-align:center; padding: 30px;">No records found</td></tr>`;
             }
 
             function renderSettings() {
@@ -959,15 +3576,15 @@
 
             window.exportMeetingsExcel = function() {
                 const filtered = getFilteredMeetings();
-                const headers = ['Date', 'Venue', 'Agenda'];
-                const rows = filtered.map(m => [m.date, m.venue, m.agenda]);
-                exportToExcel('Meetings.csv', headers, rows);
+                const headers = ['Date', 'Type', 'Subject (Venue/Title)', 'Details (Agenda/Desc)'];
+                const rows = filtered.map(m => [m.date, m.recordType || 'meeting', m.subject || m.venue || '', m.details || m.agenda || '']);
+                exportToExcel('Meetings_Announcements.csv', headers, rows);
             };
             window.printMeetings = function() {
                 const filtered = getFilteredMeetings();
-                const headers = ['Date', 'Venue', 'Agenda'];
-                const rows = filtered.map(m => [formatDate(m.date), m.venue, m.agenda]);
-                printRecords('Meetings', headers, rows);
+                const headers = ['Date', 'Type', 'Subject (Venue/Title)', 'Details (Agenda/Desc)'];
+                const rows = filtered.map(m => [formatDate(m.date), m.recordType || 'meeting', m.subject || m.venue || '', m.details || m.agenda || '']);
+                printRecords('Meetings & Announcements', headers, rows);
             };
 
             // ------------------------------------------------------------
@@ -1148,39 +3765,59 @@
                 });
             };
 
-            // --- Meetings ---
+            // --- Meeting & Announcement ---
             window.openMeetingModal = function(id = null) {
                 if (!hasPermission('manageMeetings')) { showToast('Permission denied.', 'error'); return; }
                 const form = document.getElementById('meetingForm');
                 form.reset();
                 document.getElementById('meetingId').value = '';
-                document.getElementById('meetingModalTitle').textContent = id ? 'Edit Meeting' : 'Add Meeting';
                 if (id) {
                     const m = getData(STORAGE_KEYS.meetings, []).find(x => x.id === id);
                     if (m) {
                         document.getElementById('meetingId').value = m.id;
                         document.getElementById('meetingDate').value = m.date;
-                        document.getElementById('meetingVenue').value = m.venue;
-                        document.getElementById('meetingAgenda').value = m.agenda;
+                        document.getElementById('meetingRecordType').value = m.recordType || 'meeting';
+                        document.getElementById('meetingSubject').value = m.subject || m.venue || '';
+                        document.getElementById('meetingDetails').value = m.details || m.agenda || '';
+                        updateMeetingLabels();
                     }
-                } else { document.getElementById('meetingDate').value = getTodayStr(); }
+                } else { 
+                    document.getElementById('meetingDate').value = getTodayStr(); 
+                    document.getElementById('meetingRecordType').value = 'meeting';
+                    updateMeetingLabels();
+                }
                 openModal('meetingModal');
             };
+
+            function updateMeetingLabels() {
+                const isMeeting = document.getElementById('meetingRecordType').value === 'meeting';
+                document.getElementById('meetingSubjectLabel').textContent = isMeeting ? 'Venue *' : 'Title *';
+                document.getElementById('meetingDetailsLabel').textContent = isMeeting ? 'Agenda *' : 'Details *';
+                document.getElementById('meetingModalTitle').textContent = isMeeting ? 'Add Meeting' : 'Add Announcement';
+            }
+            document.getElementById('meetingRecordType').addEventListener('change', updateMeetingLabels);
+
             document.getElementById('meetingForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 if (!hasPermission('manageMeetings')) { showToast('Permission denied.', 'error'); return; }
                 const id = document.getElementById('meetingId').value;
                 let meetings = getData(STORAGE_KEYS.meetings, []);
-                const meetingData = { id: id || 'meet_' + generateId(), date: document.getElementById('meetingDate').value, venue: document.getElementById('meetingVenue').value, agenda: document.getElementById('meetingAgenda').value };
+                const meetingData = { 
+                    id: id || 'meet_' + generateId(), 
+                    date: document.getElementById('meetingDate').value,
+                    recordType: document.getElementById('meetingRecordType').value,
+                    subject: document.getElementById('meetingSubject').value,
+                    details: document.getElementById('meetingDetails').value
+                };
                 if (id) { const idx = meetings.findIndex(m => m.id === id); if (idx > -1) meetings[idx] = { ...meetings[idx], ...meetingData }; } else { meetings.push(meetingData); }
                 setData(STORAGE_KEYS.meetings, meetings);
                 closeModal('meetingModal');
-                showToast('Meeting saved!', 'success');
+                showToast('Record saved!', 'success');
                 renderMeetTableBody();
             });
             window.deleteMeeting = function(id) { 
                 if (!hasPermission('manageMeetings')) { showToast('Permission denied.', 'error'); return; }
-                showConfirmDialog('Delete Meeting', 'Are you sure you want to delete this meeting?', function() {
+                showConfirmDialog('Delete Record', 'Are you sure you want to delete this record?', function() {
                     let meetings = getData(STORAGE_KEYS.meetings, []).filter(m => m.id !== id); 
                     setData(STORAGE_KEYS.meetings, meetings); 
                     renderMeetTableBody();
