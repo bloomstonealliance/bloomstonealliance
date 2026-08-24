@@ -68,6 +68,7 @@
         .btn-outline:hover { background: var(--primary); color: #fff; }
         .btn-block { width: 100%; }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+        .hidden { display: none !important; }
         
         /* Login Error */
         .login-error { background: var(--danger-bg); color: var(--danger); padding: 12px 16px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; margin-bottom: 16px; display: none; border: 1px solid #fca5a5; }
@@ -105,14 +106,14 @@
         .sidebar-footer .btn-logout { background: transparent; border: none; color: var(--sidebar-text); cursor: pointer; font-size: 18px; padding: 6px; border-radius: var(--radius-xs); transition: all var(--transition); flex-shrink: 0; }
         .sidebar-footer .btn-logout:hover { color: var(--danger); background: rgba(239,68,68,0.15); }
         
-        .main-content { flex: 1; margin-left: var(--sidebar-width); padding: 0; min-height: 100vh; background: var(--bg); transition: margin-left var(--transition); }
+        .main-content { flex: 1; margin-left: var(--sidebar-width); padding: 0; min-height: 100vh; background: var(--bg); transition: margin-left var(--transition); min-width: 0; overflow-x: hidden; }
         .main-content.collapsed { margin-left: var(--sidebar-collapsed-width); }
         .topbar { background: rgba(255,255,255,0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 16px 32px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
         [data-theme="dark"] .topbar { background: rgba(30,41,59,0.8); }
         .topbar h1 { font-size: 20px; font-weight: 800; letter-spacing: -0.4px; color: var(--text); }
         .topbar .topbar-actions { display: flex; align-items: center; gap: 12px; }
         .topbar .date-display { font-size: 13px; color: var(--text-muted); font-weight: 500; }
-        .page-content { padding: 24px 32px; max-width: 1400px; }
+        .page-content { padding: 24px 32px; max-width: 1400px; min-width: 0; }
         .mobile-toggle { display: none; background: transparent; border: none; font-size: 24px; cursor: pointer; color: var(--text); padding: 4px; }
         
         /* Cards & Stats */
@@ -129,15 +130,15 @@
         .stat-card .stat-value { font-size: 28px; font-weight: 800; letter-spacing: -1px; color: var(--text); }
         .stat-card .stat-sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
         .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
-        .card { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; transition: box-shadow var(--transition); }
+        .card { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; transition: box-shadow var(--transition); min-width: 0; }
         .card:hover { box-shadow: var(--shadow-lg); }
         .card-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
         .card-header h3 { font-size: 16px; font-weight: 700; color: var(--text); }
-        .card-body { padding: 20px; }
+        .card-body { padding: 20px; min-width: 0; }
         .card-body.no-padding { padding: 0; }
         
         /* Tables */
-        .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 0 0 var(--radius) var(--radius); }
+        .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; max-width: 100%; }
         table { width: 100%; border-collapse: collapse; font-size: 14px; }
         table th { text-align: left; padding: 12px 16px; background: var(--table-header-bg); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); font-weight: 700; border-bottom: 2px solid var(--border); white-space: nowrap; }
         table td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text); }
@@ -223,7 +224,7 @@
             .topbar .topbar-actions { width: 100%; justify-content: space-between; }
             .topbar h1 { font-size: 18px; }
             .topbar .date-display { display: none; }
-            #topbarAddBtn { display: none; }
+            #topbarAddBtn { display: none !important; }
             .fab { display: flex; }
             .stats-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
             .stat-card { padding: 16px; }
@@ -445,7 +446,7 @@
             'use strict';
 
             // ------------------------------------------------------------
-            // Preloaded Data (Merged from JSON)
+            // Preloaded Data
             // ------------------------------------------------------------
             const INITIAL_DATA = {
                 "users": [
@@ -506,9 +507,7 @@
                 { key: 'viewDashboard', label: 'View Dashboard' }, { key: 'viewMembers', label: 'View Members' }, { key: 'addMember', label: 'Add Member' }, { key: 'editMember', label: 'Edit Member' }, { key: 'deleteMember', label: 'Delete Member' }, { key: 'viewTransactions', label: 'View Amount Records' }, { key: 'addTransaction', label: 'Record Income/Expense/Investment' }, { key: 'editTransaction', label: 'Edit Transaction' }, { key: 'deleteTransaction', label: 'Delete Transaction' }, { key: 'viewBanking', label: 'View Banking' }, { key: 'manageBanking', label: 'Manage Banking' }, { key: 'viewMeetings', label: 'View Meetings' }, { key: 'manageMeetings', label: 'Manage Meetings' }, { key: 'manageUsers', label: 'Manage Users' }, { key: 'accessSettings', label: 'Access Settings' }, { key: 'changeOwnCredential', label: 'Change Own Credential' }
             ];
             function getDefaultPermissions(role) { const p = {}; ALL_PERMISSIONS.forEach(perm => p[perm.key] = false); if (role === 'admin') { ALL_PERMISSIONS.forEach(perm => p[perm.key] = true); } else if (role === 'manager') { p.viewDashboard = true; p.viewMembers = true; p.addMember = true; p.editMember = true; p.viewTransactions = true; p.addTransaction = true; p.editTransaction = true; p.viewBanking = true; p.manageBanking = true; p.viewMeetings = true; p.manageMeetings = true; } else if (role === 'viewer') { p.viewDashboard = true; p.viewMembers = true; p.viewTransactions = true; p.viewBanking = true; p.viewMeetings = true; } else if (role === 'member') { p.viewDashboard = true; p.viewMembers = true; p.viewTransactions = true; p.viewBanking = true; p.viewMeetings = true; p.accessSettings = true; p.changeOwnCredential = true; } return p; }
-            
             function initData() {
-                // Force load initial data if it hasn't been loaded yet to ensure the user sees their data
                 if (!localStorage.getItem('bloomstone_preload_v1')) {
                     setData(STORAGE_KEYS.users, INITIAL_DATA.users);
                     setData(STORAGE_KEYS.members, INITIAL_DATA.members);
@@ -518,20 +517,17 @@
                     setData(STORAGE_KEYS.settings, INITIAL_DATA.settings);
                     localStorage.setItem('bloomstone_preload_v1', 'true');
                 } else {
-                    // Standard initialization safety checks
                     let users = getData(STORAGE_KEYS.users, null);
-                    if (!users || users.length === 0) {
-                        setData(STORAGE_KEYS.users, INITIAL_DATA.users);
-                    }
+                    if (!users || users.length === 0) setData(STORAGE_KEYS.users, INITIAL_DATA.users);
                     const emptyCollections = ['members', 'transactions', 'banking', 'meetings'];
-                    for (const k of emptyCollections) { if (getData(STORAGE_KEYS[k], null) === null) { setData(STORAGE_KEYS[k], []); } }
+                    for (const k of emptyCollections) { if (getData(STORAGE_KEYS[k], null) === null) setData(STORAGE_KEYS[k], []); }
                     let settings = getData(STORAGE_KEYS.settings, null);
-                    if (!settings) { setData(STORAGE_KEYS.settings, INITIAL_DATA.settings); }
+                    if (!settings) setData(STORAGE_KEYS.settings, INITIAL_DATA.settings);
                 }
             }
 
             // ------------------------------------------------------------
-            // Session
+            // Session & Permissions
             // ------------------------------------------------------------
             function getSession() { const session = getData(STORAGE_KEYS.session, null); if (!session) return null; const users = getData(STORAGE_KEYS.users, []); const user = users.find(u => u.id === session.userId && u.active); if (!user) { localStorage.removeItem(STORAGE_KEYS.session); return null; } return { userId: user.id, username: user.username, name: user.name, role: user.role, permissions: user.permissions, linkedMemberId: user.linkedMemberId || null }; }
             function setSession(userId) { const users = getData(STORAGE_KEYS.users, []); const user = users.find(u => u.id === userId); if (!user) return null; const session = { userId: user.id, loginAt: new Date().toISOString() }; setData(STORAGE_KEYS.session, session); return session; }
@@ -598,6 +594,17 @@
                         case 'settings': renderSettings(); break;
                     }
                 }, 50);
+                
+                // Update Add Button visibility based on permissions
+                let canAddCurrent = false;
+                if (page === 'members') canAddCurrent = hasPermission('addMember');
+                else if (page === 'transactions') canAddCurrent = hasPermission('addTransaction');
+                else if (page === 'banking') canAddCurrent = hasPermission('manageBanking');
+                else if (page === 'meetings') canAddCurrent = hasPermission('manageMeetings');
+                else if (page === 'settings') canAddCurrent = hasPermission('manageUsers');
+                
+                document.getElementById('topbarAddBtn').classList.toggle('hidden', !canAddCurrent);
+                document.getElementById('fabAddBtn').classList.toggle('hidden', !canAddCurrent);
             }
 
             function renderDashboard() {
@@ -625,6 +632,9 @@
             function renderMembers() {
                 const members = getData(STORAGE_KEYS.members, []);
                 const roles = [...new Set(members.map(m => m.role))].sort();
+                const canAdd = hasPermission('addMember');
+                const canEdit = hasPermission('editMember');
+                const canDelete = hasPermission('deleteMember');
                 const content = document.getElementById('pageContent');
                 content.innerHTML = `
                     <div class="card">
@@ -639,7 +649,7 @@
                                 <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                                     <button class="btn btn-secondary btn-sm" onclick="exportMembersExcel()">📥 Excel</button>
                                     <button class="btn btn-secondary btn-sm" onclick="printMembers()">🖨️ Print</button>
-                                    <button class="btn btn-primary btn-sm" onclick="openMemberModal()">+ Add Member</button>
+                                    ${canAdd ? `<button class="btn btn-primary btn-sm" onclick="openMemberModal()">+ Add Member</button>` : ''}
                                 </div>
                             </div>
                         </div>
@@ -667,18 +677,30 @@
 
             function renderMemberTableBody() {
                 const filtered = getFilteredMembers();
+                const canEdit = hasPermission('editMember');
+                const canDelete = hasPermission('deleteMember');
                 const tbody = document.getElementById('memberTableBody');
                 if (!tbody) return;
-                tbody.innerHTML = filtered.map(m => `<tr><td>${escapeHtml(m.name)}</td><td>${escapeHtml(m.position)}</td><td><span class="badge badge-primary">${m.role}</span></td><td>${formatDate(m.joinDate)}</td><td><span class="badge ${m.status === 'active' ? 'badge-success' : 'badge-danger'}">${m.status}</span></td><td><div class="user-actions"><button class="btn-icon" onclick="openMemberModal('${m.id}')">✏️</button><button class="btn-icon delete" onclick="deleteMember('${m.id}')">🗑️</button></div></td></tr>`).join('') || `<tr><td colspan="6" style="text-align:center; padding: 30px;">No members found</td></tr>`;
+                tbody.innerHTML = filtered.map(m => {
+                    let actions = '';
+                    if (!canEdit && !canDelete) {
+                        actions = '<span class="badge badge-muted">View Only</span>';
+                    } else {
+                        if (canEdit) actions += `<button class="btn-icon" onclick="openMemberModal('${m.id}')">✏️</button>`;
+                        if (canDelete) actions += `<button class="btn-icon delete" onclick="deleteMember('${m.id}')">🗑️</button>`;
+                    }
+                    return `<tr><td>${escapeHtml(m.name)}</td><td>${escapeHtml(m.position)}</td><td><span class="badge badge-primary">${m.role}</span></td><td>${formatDate(m.joinDate)}</td><td><span class="badge ${m.status === 'active' ? 'badge-success' : 'badge-danger'}">${m.status}</span></td><td><div class="user-actions">${actions}</div></td></tr>`;
+                }).join('') || `<tr><td colspan="6" style="text-align:center; padding: 30px;">No members found</td></tr>`;
             }
 
             function renderTransactions() {
                 const transactions = getData(STORAGE_KEYS.transactions, []);
                 const members = getData(STORAGE_KEYS.members, []);
                 const types = [...new Set(transactions.map(t => t.type))].sort();
+                const canAdd = hasPermission('addTransaction');
                 const content = document.getElementById('pageContent');
                 content.innerHTML = `
-                    <div class="card"><div class="card-header"><h3>Amount Records</h3><div class="card-header-actions"><div class="filters-row"><input type="text" class="search-input" placeholder="Search desc..." id="txnSearchInput"><select class="filter-select" id="txnTypeFilter"><option value="">All Types</option>${types.map(t => `<option value="${t}">${t}</option>`).join('')}</select><select class="filter-select" id="txnMemberFilter"><option value="">All Members</option>${members.map(m => `<option value="${m.id}">${escapeHtml(m.name)}</option>`).join('')}</select></div><div style="display: flex; gap: 8px; flex-wrap: wrap;"><button class="btn btn-secondary btn-sm" onclick="exportTransactionsExcel()">📥 Excel</button><button class="btn btn-secondary btn-sm" onclick="printTransactions()">🖨️ Print</button><button class="btn btn-primary btn-sm" onclick="openTransactionModal()">+ Record Amount</button></div></div></div><div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Member</th><th>Type</th><th>Amount</th><th>Date</th><th>Description</th><th>Actions</th></tr></thead><tbody id="txnTableBody"></tbody></table></div></div></div>
+                    <div class="card"><div class="card-header"><h3>Amount Records</h3><div class="card-header-actions"><div class="filters-row"><input type="text" class="search-input" placeholder="Search desc..." id="txnSearchInput"><select class="filter-select" id="txnTypeFilter"><option value="">All Types</option>${types.map(t => `<option value="${t}">${t}</option>`).join('')}</select><select class="filter-select" id="txnMemberFilter"><option value="">All Members</option>${members.map(m => `<option value="${m.id}">${escapeHtml(m.name)}</option>`).join('')}</select></div><div style="display: flex; gap: 8px; flex-wrap: wrap;"><button class="btn btn-secondary btn-sm" onclick="exportTransactionsExcel()">📥 Excel</button><button class="btn btn-secondary btn-sm" onclick="printTransactions()">🖨️ Print</button>${canAdd ? `<button class="btn btn-primary btn-sm" onclick="openTransactionModal()">+ Record Amount</button>` : ''}</div></div></div><div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Member</th><th>Type</th><th>Amount</th><th>Date</th><th>Description</th><th>Actions</th></tr></thead><tbody id="txnTableBody"></tbody></table></div></div></div>
                 `;
                 document.getElementById('txnSearchInput').addEventListener('input', renderTxnTableBody);
                 document.getElementById('txnTypeFilter').addEventListener('change', renderTxnTableBody);
@@ -702,20 +724,30 @@
             function renderTxnTableBody() {
                 const filtered = getFilteredTransactions();
                 const members = getData(STORAGE_KEYS.members, []);
+                const canEdit = hasPermission('editTransaction');
+                const canDelete = hasPermission('deleteTransaction');
                 const tbody = document.getElementById('txnTableBody');
                 if (!tbody) return;
                 tbody.innerHTML = filtered.map(t => { 
-                    const m = members.find(mem => mem.id === t.memberId); 
-                    return `<tr><td>${m ? escapeHtml(m.name) : 'Unknown'}</td><td><span class="badge badge-info">${t.type}</span></td><td>${formatCurrency(t.amount)}</td><td>${formatDate(t.date)}</td><td>${escapeHtml(t.description)}</td><td><div class="user-actions"><button class="btn-icon" onclick="openTransactionModal('${t.id}')">✏️</button><button class="btn-icon delete" onclick="deleteTransaction('${t.id}')">🗑️</button></div></td></tr>`; 
+                    const m = members.find(mem => mem.id === t.memberId);
+                    let actions = '';
+                    if (!canEdit && !canDelete) {
+                        actions = '<span class="badge badge-muted">View Only</span>';
+                    } else {
+                        if (canEdit) actions += `<button class="btn-icon" onclick="openTransactionModal('${t.id}')">✏️</button>`;
+                        if (canDelete) actions += `<button class="btn-icon delete" onclick="deleteTransaction('${t.id}')">🗑️</button>`;
+                    }
+                    return `<tr><td>${m ? escapeHtml(m.name) : 'Unknown'}</td><td><span class="badge badge-info">${t.type}</span></td><td>${formatCurrency(t.amount)}</td><td>${formatDate(t.date)}</td><td>${escapeHtml(t.description)}</td><td><div class="user-actions">${actions}</div></td></tr>`; 
                 }).join('') || `<tr><td colspan="6" style="text-align:center; padding: 30px;">No transactions found</td></tr>`;
             }
 
             function renderBanking() {
                 const banking = getData(STORAGE_KEYS.banking, []);
                 const types = [...new Set(banking.map(b => b.type))].sort();
+                const canAdd = hasPermission('manageBanking');
                 const content = document.getElementById('pageContent');
                 content.innerHTML = `
-                    <div class="card"><div class="card-header"><h3>Bank Transactions</h3><div class="card-header-actions"><div class="filters-row"><input type="text" class="search-input" placeholder="Search desc/acct..." id="bankSearchInput"><select class="filter-select" id="bankTypeFilter"><option value="">All Types</option>${types.map(t => `<option value="${t}">${t}</option>`).join('')}</select></div><div style="display: flex; gap: 8px; flex-wrap: wrap;"><button class="btn btn-secondary btn-sm" onclick="exportBankingExcel()">📥 Excel</button><button class="btn btn-secondary btn-sm" onclick="printBanking()">🖨️ Print</button><button class="btn btn-primary btn-sm" onclick="openBankingModal()">+ Add Bank Record</button></div></div></div><div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Type</th><th>Amount</th><th>Date</th><th>Bank</th><th>Description</th><th>Actions</th></tr></thead><tbody id="bankTableBody"></tbody></table></div></div></div>
+                    <div class="card"><div class="card-header"><h3>Bank Transactions</h3><div class="card-header-actions"><div class="filters-row"><input type="text" class="search-input" placeholder="Search desc/acct..." id="bankSearchInput"><select class="filter-select" id="bankTypeFilter"><option value="">All Types</option>${types.map(t => `<option value="${t}">${t}</option>`).join('')}</select></div><div style="display: flex; gap: 8px; flex-wrap: wrap;"><button class="btn btn-secondary btn-sm" onclick="exportBankingExcel()">📥 Excel</button><button class="btn btn-secondary btn-sm" onclick="printBanking()">🖨️ Print</button>${canAdd ? `<button class="btn btn-primary btn-sm" onclick="openBankingModal()">+ Add Bank Record</button>` : ''}</div></div></div><div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Type</th><th>Amount</th><th>Date</th><th>Bank</th><th>Description</th><th>Actions</th></tr></thead><tbody id="bankTableBody"></tbody></table></div></div></div>
                 `;
                 document.getElementById('bankSearchInput').addEventListener('input', renderBankTableBody);
                 document.getElementById('bankTypeFilter').addEventListener('change', renderBankTableBody);
@@ -735,16 +767,28 @@
 
             function renderBankTableBody() {
                 const filtered = getFilteredBanking();
+                const canManage = hasPermission('manageBanking');
                 const tbody = document.getElementById('bankTableBody');
                 if (!tbody) return;
-                tbody.innerHTML = filtered.map(b => `<tr><td><span class="badge ${b.type === 'deposit' || b.type === 'interest' ? 'badge-success' : 'badge-danger'}">${b.type}</span></td><td>${formatCurrency(b.amount)}</td><td>${formatDate(b.date)}</td><td>${escapeHtml(b.account)}</td><td>${escapeHtml(b.description)}</td><td><div class="user-actions">${b.linkedTxnId ? '<span class="badge badge-muted">Auto</span>' : `<button class="btn-icon" onclick="openBankingModal('${b.id}')">✏️</button><button class="btn-icon delete" onclick="deleteBanking('${b.id}')">🗑️</button>`}</div></td></tr>`).join('') || `<tr><td colspan="6" style="text-align:center; padding: 30px;">No bank records found</td></tr>`;
+                tbody.innerHTML = filtered.map(b => {
+                    let actions = '';
+                    if (b.linkedTxnId) {
+                        actions = '<span class="badge badge-muted">Auto</span>';
+                    } else if (!canManage) {
+                        actions = '<span class="badge badge-muted">View Only</span>';
+                    } else {
+                        actions = `<button class="btn-icon" onclick="openBankingModal('${b.id}')">✏️</button><button class="btn-icon delete" onclick="deleteBanking('${b.id}')">🗑️</button>`;
+                    }
+                    return `<tr><td><span class="badge ${b.type === 'deposit' || b.type === 'interest' ? 'badge-success' : 'badge-danger'}">${b.type}</span></td><td>${formatCurrency(b.amount)}</td><td>${formatDate(b.date)}</td><td>${escapeHtml(b.account)}</td><td>${escapeHtml(b.description)}</td><td><div class="user-actions">${actions}</div></td></tr>`;
+                }).join('') || `<tr><td colspan="6" style="text-align:center; padding: 30px;">No bank records found</td></tr>`;
             }
 
             function renderMeetings() {
                 const meetings = getData(STORAGE_KEYS.meetings, []);
+                const canAdd = hasPermission('manageMeetings');
                 const content = document.getElementById('pageContent');
                 content.innerHTML = `
-                    <div class="card"><div class="card-header"><h3>Meetings</h3><div class="card-header-actions"><div class="filters-row"><input type="text" class="search-input" placeholder="Search venue/agenda..." id="meetSearchInput"></div><div style="display: flex; gap: 8px; flex-wrap: wrap;"><button class="btn btn-secondary btn-sm" onclick="exportMeetingsExcel()">📥 Excel</button><button class="btn btn-secondary btn-sm" onclick="printMeetings()">🖨️ Print</button><button class="btn btn-primary btn-sm" onclick="openMeetingModal()">+ Add Meeting</button></div></div></div><div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Date</th><th>Venue</th><th>Agenda</th><th>Actions</th></tr></thead><tbody id="meetTableBody"></tbody></table></div></div></div>
+                    <div class="card"><div class="card-header"><h3>Meetings</h3><div class="card-header-actions"><div class="filters-row"><input type="text" class="search-input" placeholder="Search venue/agenda..." id="meetSearchInput"></div><div style="display: flex; gap: 8px; flex-wrap: wrap;"><button class="btn btn-secondary btn-sm" onclick="exportMeetingsExcel()">📥 Excel</button><button class="btn btn-secondary btn-sm" onclick="printMeetings()">🖨️ Print</button>${canAdd ? `<button class="btn btn-primary btn-sm" onclick="openMeetingModal()">+ Add Meeting</button>` : ''}</div></div></div><div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Date</th><th>Venue</th><th>Agenda</th><th>Actions</th></tr></thead><tbody id="meetTableBody"></tbody></table></div></div></div>
                 `;
                 document.getElementById('meetSearchInput').addEventListener('input', renderMeetTableBody);
                 renderMeetTableBody();
@@ -761,13 +805,23 @@
 
             function renderMeetTableBody() {
                 const filtered = getFilteredMeetings();
+                const canManage = hasPermission('manageMeetings');
                 const tbody = document.getElementById('meetTableBody');
                 if (!tbody) return;
-                tbody.innerHTML = filtered.map(m => `<tr><td>${formatDate(m.date)}</td><td>${escapeHtml(m.venue)}</td><td>${escapeHtml(m.agenda)}</td><td><div class="user-actions"><button class="btn-icon" onclick="openMeetingModal('${m.id}')">✏️</button><button class="btn-icon delete" onclick="deleteMeeting('${m.id}')">🗑️</button></div></td></tr>`).join('') || `<tr><td colspan="4" style="text-align:center; padding: 30px;">No meetings found</td></tr>`;
+                tbody.innerHTML = filtered.map(m => {
+                    let actions = '';
+                    if (!canManage) {
+                        actions = '<span class="badge badge-muted">View Only</span>';
+                    } else {
+                        actions = `<button class="btn-icon" onclick="openMeetingModal('${m.id}')">✏️</button><button class="btn-icon delete" onclick="deleteMeeting('${m.id}')">🗑️</button>`;
+                    }
+                    return `<tr><td>${formatDate(m.date)}</td><td>${escapeHtml(m.venue)}</td><td>${escapeHtml(m.agenda)}</td><td><div class="user-actions">${actions}</div></td></tr>`;
+                }).join('') || `<tr><td colspan="4" style="text-align:center; padding: 30px;">No meetings found</td></tr>`;
             }
 
             function renderSettings() {
                 const settings = getData(STORAGE_KEYS.settings, {});
+                const canManageUsers = hasPermission('manageUsers');
                 const content = document.getElementById('pageContent');
                 content.innerHTML = `
                     <div class="dashboard-grid">
@@ -775,7 +829,7 @@
                         <div class="card"><div class="card-header"><h3>Data Management</h3></div><div class="card-body"><p style="color:var(--text-muted); margin-bottom: 16px;">Backup your data to a JSON file or restore it from a previous backup. You can also clear all data to start fresh.</p><div style="display: flex; gap: 12px; flex-wrap: wrap;"><button class="btn btn-secondary" onclick="exportBackup()">📥 Export Backup</button><button class="btn btn-outline" onclick="openModal('importModal')">📤 Restore Backup</button><button class="btn btn-danger" onclick="clearAllData()">🗑️ Clear All Data</button></div></div></div>
                     </div>
                     <div class="card" style="margin-top: 24px;">
-                        <div class="card-header"><h3>User Management</h3><div class="card-header-actions"><button class="btn btn-primary btn-sm" onclick="openUserModal()">+ Add User</button></div></div>
+                        <div class="card-header"><h3>User Management</h3><div class="card-header-actions">${canManageUsers ? `<button class="btn btn-primary btn-sm" onclick="openUserModal()">+ Add User</button>` : ''}</div></div>
                         <div class="card-body no-padding">
                             <div class="table-wrapper">
                                 <table>
@@ -797,22 +851,19 @@
 
             function renderUsersTable() {
                 const users = getData(STORAGE_KEYS.users, []);
+                const canManage = hasPermission('manageUsers');
                 const tbody = document.getElementById('userTableBody');
                 if (!tbody) return;
-                tbody.innerHTML = users.map(u => `
-                    <tr>
-                        <td>${escapeHtml(u.name)}</td>
-                        <td>${escapeHtml(u.username)}</td>
-                        <td><span class="badge badge-primary">${u.role}</span></td>
-                        <td><span class="badge ${u.active ? 'badge-success' : 'badge-danger'}">${u.active ? 'Active' : 'Inactive'}</span></td>
-                        <td>
-                            <div class="user-actions">
-                                <button class="btn-icon" onclick="openUserModal('${u.id}')">✏️</button>
-                                ${u.username !== 'admin' ? `<button class="btn-icon delete" onclick="deleteUser('${u.id}')">🗑️</button>` : ''}
-                            </div>
-                        </td>
-                    </tr>
-                `).join('') || `<tr><td colspan="5" style="text-align:center; padding: 30px;">No users found</td></tr>`;
+                tbody.innerHTML = users.map(u => {
+                    let actions = '';
+                    if (!canManage) {
+                        actions = '<span class="badge badge-muted">View Only</span>';
+                    } else {
+                        actions = `<button class="btn-icon" onclick="openUserModal('${u.id}')">✏️</button>`;
+                        if (u.username !== 'admin') actions += `<button class="btn-icon delete" onclick="deleteUser('${u.id}')">🗑️</button>`;
+                    }
+                    return `<tr><td>${escapeHtml(u.name)}</td><td>${escapeHtml(u.username)}</td><td><span class="badge badge-primary">${u.role}</span></td><td><span class="badge ${u.active ? 'badge-success' : 'badge-danger'}">${u.active ? 'Active' : 'Inactive'}</span></td><td><div class="user-actions">${actions}</div></td></tr>`;
+                }).join('') || `<tr><td colspan="5" style="text-align:center; padding: 30px;">No users found</td></tr>`;
             }
 
             // ------------------------------------------------------------
@@ -824,7 +875,7 @@
                 rows.forEach(function(row) {
                     let line = row.map(function(cell) {
                         let val = (cell === null || cell === undefined) ? '' : String(cell);
-                        val = val.replace(/"/g, '""'); // Escape quotes
+                        val = val.replace(/"/g, '""');
                         return `"${val}"`;
                     });
                     csv.push(line.join(','));
@@ -859,7 +910,6 @@
                 }, 500);
             };
 
-            // Specific Export & Print Functions
             window.exportMembersExcel = function() {
                 const filtered = getFilteredMembers();
                 const headers = ['Name', 'Email', 'Phone', 'Position', 'Role', 'Join Date', 'Status'];
@@ -929,6 +979,8 @@
 
             // --- Members ---
             window.openMemberModal = function(id = null) {
+                if (!hasPermission('addMember') && !id) { showToast('Permission denied.', 'error'); return; }
+                if (id && !hasPermission('editMember')) { showToast('Permission denied.', 'error'); return; }
                 const form = document.getElementById('memberForm');
                 form.reset();
                 document.getElementById('memberId').value = '';
@@ -951,6 +1003,8 @@
             document.getElementById('memberForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 const id = document.getElementById('memberId').value;
+                if (id && !hasPermission('editMember')) { showToast('Permission denied.', 'error'); return; }
+                if (!id && !hasPermission('addMember')) { showToast('Permission denied.', 'error'); return; }
                 let members = getData(STORAGE_KEYS.members, []);
                 const memberData = { id: id || 'mem_' + generateId(), name: document.getElementById('memberName').value, email: document.getElementById('memberEmail').value, phone: document.getElementById('memberPhone').value, position: document.getElementById('memberPosition').value, role: document.getElementById('memberRole').value, joinDate: document.getElementById('memberJoinDate').value, status: document.getElementById('memberStatus').value };
                 if (id) { const idx = members.findIndex(m => m.id === id); if (idx > -1) members[idx] = { ...members[idx], ...memberData }; } else { members.push(memberData); }
@@ -960,6 +1014,7 @@
                 renderMemberTableBody();
             });
             window.deleteMember = function(id) { 
+                if (!hasPermission('deleteMember')) { showToast('Permission denied.', 'error'); return; }
                 showConfirmDialog('Delete Member', 'Are you sure you want to delete this member? This action cannot be undone.', function() {
                     let members = getData(STORAGE_KEYS.members, []).filter(m => m.id !== id); 
                     setData(STORAGE_KEYS.members, members); 
@@ -970,6 +1025,8 @@
 
             // --- Transactions (Auto-adjusts Banking) ---
             window.openTransactionModal = function(id = null) {
+                if (!hasPermission('addTransaction') && !id) { showToast('Permission denied.', 'error'); return; }
+                if (id && !hasPermission('editTransaction')) { showToast('Permission denied.', 'error'); return; }
                 const form = document.getElementById('transactionForm');
                 form.reset();
                 document.getElementById('transactionId').value = '';
@@ -993,6 +1050,8 @@
             document.getElementById('transactionForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 const id = document.getElementById('transactionId').value;
+                if (id && !hasPermission('editTransaction')) { showToast('Permission denied.', 'error'); return; }
+                if (!id && !hasPermission('addTransaction')) { showToast('Permission denied.', 'error'); return; }
                 let transactions = getData(STORAGE_KEYS.transactions, []);
                 let banking = getData(STORAGE_KEYS.banking, []);
                 
@@ -1012,14 +1071,12 @@
                 if (id) { 
                     const idx = transactions.findIndex(t => t.id === id); 
                     if (idx > -1) transactions[idx] = { ...transactions[idx], ...transData }; 
-                    // Remove old auto-linked banking record if it exists
                     banking = banking.filter(b => b.linkedTxnId !== id);
                 } else { 
                     transactions.push(transData); 
                 }
                 setData(STORAGE_KEYS.transactions, transactions);
                 
-                // Auto-create Banking Record
                 const isIncome = ['contribution', 'return'].includes(transData.type);
                 const bankType = isIncome ? 'deposit' : 'withdrawal';
                 
@@ -1039,21 +1096,20 @@
                 renderTxnTableBody();
             });
             window.deleteTransaction = function(id) { 
+                if (!hasPermission('deleteTransaction')) { showToast('Permission denied.', 'error'); return; }
                 showConfirmDialog('Delete Transaction', 'Are you sure you want to delete this transaction? The linked banking record will also be deleted.', function() {
                     let transactions = getData(STORAGE_KEYS.transactions, []).filter(t => t.id !== id); 
                     setData(STORAGE_KEYS.transactions, transactions); 
-                    
-                    // Also delete the linked banking record
                     let banking = getData(STORAGE_KEYS.banking, []).filter(b => b.linkedTxnId !== id);
                     setData(STORAGE_KEYS.banking, banking);
-                    
                     showToast('Transaction deleted.', 'success'); 
-                    renderTxnTableBody();
+                    renderTxnTableBody(); 
                 });
             };
 
             // --- Banking ---
             window.openBankingModal = function(id = null) {
+                if (!hasPermission('manageBanking')) { showToast('Permission denied.', 'error'); return; }
                 const form = document.getElementById('bankingForm');
                 form.reset();
                 document.getElementById('bankingId').value = '';
@@ -1073,6 +1129,7 @@
             };
             document.getElementById('bankingForm').addEventListener('submit', function(e) {
                 e.preventDefault();
+                if (!hasPermission('manageBanking')) { showToast('Permission denied.', 'error'); return; }
                 const id = document.getElementById('bankingId').value;
                 let banking = getData(STORAGE_KEYS.banking, []);
                 const bankData = { id: id || 'bank_' + generateId(), type: document.getElementById('bankingType').value, amount: parseFloat(document.getElementById('bankingAmount').value), date: document.getElementById('bankingDate').value, account: document.getElementById('bankingAccount').value, description: document.getElementById('bankingDescription').value };
@@ -1083,6 +1140,7 @@
                 renderBankTableBody();
             });
             window.deleteBanking = function(id) { 
+                if (!hasPermission('manageBanking')) { showToast('Permission denied.', 'error'); return; }
                 showConfirmDialog('Delete Bank Record', 'Are you sure you want to delete this bank record?', function() {
                     let banking = getData(STORAGE_KEYS.banking, []).filter(b => b.id !== id); 
                     setData(STORAGE_KEYS.banking, banking); 
@@ -1092,6 +1150,7 @@
 
             // --- Meetings ---
             window.openMeetingModal = function(id = null) {
+                if (!hasPermission('manageMeetings')) { showToast('Permission denied.', 'error'); return; }
                 const form = document.getElementById('meetingForm');
                 form.reset();
                 document.getElementById('meetingId').value = '';
@@ -1109,6 +1168,7 @@
             };
             document.getElementById('meetingForm').addEventListener('submit', function(e) {
                 e.preventDefault();
+                if (!hasPermission('manageMeetings')) { showToast('Permission denied.', 'error'); return; }
                 const id = document.getElementById('meetingId').value;
                 let meetings = getData(STORAGE_KEYS.meetings, []);
                 const meetingData = { id: id || 'meet_' + generateId(), date: document.getElementById('meetingDate').value, venue: document.getElementById('meetingVenue').value, agenda: document.getElementById('meetingAgenda').value };
@@ -1119,6 +1179,7 @@
                 renderMeetTableBody();
             });
             window.deleteMeeting = function(id) { 
+                if (!hasPermission('manageMeetings')) { showToast('Permission denied.', 'error'); return; }
                 showConfirmDialog('Delete Meeting', 'Are you sure you want to delete this meeting?', function() {
                     let meetings = getData(STORAGE_KEYS.meetings, []).filter(m => m.id !== id); 
                     setData(STORAGE_KEYS.meetings, meetings); 
@@ -1136,12 +1197,12 @@
             }
 
             window.openUserModal = function(id = null) {
+                if (!hasPermission('manageUsers')) { showToast('Permission denied.', 'error'); return; }
                 const form = document.getElementById('userForm');
                 form.reset();
                 document.getElementById('userId').value = '';
                 document.getElementById('userModalTitle').textContent = id ? 'Edit User' : 'Add User';
                 
-                // Render permissions list dynamically
                 const permList = document.getElementById('permissionList');
                 permList.innerHTML = ALL_PERMISSIONS.map(p => `
                     <div class="permission-item">
@@ -1155,29 +1216,27 @@
                         document.getElementById('userId').value = u.id;
                         document.getElementById('userFullName').value = u.name;
                         document.getElementById('userUsername').value = u.username;
-                        document.getElementById('userPassword').value = ''; // Don't show password hash
+                        document.getElementById('userPassword').value = '';
                         document.getElementById('userRoleSelect').value = u.role;
-                        // Set checkboxes based on saved permissions
                         ALL_PERMISSIONS.forEach(p => {
                             const chk = document.getElementById(`perm_${p.key}`);
                             if (chk) chk.checked = u.permissions && u.permissions[p.key];
                         });
                     }
                 } else {
-                    // Default to admin role and check all boxes
                     document.getElementById('userRoleSelect').value = 'admin';
                     applyDefaultPermissions('admin');
                 }
                 openModal('userModal');
             };
 
-            // Add listener for role change to auto-fill permissions
             document.getElementById('userRoleSelect').addEventListener('change', function() {
                 applyDefaultPermissions(this.value);
             });
 
             document.getElementById('userForm').addEventListener('submit', function(e) {
                 e.preventDefault();
+                if (!hasPermission('manageUsers')) { showToast('Permission denied.', 'error'); return; }
                 const id = document.getElementById('userId').value;
                 const name = document.getElementById('userFullName').value;
                 const username = document.getElementById('userUsername').value;
@@ -1186,38 +1245,32 @@
                 
                 let users = getData(STORAGE_KEYS.users, []);
                 
-                // Check if username exists (if new user)
                 if (!id && users.find(u => u.username === username)) {
                     showToast('Username already exists!', 'error');
                     return;
                 }
                 
-                // Gather permissions from checkboxes
                 const permissions = {};
                 ALL_PERMISSIONS.forEach(p => {
                     const chk = document.getElementById(`perm_${p.key}`);
                     permissions[p.key] = chk ? chk.checked : false;
                 });
-                // Admin always gets all permissions
                 if (role === 'admin') {
                     ALL_PERMISSIONS.forEach(p => permissions[p.key] = true);
                 }
                 
                 if (id) {
-                    // Editing
                     const idx = users.findIndex(u => u.id === id);
                     if (idx > -1) {
                         users[idx].name = name;
                         users[idx].username = username;
                         users[idx].role = role;
                         users[idx].permissions = permissions;
-                        // Update password only if provided
                         if (password) {
                             users[idx].passwordHash = hashPassword(password);
                         }
                     }
                 } else {
-                    // New
                     users.push({
                         id: 'user_' + generateId(),
                         username: username,
@@ -1236,6 +1289,7 @@
             });
 
             window.deleteUser = function(id) {
+                if (!hasPermission('manageUsers')) { showToast('Permission denied.', 'error'); return; }
                 showConfirmDialog('Delete User', 'Are you sure you want to delete this user?', function() {
                     let users = getData(STORAGE_KEYS.users, []).filter(u => u.id !== id);
                     setData(STORAGE_KEYS.users, users);
@@ -1321,12 +1375,12 @@
             document.getElementById('sidebarOverlay').addEventListener('click', closeSidebar);
             
             function handleAddRecord() {
-                if (currentPage === 'members') openMemberModal();
-                else if (currentPage === 'transactions') openTransactionModal();
-                else if (currentPage === 'banking') openBankingModal();
-                else if (currentPage === 'meetings') openMeetingModal();
-                else if (currentPage === 'settings') openUserModal();
-                else showToast('Navigate to a specific page to add records', 'info');
+                if (currentPage === 'members' && hasPermission('addMember')) openMemberModal();
+                else if (currentPage === 'transactions' && hasPermission('addTransaction')) openTransactionModal();
+                else if (currentPage === 'banking' && hasPermission('manageBanking')) openBankingModal();
+                else if (currentPage === 'meetings' && hasPermission('manageMeetings')) openMeetingModal();
+                else if (currentPage === 'settings' && hasPermission('manageUsers')) openUserModal();
+                else showToast('You do not have permission to add records here', 'error');
             }
             document.getElementById('topbarAddBtn').addEventListener('click', handleAddRecord);
             document.getElementById('fabAddBtn').addEventListener('click', handleAddRecord);
