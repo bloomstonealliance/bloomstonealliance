@@ -4,208 +4,190 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bloomstone Alliance - Fund Manager (Nepal)</title>
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --sidebar-bg: #0f172a;
-            --sidebar-hover: #1e293b;
-            --sidebar-text: #94a3b8;
-            --sidebar-active: #0d9488;
-            --sidebar-active-bg: rgba(13, 148, 136, 0.15);
-            --primary: #0d9488;
-            --primary-hover: #0f766e;
-            --primary-light: #ccfbf1;
-            --bg: #f1f5f9;
-            --card-bg: #ffffff;
-            --text: #1e293b;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-            --success: #10b981;
-            --success-bg: #d1fae5;
-            --warning: #f59e0b;
-            --warning-bg: #fef3c7;
-            --danger: #ef4444;
-            --danger-bg: #fee2e2;
-            --info: #3b82f6;
-            --info-bg: #dbeafe;
-            --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
-            --radius: 12px;
-            --radius-sm: 8px;
-            --sidebar-width: 250px;
-            --sidebar-collapsed-width: 70px;
-            --transition: 0.2s ease;
-            --input-bg: #f8fafc;
-            --table-header-bg: #f8fafc;
-            --hover-bg: #f8fafc;
+            --sidebar-bg: #0f172a; --sidebar-hover: #1e293b; --sidebar-text: #94a3b8;
+            --sidebar-active: #14b8a6; --sidebar-active-bg: rgba(20, 184, 166, 0.15);
+            --primary: #0d9488; --primary-hover: #0f766e; --primary-light: #ccfbf1;
+            --bg: #f8fafc; --card-bg: #ffffff; --text: #0f172a; --text-muted: #64748b;
+            --border: #e2e8f0; --success: #10b981; --success-bg: #d1fae5;
+            --warning: #f59e0b; --warning-bg: #fef3c7; --danger: #ef4444; --danger-bg: #fee2e2;
+            --info: #3b82f6; --info-bg: #dbeafe;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.12);
+            --radius: 16px; --radius-sm: 10px;
+            --sidebar-width: 260px; --sidebar-collapsed-width: 72px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --input-bg: #f1f5f9; --table-header-bg: #f8fafc; --hover-bg: #f1f5f9;
         }
-
         [data-theme="dark"] {
-            --bg: #0f172a;
-            --card-bg: #1e293b;
-            --text: #e2e8f0;
-            --text-muted: #94a3b8;
-            --border: #334155;
-            --primary-light: #134e4a;
-            --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
-            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.3), 0 4px 6px -2px rgba(0,0,0,0.2);
-            --input-bg: #0f172a;
-            --table-header-bg: #0f172a;
-            --hover-bg: #2d3a4f;
-            --success-bg: #064e3b;
-            --danger-bg: #7f1d1d;
-            --warning-bg: #78350f;
-            --info-bg: #1e3a8a;
+            --bg: #0f172a; --card-bg: #1e293b; --text: #e2e8f0; --text-muted: #94a3b8;
+            --border: #334155; --primary-light: #134e4a;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+            --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+            --input-bg: #0f172a; --table-header-bg: #0f172a; --hover-bg: #2d3a4f;
+            --success-bg: #064e3b; --danger-bg: #7f1d1d; --warning-bg: #78350f; --info-bg: #1e3a8a;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; overflow-x: hidden; }
-
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; overflow-x: hidden; transition: background 0.3s ease, color 0.3s ease; }
         .login-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0f172a 0%, #0d9488 50%, #0f766e 100%); padding: 20px; position: relative; overflow: hidden; }
-        .login-container::before { content: ''; position: absolute; top: -50%; right: -30%; width: 80%; height: 100%; background: rgba(255,255,255,0.03); border-radius: 50%; transform: rotate(25deg); pointer-events: none; }
-        .login-container::after { content: ''; position: absolute; bottom: -40%; left: -20%; width: 70%; height: 90%; background: rgba(255,255,255,0.02); border-radius: 50%; pointer-events: none; }
-        .login-box { background: var(--card-bg); border-radius: 20px; padding: 48px 40px; width: 100%; max-width: 420px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.35); position: relative; z-index: 1; animation: slideUp 0.5s ease; }
+        .login-container::before { content: ''; position: absolute; top: -40%; right: -20%; width: 80%; height: 100%; background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.08), transparent 60%); border-radius: 50%; pointer-events: none; }
+        .login-container::after { content: ''; position: absolute; bottom: -30%; left: -20%; width: 70%; height: 90%; background: radial-gradient(circle at 70% 70%, rgba(255,255,255,0.06), transparent 60%); border-radius: 50%; pointer-events: none; }
+        .login-box { background: var(--card-bg); border-radius: 24px; padding: 48px 40px; width: 100%; max-width: 430px; box-shadow: var(--shadow-xl); position: relative; z-index: 1; animation: slideUp 0.5s ease; backdrop-filter: blur(20px); background: rgba(255,255,255,0.85); }
+        [data-theme="dark"] .login-box { background: rgba(30, 41, 59, 0.9); }
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         .login-logo { text-align: center; margin-bottom: 32px; }
-        .login-logo .logo-icon { width: 64px; height: 64px; background: var(--primary); border-radius: 16px; display: inline-flex; align-items: center; justify-content: center; font-size: 32px; color: #fff; margin-bottom: 16px; box-shadow: 0 8px 16px -4px rgba(13,148,136,0.4); }
-        .login-logo h1 { font-size: 24px; font-weight: 700; color: var(--text); letter-spacing: -0.5px; }
+        .login-logo .logo-icon { width: 72px; height: 72px; background: linear-gradient(135deg, #0d9488, #0f766e); border-radius: 20px; display: inline-flex; align-items: center; justify-content: center; font-size: 36px; color: #fff; margin-bottom: 16px; box-shadow: 0 12px 24px -6px rgba(13,148,136,0.5); }
+        .login-logo h1 { font-size: 26px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
         .login-logo p { color: var(--text-muted); font-size: 14px; margin-top: 4px; }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; letter-spacing: 0.3px; }
         .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: var(--radius-sm); font-size: 14px; color: var(--text); transition: all var(--transition); background: var(--input-bg); font-family: inherit; }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--primary); background: var(--card-bg); box-shadow: 0 0 0 3px rgba(13,148,136,0.1); }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--primary); background: var(--card-bg); box-shadow: 0 0 0 4px rgba(13,148,136,0.12); }
         .form-group textarea { resize: vertical; min-height: 80px; }
         .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; transition: all var(--transition); text-decoration: none; letter-spacing: 0.3px; font-family: inherit; white-space: nowrap; }
-        .btn-primary { background: var(--primary); color: #fff; }
-        .btn-primary:hover { background: var(--primary-hover); box-shadow: 0 4px 12px -2px rgba(13,148,136,0.4); transform: translateY(-1px); }
+        .btn-primary { background: linear-gradient(135deg, #0d9488, #0f766e); color: #fff; box-shadow: 0 4px 14px rgba(13,148,136,0.35); }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(13,148,136,0.5); }
         .btn-secondary { background: var(--border); color: var(--text); }
-        .btn-secondary:hover { background: var(--text-muted); color: var(--card-bg); }
-        .btn-danger { background: var(--danger); color: #fff; }
-        .btn-danger:hover { background: #dc2626; box-shadow: 0 4px 12px -2px rgba(239,68,68,0.4); }
-        .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 6px; }
+        .btn-secondary:hover { background: #cbd5e1; }
+        .btn-danger { background: #ef4444; color: #fff; box-shadow: 0 4px 14px rgba(239,68,68,0.35); }
+        .btn-danger:hover { background: #dc2626; box-shadow: 0 8px 20px rgba(239,68,68,0.5); }
+        .btn-sm { padding: 6px 14px; font-size: 12px; border-radius: 8px; }
         .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
         .btn-outline:hover { background: var(--primary); color: #fff; }
         .btn-block { width: 100%; }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
         .login-error { background: var(--danger-bg); color: var(--danger); padding: 12px 16px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; margin-bottom: 16px; display: none; border: 1px solid #fca5a5; }
         .login-error.show { display: block; animation: shake 0.3s ease; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
-        .login-hint { text-align: center; margin-top: 20px; font-size: 12px; color: var(--text-muted); }
-
         .app-container { display: none; min-height: 100vh; }
         .app-container.active { display: flex; }
-        .sidebar { width: var(--sidebar-width); background: var(--sidebar-bg); min-height: 100vh; position: fixed; top: 0; left: 0; bottom: 0; display: flex; flex-direction: column; z-index: 100; transition: width var(--transition); overflow: hidden; }
+        .sidebar { width: var(--sidebar-width); background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%); min-height: 100vh; position: fixed; top: 0; left: 0; bottom: 0; display: flex; flex-direction: column; z-index: 100; transition: width var(--transition); overflow: hidden; box-shadow: 4px 0 20px rgba(0,0,0,0.1); }
         .sidebar.collapsed { width: var(--sidebar-collapsed-width); }
-        .sidebar.collapsed .sidebar-header h2, .sidebar.collapsed .sidebar-header p, 
-        .sidebar.collapsed .nav-item span:not(.nav-icon), 
-        .sidebar.collapsed .sidebar-footer .user-info { display: none; }
+        .sidebar.collapsed .sidebar-header h2, .sidebar.collapsed .sidebar-header p, .sidebar.collapsed .nav-item span:not(.nav-icon), .sidebar.collapsed .sidebar-footer .user-info { display: none; }
         .sidebar.collapsed .sidebar-header { justify-content: center; padding: 20px 0; }
         .sidebar.collapsed .nav-item { justify-content: center; padding: 11px 0; }
         .sidebar.collapsed .nav-item .nav-icon { margin-right: 0; }
         .sidebar.collapsed .sidebar-footer { justify-content: center; padding: 16px 0; }
         .sidebar.collapsed .user-avatar { margin: 0; }
-        .sidebar-header { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; gap: 12px; }
-        .sidebar-header .logo-icon { width: 40px; height: 40px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #fff; flex-shrink: 0; }
-        .sidebar-header h2 { font-size: 16px; color: #fff; font-weight: 700; letter-spacing: -0.3px; line-height: 1.2; }
-        .sidebar-header p { font-size: 11px; color: var(--sidebar-text); letter-spacing: 0.5px; }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 12px; }
+        .sidebar-header .logo-icon { width: 44px; height: 44px; background: linear-gradient(135deg, #0d9488, #0f766e); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #fff; flex-shrink: 0; box-shadow: 0 8px 16px -4px rgba(13,148,136,0.4); }
+        .sidebar-header h2 { font-size: 18px; color: #fff; font-weight: 800; letter-spacing: -0.3px; line-height: 1.2; }
+        .sidebar-header p { font-size: 11px; color: var(--sidebar-text); letter-spacing: 0.8px; }
         .sidebar-nav { flex: 1; padding: 16px 12px; overflow-y: auto; }
-        .sidebar-nav .nav-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #475569; font-weight: 700; padding: 0 12px; margin-bottom: 8px; margin-top: 16px; }
+        .sidebar-nav .nav-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: #475569; font-weight: 700; padding: 0 12px; margin-bottom: 8px; margin-top: 16px; }
         .sidebar.collapsed .sidebar-nav .nav-label { display: none; }
         .sidebar-nav .nav-label:first-child { margin-top: 0; }
-        .nav-item { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: 10px; cursor: pointer; color: var(--sidebar-text); transition: all var(--transition); margin-bottom: 4px; font-size: 14px; font-weight: 500; user-select: none; border: none; background: transparent; width: 100%; text-align: left; font-family: inherit; }
-        .nav-item:hover { background: var(--sidebar-hover); color: #e2e8f0; }
-        .nav-item.active { background: var(--sidebar-active-bg); color: var(--sidebar-active); font-weight: 600; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: 12px; cursor: pointer; color: var(--sidebar-text); transition: all var(--transition); margin-bottom: 4px; font-size: 14px; font-weight: 500; user-select: none; border: none; background: transparent; width: 100%; text-align: left; font-family: inherit; }
+        .nav-item:hover { background: var(--sidebar-hover); color: #e2e8f0; transform: translateX(2px); }
+        .nav-item.active { background: var(--sidebar-active-bg); color: var(--sidebar-active); font-weight: 600; box-shadow: inset 0 0 0 1px rgba(20,184,166,0.2); }
         .nav-item .nav-icon { font-size: 18px; width: 24px; text-align: center; flex-shrink: 0; }
         .nav-item .nav-badge { margin-left: auto; background: var(--primary); color: #fff; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
         .sidebar.collapsed .nav-item .nav-badge { display: none; }
-        .sidebar-footer { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; gap: 12px; }
-        .sidebar-footer .user-avatar { width: 36px; height: 36px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 14px; flex-shrink: 0; }
+        .sidebar-footer { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 12px; }
+        .sidebar-footer .user-avatar { width: 38px; height: 38px; background: linear-gradient(135deg, #0d9488, #0f766e); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 15px; flex-shrink: 0; }
         .sidebar-footer .user-info { flex: 1; min-width: 0; }
         .sidebar-footer .user-name { font-size: 13px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .sidebar-footer .user-role { font-size: 11px; color: var(--sidebar-text); text-transform: capitalize; }
-        .sidebar-footer .btn-logout { background: transparent; border: none; color: var(--sidebar-text); cursor: pointer; font-size: 18px; padding: 6px; border-radius: 6px; transition: all var(--transition); flex-shrink: 0; }
-        .sidebar-footer .btn-logout:hover { color: var(--danger); background: rgba(239,68,68,0.1); }
-
+        .sidebar-footer .btn-logout { background: transparent; border: none; color: var(--sidebar-text); cursor: pointer; font-size: 18px; padding: 6px; border-radius: 8px; transition: all var(--transition); flex-shrink: 0; }
+        .sidebar-footer .btn-logout:hover { color: var(--danger); background: rgba(239,68,68,0.15); }
         .main-content { flex: 1; margin-left: var(--sidebar-width); padding: 0; min-height: 100vh; background: var(--bg); transition: margin-left var(--transition); }
         .main-content.collapsed { margin-left: var(--sidebar-collapsed-width); }
-        .topbar { background: var(--card-bg); padding: 16px 32px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; box-shadow: var(--shadow); }
-        .topbar h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; color: var(--text); }
+        .topbar { background: rgba(255,255,255,0.8); backdrop-filter: blur(12px); padding: 16px 32px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+        [data-theme="dark"] .topbar { background: rgba(30,41,59,0.8); }
+        .topbar h1 { font-size: 20px; font-weight: 800; letter-spacing: -0.4px; color: var(--text); }
         .topbar .topbar-actions { display: flex; align-items: center; gap: 12px; }
         .topbar .date-display { font-size: 13px; color: var(--text-muted); font-weight: 500; }
         .page-content { padding: 24px 32px; max-width: 1400px; }
         .mobile-toggle { display: none; background: transparent; border: none; font-size: 24px; cursor: pointer; color: var(--text); padding: 4px; }
-
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
-        .stat-card { background: var(--card-bg); border-radius: var(--radius); padding: 20px 24px; box-shadow: var(--shadow); transition: all var(--transition); border: 1px solid var(--border); }
-        .stat-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
-        .stat-card .stat-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 12px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: var(--card-bg); border-radius: var(--radius); padding: 20px 24px; box-shadow: var(--shadow); transition: all var(--transition); border: 1px solid var(--border); position: relative; overflow: hidden; }
+        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--primary), transparent); }
+        .stat-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); }
+        .stat-card .stat-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 12px; }
         .stat-card .stat-icon.teal { background: var(--primary-light); color: var(--primary); }
         .stat-card .stat-icon.green { background: var(--success-bg); color: var(--success); }
         .stat-card .stat-icon.blue { background: var(--info-bg); color: var(--info); }
         .stat-card .stat-icon.orange { background: var(--warning-bg); color: var(--warning); }
         .stat-card .stat-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); font-weight: 600; margin-bottom: 4px; }
-        .stat-card .stat-value { font-size: 28px; font-weight: 700; letter-spacing: -1px; color: var(--text); }
+        .stat-card .stat-value { font-size: 28px; font-weight: 800; letter-spacing: -1px; color: var(--text); }
         .stat-card .stat-sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
         .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
-        .card { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; }
+        .card { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; transition: box-shadow var(--transition); }
+        .card:hover { box-shadow: var(--shadow-lg); }
         .card-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
-        .card-header h3 { font-size: 16px; font-weight: 600; color: var(--text); }
+        .card-header h3 { font-size: 16px; font-weight: 700; color: var(--text); }
         .card-body { padding: 20px; }
         .card-body.no-padding { padding: 0; }
         canvas#fundChart { width: 100% !important; height: 250px !important; }
         .table-wrapper { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; font-size: 14px; }
-        table th { text-align: left; padding: 12px 16px; background: var(--table-header-bg); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); font-weight: 700; border-bottom: 2px solid var(--border); white-space: nowrap; }
+        table th { text-align: left; padding: 12px 16px; background: var(--table-header-bg); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); font-weight: 700; border-bottom: 2px solid var(--border); white-space: nowrap; }
         table td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text); }
-        table tr:hover td { background: var(--hover-bg); }
-        .badge { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; letter-spacing: 0.3px; }
+        table tbody tr { transition: background 0.15s ease; }
+        table tbody tr:hover { background: var(--hover-bg); }
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 999px; font-size: 11px; font-weight: 600; letter-spacing: 0.3px; }
         .badge-success { background: var(--success-bg); color: var(--success); }
         .badge-danger { background: var(--danger-bg); color: var(--danger); }
         .badge-warning { background: var(--warning-bg); color: var(--warning); }
         .badge-info { background: var(--info-bg); color: var(--info); }
         .badge-primary { background: var(--primary-light); color: var(--primary); }
         .badge-muted { background: var(--input-bg); color: var(--text-muted); }
-
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); animation: fadeIn 0.2s ease; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15,23,42,0.55); z-index: 200; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(6px); animation: fadeIn 0.2s ease; }
         .modal-overlay.active { display: flex; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .modal { background: var(--card-bg); border-radius: 16px; padding: 28px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); animation: modalIn 0.25s ease; }
+        .modal { background: var(--card-bg); border-radius: 20px; padding: 28px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-xl); animation: modalIn 0.25s ease; }
         @keyframes modalIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
         .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-        .modal-header h2 { font-size: 18px; font-weight: 700; color: var(--text); }
-        .modal-close { background: transparent; border: none; font-size: 24px; cursor: pointer; color: var(--text-muted); padding: 4px 8px; border-radius: 6px; transition: all var(--transition); line-height: 1; }
+        .modal-header h2 { font-size: 20px; font-weight: 800; color: var(--text); }
+        .modal-close { background: transparent; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted); padding: 4px 10px; border-radius: 8px; transition: all var(--transition); line-height: 1; }
         .modal-close:hover { background: var(--hover-bg); color: var(--text); }
         .modal-footer { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
         .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
-
-        .permission-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; padding: 12px; background: var(--input-bg); border-radius: var(--radius-sm); border: 1px solid var(--border); }
-        .permission-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: var(--card-bg); border-radius: 6px; border: 1px solid var(--border); }
+        .permission-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; padding: 12px; background: var(--input-bg); border-radius: var(--radius-sm); border: 1px solid var(--border); max-height: 280px; overflow-y: auto; }
+        .permission-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border); }
         .permission-item label { font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px; color: var(--text); }
         .permission-item input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer; }
-
+        .toggle-switch { position: relative; width: 40px; height: 22px; cursor: pointer; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #cbd5e1; border-radius: 999px; transition: all 0.3s ease; }
+        .toggle-slider::before { content: ''; position: absolute; width: 18px; height: 18px; border-radius: 50%; background: #fff; top: 2px; left: 2px; transition: all 0.3s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        .toggle-switch input:checked + .toggle-slider { background: var(--primary); }
+        .toggle-switch input:checked + .toggle-slider::before { transform: translateX(18px); }
         .toast-container { position: fixed; top: 20px; right: 20px; z-index: 300; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
-        .toast { padding: 14px 20px; border-radius: 10px; color: #fff; font-weight: 500; font-size: 14px; box-shadow: 0 8px 16px -4px rgba(0,0,0,0.2); animation: toastIn 0.3s ease, toastOut 0.3s ease 2.5s forwards; pointer-events: auto; min-width: 280px; max-width: 400px; }
+        .toast { padding: 14px 20px; border-radius: 12px; color: #fff; font-weight: 500; font-size: 14px; box-shadow: 0 8px 16px -4px rgba(0,0,0,0.2); animation: toastIn 0.3s ease, toastOut 0.3s ease 2.5s forwards; pointer-events: auto; min-width: 280px; max-width: 400px; }
         .toast-success { background: var(--success); }
         .toast-error { background: var(--danger); }
         .toast-info { background: var(--info); }
         .toast-warning { background: var(--warning); color: #1e293b; }
         @keyframes toastIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
         @keyframes toastOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(30px); } }
-
         .empty-state { text-align: center; padding: 48px 20px; color: var(--text-muted); }
         .empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
         .empty-state h4 { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
         .empty-state p { font-size: 13px; }
-
+        .user-actions { display: flex; gap: 6px; align-items: center; }
+        .btn-icon { background: transparent; border: none; cursor: pointer; padding: 6px; border-radius: 8px; font-size: 14px; transition: all var(--transition); color: var(--text-muted); }
+        .btn-icon:hover { background: var(--hover-bg); color: var(--text); }
+        .btn-icon.delete:hover { background: var(--danger-bg); color: var(--danger); }
+        .search-input, .filter-select { padding: 8px 14px; border: 2px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; transition: all var(--transition); font-family: inherit; background: var(--input-bg); color: var(--text); }
+        .search-input { width: 100%; max-width: 300px; }
+        .search-input:focus, .filter-select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(13,148,136,0.12); }
+        .card-header-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .import-hint { font-size: 12px; color: var(--text-muted); margin-top: 8px; background: var(--input-bg); padding: 8px 12px; border-radius: 8px; border: 1px dashed var(--border); }
+        .import-hint code { background: var(--card-bg); padding: 2px 6px; border-radius: 4px; }
         @media (max-width: 1024px) { .dashboard-grid { grid-template-columns: 1fr; } }
         @media (max-width: 768px) {
             .sidebar { transform: translateX(-100%); box-shadow: var(--shadow-lg); width: var(--sidebar-width); }
             .sidebar.collapsed { width: var(--sidebar-width); }
             .sidebar.open { transform: translateX(0); }
+            .sidebar.open.collapsed { width: var(--sidebar-width); }
             .main-content { margin-left: 0; }
             .main-content.collapsed { margin-left: 0; }
             .mobile-toggle { display: block; }
@@ -221,22 +203,10 @@
             .sidebar-overlay.active { display: block; }
         }
         @media (max-width: 480px) { .stats-grid { grid-template-columns: 1fr; } .login-box { padding: 24px 16px; border-radius: 16px; } }
-
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-
-        .user-actions { display: flex; gap: 6px; align-items: center; }
-        .btn-icon { background: transparent; border: none; cursor: pointer; padding: 6px; border-radius: 6px; font-size: 14px; transition: all var(--transition); color: var(--text-muted); }
-        .btn-icon:hover { background: var(--hover-bg); color: var(--text); }
-        .btn-icon.delete:hover { background: var(--danger-bg); color: var(--danger); }
-
-        .search-input { padding: 8px 14px; border: 2px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; width: 100%; max-width: 300px; transition: all var(--transition); font-family: inherit; background: var(--input-bg); color: var(--text); }
-        .search-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(13,148,136,0.1); }
-        .filter-select { padding: 8px 12px; border: 2px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; background: var(--input-bg); font-family: inherit; transition: all var(--transition); color: var(--text); }
-        .filter-select:focus { outline: none; border-color: var(--primary); }
-        .card-header-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
     </style>
 </head>
 <body>
@@ -252,7 +222,7 @@
             </div>
             <div class="login-error" id="loginError"></div>
             <form id="loginForm" autocomplete="off">
-                <div class="form-group"><label for="loginEmail">Email</label><input type="email" id="loginEmail" required></div>
+                <div class="form-group"><label for="loginUsername">Username</label><input type="text" id="loginUsername" required></div>
                 <div class="form-group"><label for="loginPassword">Password</label><input type="password" id="loginPassword" required></div>
                 <button type="submit" class="btn btn-primary btn-block">Sign In</button>
             </form>
@@ -290,6 +260,7 @@
             </div>
         </aside>
 
+        <!-- Main Content -->
         <main class="main-content" id="mainContent">
             <div class="topbar">
                 <div style="display:flex;align-items:center;gap:12px;">
@@ -307,7 +278,7 @@
         </main>
     </div>
 
-    <!-- Modals (keep all essential ones) -->
+    <!-- Modals -->
     <div class="modal-overlay" id="memberModal">
         <div class="modal">
             <div class="modal-header"><h2 id="memberModalTitle">Add Member</h2><button class="modal-close" data-close="memberModal">✕</button></div>
@@ -329,7 +300,7 @@
                 <div class="form-group" style="margin-top:16px; border-top:1px solid var(--border); padding-top:16px;">
                     <label style="font-weight:600;">User Account (optional)</label>
                     <div class="form-row">
-                        <div class="form-group"><label>Email</label><input type="email" id="memberUserEmail" placeholder="e.g. member@bloomstone.np"></div>
+                        <div class="form-group"><label>Username</label><input type="text" id="memberUserUsername" placeholder="e.g. adaeze"></div>
                         <div class="form-group"><label>Password</label><input type="password" id="memberUserPassword" placeholder="Password"></div>
                     </div>
                 </div>
@@ -390,7 +361,7 @@
                 <input type="hidden" id="userId">
                 <div class="form-row">
                     <div class="form-group"><label>Name *</label><input type="text" id="userFullName" required></div>
-                    <div class="form-group"><label>Email *</label><input type="email" id="userEmail" required></div>
+                    <div class="form-group"><label>Username *</label><input type="text" id="userUsername" required></div>
                 </div>
                 <div class="form-row">
                     <div class="form-group"><label>Password *</label><input type="password" id="userPassword" required></div>
@@ -411,615 +382,607 @@
         </div>
     </div>
 
-    <!-- Firebase Config and Initialization -->
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyDvv8UTRCO7JSyj83FSsLS5kE4QllfiFQ8",
-            authDomain: "bloomstone-alliance.firebaseapp.com",
-            projectId: "bloomstone-alliance",
-            storageBucket: "bloomstone-alliance.firebasestorage.app",
-            messagingSenderId: "85994919777",
-            appId: "1:85994919777:web:e0ec61df4bae920dced720"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        const auth = firebase.auth();
-    </script>
+    <!-- Import Modal (Restore Backup) -->
+    <div class="modal-overlay" id="importModal">
+        <div class="modal" style="max-width:480px;">
+            <div class="modal-header"><h2>Restore Backup</h2><button class="modal-close" data-close="importModal">✕</button></div>
+            <div class="form-group">
+                <label>Select JSON backup file</label>
+                <input type="file" id="importFileInput" accept=".json">
+                <div class="import-hint">
+                    File must contain: <code>users</code>, <code>members</code>, <code>transactions</code>, <code>banking</code>, <code>meetings</code>, <code>settings</code>
+                </div>
+            </div>
+            <div class="modal-footer"><button type="button" class="btn btn-secondary" data-close="importModal">Cancel</button><button type="button" class="btn btn-primary" id="importConfirmBtn">Restore</button></div>
+        </div>
+    </div>
 
-    <!-- Main Application Script -->
     <script>
         (function() {
             'use strict';
 
-            // State
-            let state = {
-                users: [],
-                members: [],
-                transactions: [],
-                banking: [],
-                meetings: [],
-                settings: { interestRate: 6.5, orgDetails: { name: 'Bloomstone Alliance', address: '', phone: '', email: '', website: '', registrationNo: '' } },
-                currentUser: null
-            };
-
-            const ALL_PERMISSIONS = [
-                { key: 'viewDashboard', label: 'View Dashboard' },
-                { key: 'viewMembers', label: 'View Members' },
-                { key: 'addMember', label: 'Add Member' },
-                { key: 'editMember', label: 'Edit Member' },
-                { key: 'deleteMember', label: 'Delete Member' },
-                { key: 'viewTransactions', label: 'View Amount Records' },
-                { key: 'addTransaction', label: 'Record Income/Expense/Investment' },
-                { key: 'editTransaction', label: 'Edit Transaction' },
-                { key: 'deleteTransaction', label: 'Delete Transaction' },
-                { key: 'viewBanking', label: 'View Banking' },
-                { key: 'manageBanking', label: 'Manage Banking' },
-                { key: 'viewMeetings', label: 'View Meetings' },
-                { key: 'manageMeetings', label: 'Manage Meetings' },
-                { key: 'manageUsers', label: 'Manage Users' },
-                { key: 'accessSettings', label: 'Access Settings' },
-                { key: 'changeOwnCredential', label: 'Change Own Credential' }
-            ];
-
-            function getDefaultPermissions(role) {
-                const p = {};
-                ALL_PERMISSIONS.forEach(perm => p[perm.key] = false);
-                if (role === 'admin') { ALL_PERMISSIONS.forEach(perm => p[perm.key] = true); }
-                else if (role === 'manager') {
-                    p.viewDashboard = true; p.viewMembers = true; p.addMember = true; p.editMember = true;
-                    p.viewTransactions = true; p.addTransaction = true; p.editTransaction = true;
-                    p.viewBanking = true; p.manageBanking = true; p.viewMeetings = true; p.manageMeetings = true;
-                }
-                else if (role === 'viewer') {
-                    p.viewDashboard = true; p.viewMembers = true; p.viewTransactions = true; p.viewBanking = true; p.viewMeetings = true;
-                }
-                else if (role === 'member') {
-                    p.viewDashboard = true; p.viewMembers = true; p.viewTransactions = true; p.viewBanking = true; p.viewMeetings = true;
-                    p.accessSettings = true; p.changeOwnCredential = true;
-                }
-                return p;
-            }
-
-            // Utility
+            // ------------------------------------------------------------
+            // Helpers & Storage
+            // ------------------------------------------------------------
+            function generateId() { return Date.now().toString(36) + Math.random().toString(36).substr(2, 6); }
+            function hashPassword(str) { let hash = 5381; for (let i = 0; i < str.length; i++) { hash = ((hash << 5) + hash) + str.charCodeAt(i); hash = hash & 0x7fffffff; } return 'h_' + hash.toString(36) + '_' + str.length; }
             function formatCurrency(amount) { return 'Rs. ' + Number(amount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
             function formatDate(dateStr) { if (!dateStr) return '-'; const d = new Date(dateStr + 'T00:00:00'); if (isNaN(d.getTime())) return dateStr; return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }); }
             function getTodayStr() { return new Date().toISOString().split('T')[0]; }
             function escapeHtml(str) { if (!str) return ''; const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
             function showToast(message, type) { type = type || 'success'; const container = document.getElementById('toastContainer'); const toast = document.createElement('div'); toast.className = 'toast toast-' + type; toast.textContent = message; container.appendChild(toast); setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 3000); }
-            function capitalizeFirst(str) { return str.charAt(0).toUpperCase() + str.slice(1); }
-            function getTypeBadge(type) { const map = { contribution: 'badge-success', withdrawal: 'badge-danger', return: 'badge-info', expense: 'badge-warning', investment: 'badge-warning', other: 'badge-muted' }; return map[type] || 'badge-muted'; }
-            function hasPermission(permKey) { const user = state.currentUser; if (!user) return false; if (user.role === 'admin') return true; return user.permissions && user.permissions[permKey] === true; }
 
-            // Real-time listeners
-            function setupListeners() {
-                db.collection('users').onSnapshot(snapshot => {
-                    state.users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    if (auth.currentUser) {
-                        const user = state.users.find(u => u.uid === auth.currentUser.uid);
-                        if (user) { state.currentUser = user; updateSidebarUser(); }
+            const STORAGE_KEYS = { users: 'bloomstone_users', members: 'bloomstone_members', transactions: 'bloomstone_transactions', banking: 'bloomstone_banking', meetings: 'bloomstone_meetings', settings: 'bloomstone_settings', session: 'bloomstone_session', theme: 'bloomstone_theme' };
+            function getData(key, defaultVal) { try { const raw = localStorage.getItem(key); if (raw === null) return defaultVal; return JSON.parse(raw); } catch (e) { console.error(e); return defaultVal; } }
+            function setData(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); return true; } catch (e) { console.error(e); showToast('Failed to save data.', 'error'); return false; } }
+
+            // ------------------------------------------------------------
+            // Permissions & Init Data
+            // ------------------------------------------------------------
+            const ALL_PERMISSIONS = [
+                { key: 'viewDashboard', label: 'View Dashboard' }, { key: 'viewMembers', label: 'View Members' }, { key: 'addMember', label: 'Add Member' }, { key: 'editMember', label: 'Edit Member' }, { key: 'deleteMember', label: 'Delete Member' }, { key: 'viewTransactions', label: 'View Amount Records' }, { key: 'addTransaction', label: 'Record Income/Expense/Investment' }, { key: 'editTransaction', label: 'Edit Transaction' }, { key: 'deleteTransaction', label: 'Delete Transaction' }, { key: 'viewBanking', label: 'View Banking' }, { key: 'manageBanking', label: 'Manage Banking' }, { key: 'viewMeetings', label: 'View Meetings' }, { key: 'manageMeetings', label: 'Manage Meetings' }, { key: 'manageUsers', label: 'Manage Users' }, { key: 'accessSettings', label: 'Access Settings' }, { key: 'changeOwnCredential', label: 'Change Own Credential' }
+            ];
+            function getDefaultPermissions(role) { const p = {}; ALL_PERMISSIONS.forEach(perm => p[perm.key] = false); if (role === 'admin') { ALL_PERMISSIONS.forEach(perm => p[perm.key] = true); } else if (role === 'manager') { p.viewDashboard = true; p.viewMembers = true; p.addMember = true; p.editMember = true; p.viewTransactions = true; p.addTransaction = true; p.editTransaction = true; p.viewBanking = true; p.manageBanking = true; p.viewMeetings = true; p.manageMeetings = true; } else if (role === 'viewer') { p.viewDashboard = true; p.viewMembers = true; p.viewTransactions = true; p.viewBanking = true; p.viewMeetings = true; } else if (role === 'member') { p.viewDashboard = true; p.viewMembers = true; p.viewTransactions = true; p.viewBanking = true; p.viewMeetings = true; p.accessSettings = true; p.changeOwnCredential = true; } return p; }
+            function initData() {
+                let users = getData(STORAGE_KEYS.users, null);
+                if (!users || users.length === 0) {
+                    users = [{ id: 'admin_' + generateId(), username: 'admin', passwordHash: hashPassword('admin123'), name: 'System Administrator', role: 'admin', permissions: getDefaultPermissions('admin'), createdAt: new Date().toISOString(), active: true }];
+                    setData(STORAGE_KEYS.users, users);
+                }
+                const emptyCollections = ['members', 'transactions', 'banking', 'meetings'];
+                for (const k of emptyCollections) { if (getData(STORAGE_KEYS[k], null) === null) { setData(STORAGE_KEYS[k], []); } }
+                let settings = getData(STORAGE_KEYS.settings, null);
+                if (!settings) { settings = { interestRate: 6.5, orgDetails: { name: 'Bloomstone Alliance', address: 'Kathmandu, Nepal', phone: '01-XXXXXXX', email: 'info@bloomstone.np', website: 'www.bloomstone.np', registrationNo: '12345' } }; setData(STORAGE_KEYS.settings, settings); } else if (!settings.orgDetails) { settings.orgDetails = { name: 'Bloomstone Alliance', address: 'Kathmandu, Nepal', phone: '01-XXXXXXX', email: 'info@bloomstone.np', website: 'www.bloomstone.np', registrationNo: '12345' }; setData(STORAGE_KEYS.settings, settings); }
+            }
+
+            // ------------------------------------------------------------
+            // Session
+            // ------------------------------------------------------------
+            function getSession() { const session = getData(STORAGE_KEYS.session, null); if (!session) return null; const users = getData(STORAGE_KEYS.users, []); const user = users.find(u => u.id === session.userId && u.active); if (!user) { localStorage.removeItem(STORAGE_KEYS.session); return null; } return { userId: user.id, username: user.username, name: user.name, role: user.role, permissions: user.permissions, linkedMemberId: user.linkedMemberId || null }; }
+            function setSession(userId) { const users = getData(STORAGE_KEYS.users, []); const user = users.find(u => u.id === userId); if (!user) return null; const session = { userId: user.id, loginAt: new Date().toISOString() }; setData(STORAGE_KEYS.session, session); return session; }
+            function clearSession() { localStorage.removeItem(STORAGE_KEYS.session); }
+            function hasPermission(permKey) { const session = getSession(); if (!session) return false; if (session.role === 'admin') return true; return session.permissions && session.permissions[permKey] === true; }
+
+            // ------------------------------------------------------------
+            // Theme & Sidebar
+            // ------------------------------------------------------------
+            function applyTheme(theme) { document.documentElement.setAttribute('data-theme', theme); localStorage.setItem(STORAGE_KEYS.theme, JSON.stringify(theme)); const btn = document.getElementById('themeToggle'); if (btn) btn.textContent = theme === 'dark' ? '☀️' : '🌙'; }
+            function toggleTheme() { const current = document.documentElement.getAttribute('data-theme') || 'light'; const next = current === 'light' ? 'dark' : 'light'; applyTheme(next); }
+            function toggleSidebar() { const sidebar = document.getElementById('sidebar'); const mainContent = document.getElementById('mainContent'); sidebar.classList.toggle('collapsed'); mainContent.classList.toggle('collapsed'); const isCollapsed = sidebar.classList.contains('collapsed'); document.getElementById('sidebarToggle').textContent = isCollapsed ? '▶' : '◀'; }
+            function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarOverlay').classList.remove('active'); }
+
+            // ------------------------------------------------------------
+            // Navigation & Rendering
+            // ------------------------------------------------------------
+            let currentPage = 'dashboard';
+            function navigateTo(page) {
+                const session = getSession();
+                if (!session) { showLogin(); return; }
+                if (page === 'settings' && !hasPermission('accessSettings') && session.role !== 'admin') { showToast('Access denied.', 'error'); return; }
+                if (page === 'banking' && !hasPermission('viewBanking')) { showToast('Access denied.', 'error'); return; }
+                if (page === 'meetings' && !hasPermission('viewMeetings')) { showToast('Access denied.', 'error'); return; }
+                if (page === 'members' && !hasPermission('viewMembers')) { showToast('Access denied.', 'error'); return; }
+                if (page === 'transactions' && !hasPermission('viewTransactions')) { showToast('Access denied.', 'error'); return; }
+
+                currentPage = page;
+                document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+                const activeNav = document.querySelector(`.nav-item[data-page="${page}"]`);
+                if (activeNav) activeNav.classList.add('active');
+                
+                const titles = { dashboard: 'Dashboard', members: 'Members', transactions: 'Amount Records', banking: 'Banking', meetings: 'Meetings', settings: 'Settings' };
+                document.getElementById('pageTitle').textContent = titles[page] || 'Dashboard';
+                closeSidebar();
+
+                const content = document.getElementById('pageContent');
+                content.innerHTML = '<div class="empty-state"><div class="empty-icon">⏳</div><h4>Loading...</h4></div>';
+                
+                setTimeout(() => {
+                    switch(page) {
+                        case 'dashboard': renderDashboard(); break;
+                        case 'members': renderMembers(); break;
+                        case 'transactions': renderTransactions(); break;
+                        case 'banking': renderBanking(); break;
+                        case 'meetings': renderMeetings(); break;
+                        case 'settings': renderSettings(); break;
                     }
-                });
-                db.collection('members').onSnapshot(snapshot => {
-                    state.members = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    if (currentPage === 'members') renderPage('members');
-                    if (currentPage === 'dashboard') renderPage('dashboard');
-                });
-                db.collection('transactions').onSnapshot(snapshot => {
-                    state.transactions = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    if (currentPage === 'transactions') renderPage('transactions');
-                    if (currentPage === 'dashboard') renderPage('dashboard');
-                });
-                db.collection('banking').onSnapshot(snapshot => {
-                    state.banking = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    if (currentPage === 'banking') renderPage('banking');
-                    if (currentPage === 'dashboard') renderPage('dashboard');
-                });
-                db.collection('meetings').onSnapshot(snapshot => {
-                    state.meetings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    if (currentPage === 'meetings') renderPage('meetings');
-                });
-                db.collection('settings').doc('app_settings').onSnapshot(doc => {
-                    if (doc.exists) state.settings = doc.data();
-                    if (currentPage === 'settings') renderPage('settings');
-                });
+                }, 50);
             }
 
-            // Initial data setup
-            async function ensureDefaultData() {
-                const settingsRef = db.collection('settings').doc('app_settings');
-                const settingsDoc = await settingsRef.get();
-                if (!settingsDoc.exists) {
-                    await settingsRef.set({
-                        interestRate: 6.5,
-                        orgDetails: { name: 'Bloomstone Alliance', address: '', phone: '', email: '', website: '', registrationNo: '' }
-                    });
-                }
-                const adminEmail = 'admin@bloomstone.np';
-                const usersRef = db.collection('users');
-                const adminQuery = await usersRef.where('email', '==', adminEmail).get();
-                if (adminQuery.empty) {
-                    try {
-                        const cred = await auth.createUserWithEmailAndPassword(adminEmail, 'admin123');
-                        await usersRef.doc(cred.user.uid).set({
-                            uid: cred.user.uid,
-                            name: 'System Administrator',
-                            email: adminEmail,
-                            role: 'admin',
-                            permissions: getDefaultPermissions('admin'),
-                            active: true,
-                            linkedMemberId: null,
-                            createdAt: new Date().toISOString()
-                        });
-                    } catch (e) { console.error('Error creating admin:', e); }
-                }
+            function renderDashboard() {
+                const transactions = getData(STORAGE_KEYS.transactions, []);
+                const members = getData(STORAGE_KEYS.members, []);
+                const banking = getData(STORAGE_KEYS.banking, []);
+                let totalIncome = 0, totalExpense = 0;
+                transactions.forEach(t => { if (t.type === 'contribution' || t.type === 'return') totalIncome += Number(t.amount); else totalExpense += Number(t.amount); });
+                const bankBalance = banking.reduce((acc, b) => b.type === 'deposit' || b.type === 'interest' ? acc + Number(b.amount) : acc - Number(b.amount), 0);
+                const content = document.getElementById('pageContent');
+                content.innerHTML = `
+                    <div class="stats-grid">
+                        <div class="stat-card"><div class="stat-icon teal">💰</div><div class="stat-label">Total Fund Balance</div><div class="stat-value">${formatCurrency(totalIncome - totalExpense)}</div><div class="stat-sub">Net position</div></div>
+                        <div class="stat-card"><div class="stat-icon green">📈</div><div class="stat-label">Total Income</div><div class="stat-value">${formatCurrency(totalIncome)}</div><div class="stat-sub">Contributions & Returns</div></div>
+                        <div class="stat-card"><div class="stat-icon orange">📉</div><div class="stat-label">Total Expenses</div><div class="stat-value">${formatCurrency(totalExpense)}</div><div class="stat-sub">Withdrawals & Expenses</div></div>
+                        <div class="stat-card"><div class="stat-icon blue">🏦</div><div class="stat-label">Bank Balance</div><div class="stat-value">${formatCurrency(bankBalance)}</div><div class="stat-sub">All accounts</div></div>
+                    </div>
+                    <div class="dashboard-grid">
+                        <div class="card"><div class="card-header"><h3>Recent Transactions</h3></div><div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Member</th><th>Type</th><th>Amount</th><th>Date</th></tr></thead><tbody>${transactions.slice(-5).reverse().map(t => { const m = members.find(mem => mem.id === t.memberId); return `<tr><td>${m ? escapeHtml(m.name) : 'Unknown'}</td><td><span class="badge badge-info">${t.type}</span></td><td>${formatCurrency(t.amount)}</td><td>${formatDate(t.date)}</td></tr>`; }).join('') || `<tr><td colspan="4" style="text-align:center; padding: 30px;">No transactions yet</td></tr>`}</tbody></table></div></div></div>
+                        <div class="card"><div class="card-header"><h3>Fund Growth</h3></div><div class="card-body"><canvas id="fundChart"></canvas><p style="text-align:center; color:var(--text-muted); margin-top:10px;">Chart requires Chart.js (not included in this demo)</p></div></div>
+                    </div>
+                `;
             }
 
-            // Authentication
-            document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            function renderMembers() {
+                const members = getData(STORAGE_KEYS.members, []);
+                const content = document.getElementById('pageContent');
+                content.innerHTML = `
+                    <div class="card">
+                        <div class="card-header"><h3>Members List</h3><div class="card-header-actions"><input type="text" class="search-input" placeholder="Search members..." id="memberSearch"><button class="btn btn-primary btn-sm" onclick="openMemberModal()">+ Add Member</button></div></div>
+                        <div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Name</th><th>Position</th><th>Role</th><th>Join Date</th><th>Status</th><th>Actions</th></tr></thead><tbody>${members.map(m => `<tr><td>${escapeHtml(m.name)}</td><td>${escapeHtml(m.position)}</td><td><span class="badge badge-primary">${m.role}</span></td><td>${formatDate(m.joinDate)}</td><td><span class="badge ${m.status === 'active' ? 'badge-success' : 'badge-danger'}">${m.status}</span></td><td><div class="user-actions"><button class="btn-icon" onclick="openMemberModal('${m.id}')">✏️</button><button class="btn-icon delete" onclick="deleteMember('${m.id}')">🗑️</button></div></td></tr>`).join('') || `<tr><td colspan="6" style="text-align:center; padding: 30px;">No members found</td></tr>`}</tbody></table></div></div>
+                    </div>
+                `;
+            }
+
+            function renderTransactions() {
+                const transactions = getData(STORAGE_KEYS.transactions, []);
+                const members = getData(STORAGE_KEYS.members, []);
+                const content = document.getElementById('pageContent');
+                content.innerHTML = `
+                    <div class="card"><div class="card-header"><h3>Amount Records</h3><div class="card-header-actions"><button class="btn btn-primary btn-sm" onclick="openTransactionModal()">+ Record Amount</button></div></div><div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Member</th><th>Type</th><th>Amount</th><th>Date</th><th>Description</th><th>Actions</th></tr></thead><tbody>${transactions.map(t => { const m = members.find(mem => mem.id === t.memberId); return `<tr><td>${m ? escapeHtml(m.name) : 'Unknown'}</td><td><span class="badge badge-info">${t.type}</span></td><td>${formatCurrency(t.amount)}</td><td>${formatDate(t.date)}</td><td>${escapeHtml(t.description)}</td><td><div class="user-actions"><button class="btn-icon" onclick="openTransactionModal('${t.id}')">✏️</button><button class="btn-icon delete" onclick="deleteTransaction('${t.id}')">🗑️</button></div></td></tr>`; }).join('') || `<tr><td colspan="6" style="text-align:center; padding: 30px;">No transactions found</td></tr>`}</tbody></table></div></div></div>
+                `;
+            }
+
+            function renderBanking() {
+                const banking = getData(STORAGE_KEYS.banking, []);
+                const content = document.getElementById('pageContent');
+                content.innerHTML = `
+                    <div class="card"><div class="card-header"><h3>Bank Transactions</h3><div class="card-header-actions"><button class="btn btn-primary btn-sm" onclick="openBankingModal()">+ Add Bank Record</button></div></div><div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Type</th><th>Amount</th><th>Date</th><th>Bank</th><th>Description</th><th>Actions</th></tr></thead><tbody>${banking.map(b => `<tr><td><span class="badge ${b.type === 'deposit' || b.type === 'interest' ? 'badge-success' : 'badge-danger'}">${b.type}</span></td><td>${formatCurrency(b.amount)}</td><td>${formatDate(b.date)}</td><td>${escapeHtml(b.account)}</td><td>${escapeHtml(b.description)}</td><td><div class="user-actions">${b.linkedTxnId ? '<span class="badge badge-muted">Auto</span>' : `<button class="btn-icon" onclick="openBankingModal('${b.id}')">✏️</button><button class="btn-icon delete" onclick="deleteBanking('${b.id}')">🗑️</button>`}</div></td></tr>`).join('') || `<tr><td colspan="6" style="text-align:center; padding: 30px;">No bank records found</td></tr>`}</tbody></table></div></div></div>
+                `;
+            }
+
+            function renderMeetings() {
+                const meetings = getData(STORAGE_KEYS.meetings, []);
+                const content = document.getElementById('pageContent');
+                content.innerHTML = `
+                    <div class="card"><div class="card-header"><h3>Meetings</h3><div class="card-header-actions"><button class="btn btn-primary btn-sm" onclick="openMeetingModal()">+ Add Meeting</button></div></div><div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Date</th><th>Venue</th><th>Agenda</th><th>Actions</th></tr></thead><tbody>${meetings.map(m => `<tr><td>${formatDate(m.date)}</td><td>${escapeHtml(m.venue)}</td><td>${escapeHtml(m.agenda)}</td><td><div class="user-actions"><button class="btn-icon" onclick="openMeetingModal('${m.id}')">✏️</button><button class="btn-icon delete" onclick="deleteMeeting('${m.id}')">🗑️</button></div></td></tr>`).join('') || `<tr><td colspan="4" style="text-align:center; padding: 30px;">No meetings found</td></tr>`}</tbody></table></div></div></div>
+                `;
+            }
+
+            function renderSettings() {
+                const settings = getData(STORAGE_KEYS.settings, {});
+                const content = document.getElementById('pageContent');
+                content.innerHTML = `
+                    <div class="dashboard-grid">
+                        <div class="card"><div class="card-header"><h3>Organization Details</h3></div><div class="card-body"><form id="orgDetailsForm"><div class="form-group"><label>Organization Name</label><input type="text" id="orgName" value="${escapeHtml(settings.orgDetails?.name || '')}"></div><div class="form-group"><label>Address</label><input type="text" id="orgAddress" value="${escapeHtml(settings.orgDetails?.address || '')}"></div><div class="form-row"><div class="form-group"><label>Phone</label><input type="text" id="orgPhone" value="${escapeHtml(settings.orgDetails?.phone || '')}"></div><div class="form-group"><label>Email</label><input type="email" id="orgEmail" value="${escapeHtml(settings.orgDetails?.email || '')}"></div></div><div class="form-row"><div class="form-group"><label>Website</label><input type="text" id="orgWebsite" value="${escapeHtml(settings.orgDetails?.website || '')}"></div><div class="form-group"><label>Registration No.</label><input type="text" id="orgReg" value="${escapeHtml(settings.orgDetails?.registrationNo || '')}"></div></div><button type="submit" class="btn btn-primary btn-block">Save Organization Details</button></form></div></div>
+                        <div class="card"><div class="card-header"><h3>Data Management</h3></div><div class="card-body"><p style="color:var(--text-muted); margin-bottom: 16px;">Backup your data to a JSON file or restore it from a previous backup.</p><div style="display: flex; gap: 12px; flex-wrap: wrap;"><button class="btn btn-secondary" onclick="exportBackup()">📥 Export Backup</button><button class="btn btn-outline" onclick="openModal('importModal')">📤 Restore Backup</button></div></div></div>
+                    </div>
+                    <div class="card" style="margin-top: 24px;">
+                        <div class="card-header"><h3>User Management</h3><div class="card-header-actions"><button class="btn btn-primary btn-sm" onclick="openUserModal()">+ Add User</button></div></div>
+                        <div class="card-body no-padding">
+                            <div class="table-wrapper">
+                                <table>
+                                    <thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
+                                    <tbody id="userTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('orgDetailsForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    settings.orgDetails = { name: document.getElementById('orgName').value, address: document.getElementById('orgAddress').value, phone: document.getElementById('orgPhone').value, email: document.getElementById('orgEmail').value, website: document.getElementById('orgWebsite').value, registrationNo: document.getElementById('orgReg').value };
+                    setData(STORAGE_KEYS.settings, settings);
+                    showToast('Organization details saved!', 'success');
+                });
+                renderUsersTable();
+            }
+
+            function renderUsersTable() {
+                const users = getData(STORAGE_KEYS.users, []);
+                const tbody = document.getElementById('userTableBody');
+                if (!tbody) return;
+                tbody.innerHTML = users.map(u => `
+                    <tr>
+                        <td>${escapeHtml(u.name)}</td>
+                        <td>${escapeHtml(u.username)}</td>
+                        <td><span class="badge badge-primary">${u.role}</span></td>
+                        <td><span class="badge ${u.active ? 'badge-success' : 'badge-danger'}">${u.active ? 'Active' : 'Inactive'}</span></td>
+                        <td>
+                            <div class="user-actions">
+                                <button class="btn-icon" onclick="openUserModal('${u.id}')">✏️</button>
+                                ${u.username !== 'admin' ? `<button class="btn-icon delete" onclick="deleteUser('${u.id}')">🗑️</button>` : ''}
+                            </div>
+                        </td>
+                    </tr>
+                `).join('') || `<tr><td colspan="5" style="text-align:center; padding: 30px;">No users found</td></tr>`;
+            }
+
+            // ------------------------------------------------------------
+            // Modal & CRUD Logic
+            // ------------------------------------------------------------
+            window.openModal = function(modalId) { document.getElementById(modalId).classList.add('active'); };
+            window.closeModal = function(modalId) { document.getElementById(modalId).classList.remove('active'); if (modalId === 'importModal') { document.getElementById('importFileInput').value = ''; } };
+            document.querySelectorAll('[data-close]').forEach(btn => { btn.addEventListener('click', function() { closeModal(this.getAttribute('data-close')); }); });
+
+            // --- Members ---
+            window.openMemberModal = function(id = null) {
+                const form = document.getElementById('memberForm');
+                form.reset();
+                document.getElementById('memberId').value = '';
+                document.getElementById('memberModalTitle').textContent = id ? 'Edit Member' : 'Add Member';
+                if (id) {
+                    const m = getData(STORAGE_KEYS.members, []).find(x => x.id === id);
+                    if (m) {
+                        document.getElementById('memberId').value = m.id;
+                        document.getElementById('memberName').value = m.name;
+                        document.getElementById('memberEmail').value = m.email || '';
+                        document.getElementById('memberPhone').value = m.phone || '';
+                        document.getElementById('memberPosition').value = m.position;
+                        document.getElementById('memberRole').value = m.role;
+                        document.getElementById('memberJoinDate').value = m.joinDate;
+                        document.getElementById('memberStatus').value = m.status;
+                    }
+                } else { document.getElementById('memberJoinDate').value = getTodayStr(); }
+                openModal('memberModal');
+            };
+            document.getElementById('memberForm').addEventListener('submit', function(e) {
                 e.preventDefault();
-                const email = document.getElementById('loginEmail').value.trim();
-                const password = document.getElementById('loginPassword').value;
-                const errorEl = document.getElementById('loginError');
-                errorEl.classList.remove('show');
-                try {
-                    await auth.signInWithEmailAndPassword(email, password);
-                } catch (err) {
-                    errorEl.textContent = err.message;
-                    errorEl.classList.add('show');
+                const id = document.getElementById('memberId').value;
+                let members = getData(STORAGE_KEYS.members, []);
+                const memberData = { id: id || 'mem_' + generateId(), name: document.getElementById('memberName').value, email: document.getElementById('memberEmail').value, phone: document.getElementById('memberPhone').value, position: document.getElementById('memberPosition').value, role: document.getElementById('memberRole').value, joinDate: document.getElementById('memberJoinDate').value, status: document.getElementById('memberStatus').value };
+                if (id) { const idx = members.findIndex(m => m.id === id); if (idx > -1) members[idx] = { ...members[idx], ...memberData }; } else { members.push(memberData); }
+                setData(STORAGE_KEYS.members, members);
+                closeModal('memberModal');
+                showToast('Member saved successfully!', 'success');
+                renderMembers();
+            });
+            window.deleteMember = function(id) { if (!confirm('Are you sure you want to delete this member?')) return; let members = getData(STORAGE_KEYS.members, []).filter(m => m.id !== id); setData(STORAGE_KEYS.members, members); showToast('Member deleted.', 'success'); renderMembers(); };
+
+            // --- Transactions (Auto-adjusts Banking) ---
+            window.openTransactionModal = function(id = null) {
+                const form = document.getElementById('transactionForm');
+                form.reset();
+                document.getElementById('transactionId').value = '';
+                document.getElementById('transactionModalTitle').textContent = id ? 'Edit Transaction' : 'Record Amount';
+                const members = getData(STORAGE_KEYS.members, []);
+                const select = document.getElementById('transactionMemberId');
+                select.innerHTML = '<option value="">Select member...</option>' + members.map(m => `<option value="${m.id}">${escapeHtml(m.name)}</option>`).join('');
+                if (id) {
+                    const t = getData(STORAGE_KEYS.transactions, []).find(x => x.id === id);
+                    if (t) {
+                        document.getElementById('transactionId').value = t.id;
+                        document.getElementById('transactionMemberId').value = t.memberId;
+                        document.getElementById('transactionType').value = t.type;
+                        document.getElementById('transactionAmount').value = t.amount;
+                        document.getElementById('transactionDate').value = t.date;
+                        document.getElementById('transactionDescription').value = t.description || '';
+                    }
+                } else { document.getElementById('transactionDate').value = getTodayStr(); }
+                openModal('transactionModal');
+            };
+            document.getElementById('transactionForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const id = document.getElementById('transactionId').value;
+                let transactions = getData(STORAGE_KEYS.transactions, []);
+                let banking = getData(STORAGE_KEYS.banking, []);
+                
+                const memberId = document.getElementById('transactionMemberId').value;
+                const member = getData(STORAGE_KEYS.members, []).find(m => m.id === memberId);
+                const memberName = member ? member.name : 'Unknown';
+                
+                const transData = { 
+                    id: id || 'txn_' + generateId(), 
+                    memberId: memberId, 
+                    type: document.getElementById('transactionType').value, 
+                    amount: parseFloat(document.getElementById('transactionAmount').value), 
+                    date: document.getElementById('transactionDate').value, 
+                    description: document.getElementById('transactionDescription').value 
+                };
+                
+                if (id) { 
+                    const idx = transactions.findIndex(t => t.id === id); 
+                    if (idx > -1) transactions[idx] = { ...transactions[idx], ...transData }; 
+                    // Remove old auto-linked banking record if it exists
+                    banking = banking.filter(b => b.linkedTxnId !== id);
+                } else { 
+                    transactions.push(transData); 
                 }
+                setData(STORAGE_KEYS.transactions, transactions);
+                
+                // Auto-create Banking Record
+                const isIncome = ['contribution', 'return'].includes(transData.type);
+                // Treat 'investment' as an expense/withdrawal from bank for auto-adjustment
+                const bankType = isIncome ? 'deposit' : 'withdrawal';
+                
+                banking.push({
+                    id: 'bank_auto_' + transData.id,
+                    type: bankType,
+                    amount: transData.amount,
+                    date: transData.date,
+                    account: 'Auto-adjusted',
+                    description: `Auto: ${transData.type} for ${memberName}`,
+                    linkedTxnId: transData.id
+                });
+                setData(STORAGE_KEYS.banking, banking);
+                
+                closeModal('transactionModal');
+                showToast('Transaction saved and banking auto-adjusted!', 'success');
+                renderTransactions();
             });
+            window.deleteTransaction = function(id) { 
+                if (!confirm('Delete this transaction?')) return; 
+                let transactions = getData(STORAGE_KEYS.transactions, []).filter(t => t.id !== id); 
+                setData(STORAGE_KEYS.transactions, transactions); 
+                
+                // Also delete the linked banking record
+                let banking = getData(STORAGE_KEYS.banking, []).filter(b => b.linkedTxnId !== id);
+                setData(STORAGE_KEYS.banking, banking);
+                
+                showToast('Transaction deleted.', 'success'); 
+                renderTransactions(); 
+            };
 
-            document.getElementById('logoutBtn').addEventListener('click', function() {
-                auth.signOut();
-                state.currentUser = null;
-                showLogin();
+            // --- Banking ---
+            window.openBankingModal = function(id = null) {
+                const form = document.getElementById('bankingForm');
+                form.reset();
+                document.getElementById('bankingId').value = '';
+                document.getElementById('bankingModalTitle').textContent = id ? 'Edit Bank Transaction' : 'Add Bank Transaction';
+                if (id) {
+                    const b = getData(STORAGE_KEYS.banking, []).find(x => x.id === id);
+                    if (b) {
+                        document.getElementById('bankingId').value = b.id;
+                        document.getElementById('bankingType').value = b.type;
+                        document.getElementById('bankingAmount').value = b.amount;
+                        document.getElementById('bankingDate').value = b.date;
+                        document.getElementById('bankingAccount').value = b.account || '';
+                        document.getElementById('bankingDescription').value = b.description || '';
+                    }
+                } else { document.getElementById('bankingDate').value = getTodayStr(); }
+                openModal('bankingModal');
+            };
+            document.getElementById('bankingForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const id = document.getElementById('bankingId').value;
+                let banking = getData(STORAGE_KEYS.banking, []);
+                const bankData = { id: id || 'bank_' + generateId(), type: document.getElementById('bankingType').value, amount: parseFloat(document.getElementById('bankingAmount').value), date: document.getElementById('bankingDate').value, account: document.getElementById('bankingAccount').value, description: document.getElementById('bankingDescription').value };
+                if (id) { const idx = banking.findIndex(b => b.id === id); if (idx > -1) banking[idx] = { ...banking[idx], ...bankData }; } else { banking.push(bankData); }
+                setData(STORAGE_KEYS.banking, banking);
+                closeModal('bankingModal');
+                showToast('Bank record saved!', 'success');
+                renderBanking();
             });
+            window.deleteBanking = function(id) { if (!confirm('Delete this record?')) return; let banking = getData(STORAGE_KEYS.banking, []).filter(b => b.id !== id); setData(STORAGE_KEYS.banking, banking); renderBanking(); };
 
-            auth.onAuthStateChanged(async user => {
-                if (user) {
-                    const userDoc = await db.collection('users').doc(user.uid).get();
-                    if (userDoc.exists) {
-                        state.currentUser = { id: userDoc.id, ...userDoc.data() };
-                        showApp();
-                    } else {
-                        auth.signOut();
-                        showLogin();
+            // --- Meetings ---
+            window.openMeetingModal = function(id = null) {
+                const form = document.getElementById('meetingForm');
+                form.reset();
+                document.getElementById('meetingId').value = '';
+                document.getElementById('meetingModalTitle').textContent = id ? 'Edit Meeting' : 'Add Meeting';
+                if (id) {
+                    const m = getData(STORAGE_KEYS.meetings, []).find(x => x.id === id);
+                    if (m) {
+                        document.getElementById('meetingId').value = m.id;
+                        document.getElementById('meetingDate').value = m.date;
+                        document.getElementById('meetingVenue').value = m.venue;
+                        document.getElementById('meetingAgenda').value = m.agenda;
+                    }
+                } else { document.getElementById('meetingDate').value = getTodayStr(); }
+                openModal('meetingModal');
+            };
+            document.getElementById('meetingForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const id = document.getElementById('meetingId').value;
+                let meetings = getData(STORAGE_KEYS.meetings, []);
+                const meetingData = { id: id || 'meet_' + generateId(), date: document.getElementById('meetingDate').value, venue: document.getElementById('meetingVenue').value, agenda: document.getElementById('meetingAgenda').value };
+                if (id) { const idx = meetings.findIndex(m => m.id === id); if (idx > -1) meetings[idx] = { ...meetings[idx], ...meetingData }; } else { meetings.push(meetingData); }
+                setData(STORAGE_KEYS.meetings, meetings);
+                closeModal('meetingModal');
+                showToast('Meeting saved!', 'success');
+                renderMeetings();
+            });
+            window.deleteMeeting = function(id) { if (!confirm('Delete this meeting?')) return; let meetings = getData(STORAGE_KEYS.meetings, []).filter(m => m.id !== id); setData(STORAGE_KEYS.meetings, meetings); renderMeetings(); };
+
+            // --- Users & Permissions ---
+            function applyDefaultPermissions(role) {
+                const perms = getDefaultPermissions(role);
+                ALL_PERMISSIONS.forEach(p => {
+                    const chk = document.getElementById(`perm_${p.key}`);
+                    if (chk) chk.checked = perms[p.key];
+                });
+            }
+
+            window.openUserModal = function(id = null) {
+                const form = document.getElementById('userForm');
+                form.reset();
+                document.getElementById('userId').value = '';
+                document.getElementById('userModalTitle').textContent = id ? 'Edit User' : 'Add User';
+                
+                // Render permissions list dynamically
+                const permList = document.getElementById('permissionList');
+                permList.innerHTML = ALL_PERMISSIONS.map(p => `
+                    <div class="permission-item">
+                        <label><input type="checkbox" id="perm_${p.key}" data-key="${p.key}"> ${p.label}</label>
+                    </div>
+                `).join('');
+                
+                if (id) {
+                    const u = getData(STORAGE_KEYS.users, []).find(x => x.id === id);
+                    if (u) {
+                        document.getElementById('userId').value = u.id;
+                        document.getElementById('userFullName').value = u.name;
+                        document.getElementById('userUsername').value = u.username;
+                        document.getElementById('userPassword').value = ''; // Don't show password hash
+                        document.getElementById('userRoleSelect').value = u.role;
+                        // Set checkboxes based on saved permissions
+                        ALL_PERMISSIONS.forEach(p => {
+                            const chk = document.getElementById(`perm_${p.key}`);
+                            if (chk) chk.checked = u.permissions && u.permissions[p.key];
+                        });
                     }
                 } else {
-                    state.currentUser = null;
-                    showLogin();
+                    // Default to admin role and check all boxes
+                    document.getElementById('userRoleSelect').value = 'admin';
+                    applyDefaultPermissions('admin');
                 }
+                openModal('userModal');
+            };
+
+            // Add listener for role change to auto-fill permissions
+            document.getElementById('userRoleSelect').addEventListener('change', function() {
+                applyDefaultPermissions(this.value);
             });
 
-            function showLogin() {
-                document.getElementById('loginView').style.display = 'flex';
-                document.getElementById('appView').classList.remove('active');
-                document.getElementById('appView').style.display = 'none';
-            }
+            document.getElementById('userForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const id = document.getElementById('userId').value;
+                const name = document.getElementById('userFullName').value;
+                const username = document.getElementById('userUsername').value;
+                const password = document.getElementById('userPassword').value;
+                const role = document.getElementById('userRoleSelect').value;
+                
+                let users = getData(STORAGE_KEYS.users, []);
+                
+                // Check if username exists (if new user)
+                if (!id && users.find(u => u.username === username)) {
+                    showToast('Username already exists!', 'error');
+                    return;
+                }
+                
+                // Gather permissions from checkboxes
+                const permissions = {};
+                ALL_PERMISSIONS.forEach(p => {
+                    const chk = document.getElementById(`perm_${p.key}`);
+                    permissions[p.key] = chk ? chk.checked : false;
+                });
+                // Admin always gets all permissions
+                if (role === 'admin') {
+                    ALL_PERMISSIONS.forEach(p => permissions[p.key] = true);
+                }
+                
+                if (id) {
+                    // Editing
+                    const idx = users.findIndex(u => u.id === id);
+                    if (idx > -1) {
+                        users[idx].name = name;
+                        users[idx].username = username;
+                        users[idx].role = role;
+                        users[idx].permissions = permissions;
+                        // Update password only if provided
+                        if (password) {
+                            users[idx].passwordHash = hashPassword(password);
+                        }
+                    }
+                } else {
+                    // New
+                    users.push({
+                        id: 'user_' + generateId(),
+                        username: username,
+                        name: name,
+                        passwordHash: hashPassword(password),
+                        role: role,
+                        permissions: permissions,
+                        createdAt: new Date().toISOString(),
+                        active: true
+                    });
+                }
+                setData(STORAGE_KEYS.users, users);
+                closeModal('userModal');
+                showToast('User saved successfully!', 'success');
+                renderUsersTable();
+            });
+
+            window.deleteUser = function(id) {
+                if (!confirm('Are you sure you want to delete this user?')) return;
+                let users = getData(STORAGE_KEYS.users, []).filter(u => u.id !== id);
+                setData(STORAGE_KEYS.users, users);
+                showToast('User deleted.', 'success');
+                renderUsersTable();
+            };
+
+            // ------------------------------------------------------------
+            // Backup & Restore
+            // ------------------------------------------------------------
+            window.exportBackup = function() {
+                const backupData = { users: getData(STORAGE_KEYS.users, []), members: getData(STORAGE_KEYS.members, []), transactions: getData(STORAGE_KEYS.transactions, []), banking: getData(STORAGE_KEYS.banking, []), meetings: getData(STORAGE_KEYS.meetings, []), settings: getData(STORAGE_KEYS.settings, {}), meta: { exportDate: new Date().toISOString(), version: '1.0' } };
+                const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a'); a.href = url; a.download = `bloomstone-backup-${getTodayStr()}.json`;
+                document.body.appendChild(a); a.click(); document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showToast('Backup exported successfully!', 'success');
+            };
+            document.getElementById('importConfirmBtn').addEventListener('click', function() {
+                const fileInput = document.getElementById('importFileInput');
+                if (!fileInput.files || fileInput.files.length === 0) { showToast('Please select a JSON backup file first.', 'error'); return; }
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        const requiredKeys = ['users', 'members', 'transactions', 'banking', 'meetings', 'settings'];
+                        for (let key of requiredKeys) { if (!data[key] && key !== 'settings') { throw new Error(`Invalid backup file: Missing '${key}'`); } }
+                        setData(STORAGE_KEYS.users, data.users); setData(STORAGE_KEYS.members, data.members); setData(STORAGE_KEYS.transactions, data.transactions); setData(STORAGE_KEYS.banking, data.banking); setData(STORAGE_KEYS.meetings, data.meetings); setData(STORAGE_KEYS.settings, data.settings);
+                        showToast('Backup restored successfully! Reloading...', 'success');
+                        closeModal('importModal');
+                        setTimeout(() => { window.location.reload(); }, 1500);
+                    } catch (err) { console.error('Restore failed:', err); showToast('Failed to restore backup: ' + err.message, 'error'); }
+                };
+                reader.onerror = function() { showToast('Failed to read the file.', 'error'); };
+                reader.readAsText(file);
+            });
+
+            // ------------------------------------------------------------
+            // Init App
+            // ------------------------------------------------------------
+            function showLogin() { document.getElementById('loginView').style.display = 'flex'; document.getElementById('appView').classList.remove('active'); }
             function showApp() {
                 document.getElementById('loginView').style.display = 'none';
                 document.getElementById('appView').classList.add('active');
-                document.getElementById('appView').style.display = 'flex';
-                updateSidebarUser();
-                navigateTo('dashboard');
-            }
-            function updateSidebarUser() {
-                const user = state.currentUser;
-                if (!user) return;
-                document.getElementById('sidebarAvatar').textContent = user.name ? user.name.charAt(0).toUpperCase() : 'U';
-                document.getElementById('sidebarUsername').textContent = user.name || user.email;
-                document.getElementById('sidebarRole').textContent = user.role;
-                const settingsNav = document.getElementById('settingsNavItem');
-                if (user.role === 'admin' || hasPermission('accessSettings')) settingsNav.style.display = 'flex';
-                else settingsNav.style.display = 'none';
-                document.querySelectorAll('.nav-item[data-page="meetings"]').forEach(item => {
-                    if (hasPermission('viewMeetings')) item.style.display = 'flex';
-                    else item.style.display = 'none';
-                });
+                const session = getSession();
+                if (session) {
+                    document.getElementById('sidebarAvatar').textContent = session.name.charAt(0).toUpperCase();
+                    document.getElementById('sidebarUsername').textContent = session.name;
+                    document.getElementById('sidebarRole').textContent = session.role;
+                    navigateTo('dashboard');
+                } else { showLogin(); }
             }
 
-            // Router
-            let currentPage = 'dashboard';
-            function navigateTo(page) {
-                if (!state.currentUser) return;
-                currentPage = page;
-                document.querySelectorAll('.nav-item').forEach(item => item.classList.toggle('active', item.dataset.page === page));
-                const titles = { dashboard: 'Dashboard', members: 'Members', transactions: 'Amount Records', banking: 'Banking', meetings: 'Meetings', settings: 'Settings' };
-                document.getElementById('pageTitle').textContent = titles[page] || 'Dashboard';
-                updateTopbarButton();
-                renderPage(page);
-                closeSidebar();
-            }
-            function updateTopbarButton() {
-                const btn = document.getElementById('topbarAddBtn');
-                if (!state.currentUser) return;
-                if (currentPage === 'members' && hasPermission('addMember')) { btn.textContent = '+ Add Member'; btn.style.display = 'inline-flex'; btn.onclick = () => openMemberModal(); }
-                else if (currentPage === 'transactions' && hasPermission('addTransaction')) { btn.textContent = '+ Record Amount'; btn.style.display = 'inline-flex'; btn.onclick = () => openTransactionModal(); }
-                else if (currentPage === 'banking' && hasPermission('manageBanking')) { btn.textContent = '+ Bank Transaction'; btn.style.display = 'inline-flex'; btn.onclick = () => openBankingModal(); }
-                else if (currentPage === 'meetings' && hasPermission('manageMeetings')) { btn.textContent = '+ Add Meeting'; btn.style.display = 'inline-flex'; btn.onclick = () => openMeetingModal(); }
-                else if (currentPage === 'settings' && hasPermission('manageUsers')) { btn.textContent = '+ Add User'; btn.style.display = 'inline-flex'; btn.onclick = () => openUserModal(); }
-                else { btn.style.display = 'none'; }
-            }
-            function renderPage(page) {
-                const content = document.getElementById('pageContent');
-                if (page === 'dashboard') renderDashboard(content);
-                else if (page === 'members') renderMembers(content);
-                else if (page === 'transactions') renderTransactions(content);
-                else if (page === 'banking') renderBanking(content);
-                else if (page === 'meetings') renderMeetings(content);
-                else if (page === 'settings') renderSettings(content);
-                updateTopbarButton();
-            }
-
-            // Rendering
-            function renderDashboard(container) {
-                const tx = state.transactions;
-                const totalContrib = tx.filter(t => t.type === 'contribution').reduce((s,t) => s + Number(t.amount), 0);
-                const totalWithd = tx.filter(t => t.type === 'withdrawal').reduce((s,t) => s + Number(t.amount), 0);
-                const totalReturns = tx.filter(t => t.type === 'return').reduce((s,t) => s + Number(t.amount), 0);
-                const totalExpenses = tx.filter(t => t.type === 'expense').reduce((s,t) => s + Number(t.amount), 0);
-                const totalInvest = tx.filter(t => t.type === 'investment').reduce((s,t) => s + Number(t.amount), 0);
-                const liquid = totalContrib + totalReturns - totalWithd - totalExpenses - totalInvest;
-                const totalWealth = liquid + totalInvest;
-                const activeMembers = state.members.filter(m => m.status === 'active').length;
-                const monthlyContrib = tx.filter(t => t.type === 'contribution' && t.date && t.date.startsWith(new Date().toISOString().split('T')[0].substring(0,7))).reduce((s,t) => s + Number(t.amount), 0);
-                const recentTx = [...tx].sort((a,b) => b.date.localeCompare(a.date)).slice(0,8);
-
-                container.innerHTML = `
-                    <div class="stats-grid">
-                        <div class="stat-card"><div class="stat-icon teal">💰</div><div class="stat-label">Liquid Fund</div><div class="stat-value">${formatCurrency(liquid)}</div><div class="stat-sub">Available cash</div></div>
-                        <div class="stat-card"><div class="stat-icon green">📈</div><div class="stat-label">Total Investments</div><div class="stat-value">${formatCurrency(totalInvest)}</div><div class="stat-sub">Fixed deposits & securities</div></div>
-                        <div class="stat-card"><div class="stat-icon blue">💹</div><div class="stat-label">Total Wealth</div><div class="stat-value">${formatCurrency(totalWealth)}</div><div class="stat-sub">Liquid + investments</div></div>
-                        <div class="stat-card"><div class="stat-icon orange">👥</div><div class="stat-label">Active Members</div><div class="stat-value">${activeMembers}</div><div class="stat-sub">of ${state.members.length} total</div></div>
-                        <div class="stat-card"><div class="stat-icon teal">📅</div><div class="stat-label">This Month's Contribution</div><div class="stat-value">${formatCurrency(monthlyContrib)}</div><div class="stat-sub">${new Date().toLocaleString('default', { month: 'long' })} ${new Date().getFullYear()}</div></div>
-                    </div>
-                    <div class="dashboard-grid">
-                        <div class="card"><div class="card-header"><h3>Fund Growth</h3></div><div class="card-body"><canvas id="fundChart"></canvas></div></div>
-                        <div class="card"><div class="card-header"><h3>Recent Transactions</h3><button class="btn btn-sm btn-secondary" onclick="navigateTo('transactions')">View All</button></div><div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Date</th><th>Member</th><th>Type</th><th>Amount</th></tr></thead><tbody>${recentTx.map(t => `<tr><td>${formatDate(t.date)}</td><td>${escapeHtml(t.memberName || '-')}</td><td><span class="badge ${getTypeBadge(t.type)}">${capitalizeFirst(t.type)}</span></td><td style="font-weight:600;color:${t.type === 'withdrawal' || t.type === 'expense' || t.type === 'investment' ? 'var(--danger)' : 'var(--success)'}">${t.type === 'withdrawal' || t.type === 'expense' || t.type === 'investment' ? '-' : '+'}${formatCurrency(t.amount)}</td></tr>`).join('')}${recentTx.length === 0 ? '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:24px;">No transactions</td></tr>' : ''}</tbody></table></div></div></div>
-                    </div>
-                    <div class="card"><div class="card-header"><h3>Transaction Summary</h3></div><div class="card-body"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;"><div><span style="color:var(--text-muted);font-size:13px;">Income:</span><br><strong style="font-size:18px;color:var(--success);">+${formatCurrency(totalContrib + totalReturns)}</strong></div><div><span style="color:var(--text-muted);font-size:13px;">Expenses:</span><br><strong style="font-size:18px;color:var(--danger);">-${formatCurrency(totalWithd + totalExpenses)}</strong></div><div><span style="color:var(--text-muted);font-size:13px;">Investments:</span><br><strong style="font-size:18px;color:var(--warning);">-${formatCurrency(totalInvest)}</strong></div></div></div></div>
-                `;
-                drawFundChart();
-            }
-
-            // ✅ drawFundChart function (placed inside IIFE)
-            function drawFundChart() {
-                const canvas = document.getElementById('fundChart');
-                if (!canvas) return;
-                let transactions = state.transactions;
-                const currentUser = state.currentUser;
-                if (currentUser && currentUser.role === 'member' && currentUser.linkedMemberId) {
-                    transactions = transactions.filter(t => t.memberId === currentUser.linkedMemberId);
-                }
-                const sorted = [...transactions].sort((a, b) => a.date.localeCompare(b.date));
-                const points = [];
-                let balance = 0;
-                for (const t of sorted) {
-                    const amount = Number(t.amount);
-                    if (t.type === 'contribution' || t.type === 'return' || t.type === 'other') {
-                        balance += amount;
-                    } else if (t.type === 'withdrawal' || t.type === 'expense' || t.type === 'investment') {
-                        balance -= amount;
-                    }
-                    points.push({ date: t.date, balance });
-                }
-                const rect = canvas.parentElement.getBoundingClientRect();
-                const dpr = window.devicePixelRatio || 1;
-                canvas.width = (rect.width || 500) * dpr;
-                canvas.height = 250 * dpr;
-                canvas.style.width = (rect.width || 500) + 'px';
-                canvas.style.height = '250px';
-                const ctx = canvas.getContext('2d');
-                ctx.scale(dpr, dpr);
-                const W = rect.width || 500;
-                const H = 250;
-                const padding = { top: 20, bottom: 35, left: 70, right: 20 };
-                const chartW = W - padding.left - padding.right;
-                const chartH = H - padding.top - padding.bottom;
-                ctx.clearRect(0, 0, W, H);
-                if (points.length < 2) {
-                    ctx.fillStyle = '#94a3b8';
-                    ctx.font = '14px sans-serif';
-                    ctx.textAlign = 'center';
-                    ctx.fillText('Not enough data', W / 2, H / 2);
-                    return;
-                }
-                const balances = points.map(p => p.balance);
-                const minB = Math.min(...balances, 0);
-                const maxB = Math.max(...balances, 1);
-                const range = maxB - minB || 1;
-                ctx.strokeStyle = '#e2e8f0';
-                ctx.lineWidth = 1;
-                for (let i = 0; i <= 5; i++) {
-                    const y = padding.top + (chartH / 5) * i;
-                    ctx.beginPath();
-                    ctx.moveTo(padding.left, y);
-                    ctx.lineTo(W - padding.right, y);
-                    ctx.stroke();
-                    ctx.fillStyle = '#64748b';
-                    ctx.font = '10px sans-serif';
-                    ctx.textAlign = 'right';
-                    ctx.fillText(formatCurrency(maxB - (range / 5) * i), padding.left - 8, y + 4);
-                }
-                const xStep = chartW / (points.length - 1);
-                ctx.beginPath();
-                ctx.strokeStyle = '#0d9488';
-                ctx.lineWidth = 2.5;
-                ctx.lineJoin = 'round';
-                points.forEach((p, i) => {
-                    const x = padding.left + i * xStep;
-                    const y = padding.top + chartH - ((p.balance - minB) / range) * chartH;
-                    if (i === 0) ctx.moveTo(x, y);
-                    else ctx.lineTo(x, y);
-                });
-                ctx.stroke();
-                ctx.lineTo(padding.left + (points.length - 1) * xStep, padding.top + chartH);
-                ctx.lineTo(padding.left, padding.top + chartH);
-                ctx.closePath();
-                const gradient = ctx.createLinearGradient(0, padding.top, 0, padding.top + chartH);
-                gradient.addColorStop(0, 'rgba(13, 148, 136, 0.2)');
-                gradient.addColorStop(1, 'rgba(13, 148, 136, 0.02)');
-                ctx.fillStyle = gradient;
-                ctx.fill();
-                points.forEach((p, i) => {
-                    const x = padding.left + i * xStep;
-                    const y = padding.top + chartH - ((p.balance - minB) / range) * chartH;
-                    ctx.beginPath();
-                    ctx.arc(x, y, 4, 0, Math.PI * 2);
-                    ctx.fillStyle = '#0d9488';
-                    ctx.fill();
-                    ctx.strokeStyle = '#fff';
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
-                });
-                ctx.fillStyle = '#64748b';
-                ctx.font = '10px sans-serif';
-                ctx.textAlign = 'center';
-                if (points.length >= 2) {
-                    ctx.fillText(formatDate(points[0].date), padding.left, H - 8);
-                    ctx.fillText(formatDate(points[points.length - 1].date), W - padding.right, H - 8);
-                }
-            }
-
-            function renderMembers(container) {
-                const members = state.members;
-                const searchTerm = container.dataset.search || '';
-                let filtered = members;
-                if (searchTerm) { const s = searchTerm.toLowerCase(); filtered = filtered.filter(m => m.name.toLowerCase().includes(s) || (m.email && m.email.toLowerCase().includes(s)) || (m.phone && m.phone.includes(s))); }
-                const canAdd = hasPermission('addMember'); const canEdit = hasPermission('editMember'); const canDelete = hasPermission('deleteMember');
-                let html = `<div class="card"><div class="card-header"><h3>Members (${filtered.length})</h3><div class="card-header-actions"><input type="text" class="search-input" id="memberSearchInput" placeholder="Search..." value="${escapeHtml(searchTerm)}">${canAdd ? '<button class="btn btn-primary btn-sm" onclick="openMemberModal()">+ Add Member</button>' : ''}</div></div><div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Name</th><th>Position</th><th>Role</th><th>Email</th><th>Phone</th><th>Status</th>${(canEdit || canDelete) ? '<th>Actions</th>' : ''}</tr></thead><tbody>${filtered.map(m => `<tr><td style="font-weight:600;">${escapeHtml(m.name)}</td><td>${escapeHtml(m.position || '-')}</td><td><span class="badge badge-primary">${capitalizeFirst(m.role || 'member')}</span></td><td>${escapeHtml(m.email || '-')}</td><td>${escapeHtml(m.phone || '-')}</td><td><span class="badge ${m.status === 'active' ? 'badge-success' : 'badge-muted'}">${capitalizeFirst(m.status)}</span></td>${(canEdit || canDelete) ? `<td><div class="user-actions">${canEdit ? `<button class="btn-icon" onclick="editMember('${m.id}')">✏️</button>` : ''}${canDelete ? `<button class="btn-icon delete" onclick="confirmDeleteMember('${m.id}')">🗑️</button>` : ''}</div></td>` : ''}</tr>`).join('')}${filtered.length === 0 ? '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px;">No members found</td></tr>' : ''}</tbody></table></div></div></div>`;
-                container.innerHTML = html;
-                document.getElementById('memberSearchInput')?.addEventListener('input', function() { container.dataset.search = this.value; renderMembers(container); });
-            }
-
-            function renderTransactions(container) {
-                const session = state.currentUser;
-                const transactions = state.transactions;
-                const members = state.members;
-                const searchTerm = container.dataset.search || '', filterType = container.dataset.filterType || 'all', filterMember = container.dataset.filterMember || 'all';
-                let filtered = [...transactions].sort((a, b) => b.date.localeCompare(a.date));
-                if (session.role === 'member' && session.linkedMemberId) filtered = filtered.filter(t => t.memberId === session.linkedMemberId);
-                if (filterType !== 'all') filtered = filtered.filter(t => t.type === filterType);
-                if (filterMember !== 'all' && session.role !== 'member') filtered = filtered.filter(t => t.memberId === filterMember);
-                if (searchTerm) { const s = searchTerm.toLowerCase(); filtered = filtered.filter(t => (t.memberName && t.memberName.toLowerCase().includes(s)) || (t.description && t.description.toLowerCase().includes(s))); }
-                const canAdd = hasPermission('addTransaction'), canEdit = hasPermission('editTransaction'), canDelete = hasPermission('deleteTransaction');
-                const totalIn = filtered.filter(t => t.type === 'contribution' || t.type === 'return').reduce((s,t) => s + Number(t.amount), 0);
-                const totalOut = filtered.filter(t => t.type === 'withdrawal' || t.type === 'expense' || t.type === 'investment').reduce((s,t) => s + Number(t.amount), 0);
-                let html = `<div class="card" style="margin-bottom:16px;"><div class="card-body"><div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;"><div><span style="font-size:13px;color:var(--text-muted);">Filtered Net:</span> <span style="font-size:24px;font-weight:700;color:${totalIn - totalOut >= 0 ? 'var(--success)' : 'var(--danger)'}">${totalIn - totalOut >= 0 ? '+' : ''}${formatCurrency(totalIn - totalOut)}</span></div><div style="display:flex;gap:8px;flex-wrap:wrap;"><input type="text" class="search-input" id="transactionSearchInput" placeholder="Search..." value="${escapeHtml(searchTerm)}"><select class="filter-select" id="transactionTypeFilter"><option value="all">All Types</option><option value="contribution" ${filterType === 'contribution' ? 'selected' : ''}>Income: Contribution</option><option value="return" ${filterType === 'return' ? 'selected' : ''}>Income: Return</option><option value="withdrawal" ${filterType === 'withdrawal' ? 'selected' : ''}>Expense: Withdrawal</option><option value="expense" ${filterType === 'expense' ? 'selected' : ''}>Expense: Other</option><option value="investment" ${filterType === 'investment' ? 'selected' : ''}>Investment</option><option value="other" ${filterType === 'other' ? 'selected' : ''}>Other</option></select>${session.role !== 'member' ? `<select class="filter-select" id="transactionMemberFilter"><option value="all">All Members</option>${members.map(m => `<option value="${m.id}" ${filterMember === m.id ? 'selected' : ''}>${escapeHtml(m.name)}</option>`).join('')}</select>` : ''}${canAdd ? '<button class="btn btn-primary btn-sm" onclick="openTransactionModal()">+ Record Amount</button>' : ''}<button class="btn btn-secondary btn-sm" onclick="printTransactions()">🖨️ Print</button><button class="btn btn-secondary btn-sm" onclick="exportTransactionsCSV()">📊 Excel</button></div></div></div></div>`;
-                html += `<div class="card"><div class="card-header"><h3>Transaction History (${filtered.length})</h3></div><div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Date</th><th>Member</th><th>Type</th><th>Description</th><th>Amount</th><th>Recorded By</th>${(canEdit || canDelete) ? '<th>Actions</th>' : ''}</tr></thead><tbody>${filtered.map(t => `<tr><td>${formatDate(t.date)}</td><td>${escapeHtml(t.memberName || '-')}</td><td><span class="badge ${getTypeBadge(t.type)}">${capitalizeFirst(t.type)}</span></td><td>${escapeHtml(t.description || '-')}</td><td style="font-weight:600;color:${t.type === 'withdrawal' || t.type === 'expense' || t.type === 'investment' ? 'var(--danger)' : 'var(--success)'}">${t.type === 'withdrawal' || t.type === 'expense' || t.type === 'investment' ? '-' : '+'}${formatCurrency(t.amount)}</td><td style="font-size:12px;color:var(--text-muted);">${escapeHtml(t.recordedBy || '-')}</td>${(canEdit || canDelete) ? `<td><div class="user-actions">${canEdit ? `<button class="btn-icon" onclick="editTransaction('${t.id}')">✏️</button>` : ''}${canDelete ? `<button class="btn-icon delete" onclick="confirmDeleteTransaction('${t.id}')">🗑️</button>` : ''}</div></td>` : ''}</tr>`).join('')}${filtered.length === 0 ? '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px;">No transactions found</td></tr>' : ''}</tbody></table></div></div></div>`;
-                container.innerHTML = html;
-                const searchInput = document.getElementById('transactionSearchInput');
-                const typeFilter = document.getElementById('transactionTypeFilter');
-                const memberFilter = document.getElementById('transactionMemberFilter');
-                if (searchInput) searchInput.addEventListener('input', function() { container.dataset.search = this.value; renderTransactions(container); });
-                if (typeFilter) typeFilter.addEventListener('change', function() { container.dataset.filterType = this.value; renderTransactions(container); });
-                if (memberFilter) memberFilter.addEventListener('change', function() { container.dataset.filterMember = this.value; renderTransactions(container); });
-            }
-
-            function renderBanking(container) {
-                const banking = state.banking;
-                const searchTerm = container.dataset.search || '', filterType = container.dataset.filterType || 'all';
-                let filtered = [...banking].sort((a,b) => b.date.localeCompare(a.date));
-                if (filterType !== 'all') filtered = filtered.filter(t => t.type === filterType);
-                if (searchTerm) { const s = searchTerm.toLowerCase(); filtered = filtered.filter(t => (t.account && t.account.toLowerCase().includes(s)) || (t.description && t.description.toLowerCase().includes(s))); }
-                const totalDeposits = banking.filter(t => t.type === 'deposit' || t.type === 'interest').reduce((s,t) => s + Number(t.amount), 0);
-                const totalWithdrawals = banking.filter(t => t.type === 'withdrawal' || t.type === 'bank_charge').reduce((s,t) => s + Number(t.amount), 0);
-                const bankBalance = totalDeposits - totalWithdrawals;
-                const canManage = hasPermission('manageBanking');
-                let html = `<div class="stats-grid" style="margin-bottom:16px;"><div class="stat-card"><div class="stat-icon green">🏦</div><div class="stat-label">Total Deposits</div><div class="stat-value">${formatCurrency(totalDeposits)}</div></div><div class="stat-card"><div class="stat-icon orange">💸</div><div class="stat-label">Total Withdrawals</div><div class="stat-value">${formatCurrency(totalWithdrawals)}</div></div><div class="stat-card"><div class="stat-icon teal">💰</div><div class="stat-label">Bank Balance</div><div class="stat-value">${formatCurrency(bankBalance)}</div></div></div>`;
-                html += `<div class="card"><div class="card-header"><h3>Bank Transactions (${filtered.length})</h3><div class="card-header-actions"><input type="text" class="search-input" id="bankingSearchInput" placeholder="Search..." value="${escapeHtml(searchTerm)}"><select class="filter-select" id="bankingTypeFilter"><option value="all">All Types</option><option value="deposit" ${filterType === 'deposit' ? 'selected' : ''}>Deposit</option><option value="withdrawal" ${filterType === 'withdrawal' ? 'selected' : ''}>Withdrawal</option><option value="interest" ${filterType === 'interest' ? 'selected' : ''}>Interest</option><option value="bank_charge" ${filterType === 'bank_charge' ? 'selected' : ''}>Bank Charge</option></select>${canManage ? '<button class="btn btn-primary btn-sm" onclick="openBankingModal()">+ Bank Transaction</button>' : ''}<button class="btn btn-secondary btn-sm" onclick="printBanking()">🖨️ Print</button><button class="btn btn-secondary btn-sm" onclick="exportBankingCSV()">📊 Excel</button></div></div><div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Account</th><th>Description</th>${canManage ? '<th>Actions</th>' : ''}</tr></thead><tbody>${filtered.map(b => `<tr><td>${formatDate(b.date)}</td><td><span class="badge ${b.type === 'deposit' || b.type === 'interest' ? 'badge-success' : 'badge-danger'}">${capitalizeFirst(b.type)}</span></td><td style="font-weight:600;color:${b.type === 'deposit' || b.type === 'interest' ? 'var(--success)' : 'var(--danger)'}">${b.type === 'deposit' || b.type === 'interest' ? '+' : '-'}${formatCurrency(b.amount)}</td><td>${escapeHtml(b.account || '-')}</td><td>${escapeHtml(b.description || '-')}</td>${canManage ? `<td><button class="btn-icon" onclick="confirmDeleteBanking('${b.id}')">🗑️</button></td>` : ''}</tr>`).join('')}${filtered.length === 0 ? '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:24px;">No bank transactions</td></tr>' : ''}</tbody></table></div></div></div>`;
-                container.innerHTML = html;
-                const searchInput = document.getElementById('bankingSearchInput');
-                const typeFilter = document.getElementById('bankingTypeFilter');
-                if (searchInput) searchInput.addEventListener('input', function() { container.dataset.search = this.value; renderBanking(container); });
-                if (typeFilter) typeFilter.addEventListener('change', function() { container.dataset.filterType = this.value; renderBanking(container); });
-            }
-
-            function renderMeetings(container) {
-                const meetings = state.meetings;
-                const searchTerm = container.dataset.search || '';
-                let filtered = [...meetings].sort((a,b) => b.date.localeCompare(a.date));
-                if (searchTerm) { const s = searchTerm.toLowerCase(); filtered = filtered.filter(m => m.venue.toLowerCase().includes(s) || m.agenda.toLowerCase().includes(s)); }
-                const canManage = hasPermission('manageMeetings');
-                let html = `<div class="card"><div class="card-header"><h3>Meetings (${filtered.length})</h3><div class="card-header-actions"><input type="text" class="search-input" id="meetingSearchInput" placeholder="Search..." value="${escapeHtml(searchTerm)}">${canManage ? '<button class="btn btn-primary btn-sm" onclick="openMeetingModal()">+ Add Meeting</button>' : ''}</div></div><div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Date</th><th>Venue</th><th>Agenda</th>${canManage ? '<th>Actions</th>' : ''}</tr></thead><tbody>${filtered.map(m => `<tr><td>${formatDate(m.date)}</td><td>${escapeHtml(m.venue)}</td><td>${escapeHtml(m.agenda)}</td>${canManage ? `<td><div class="user-actions"><button class="btn-icon" onclick="editMeeting('${m.id}')">✏️</button> <button class="btn-icon delete" onclick="confirmDeleteMeeting('${m.id}')">🗑️</button></div></td>` : ''}</tr>`).join('')}${filtered.length === 0 ? '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:24px;">No meetings scheduled</td></tr>' : ''}</tbody></table></div></div></div>`;
-                container.innerHTML = html;
-                document.getElementById('meetingSearchInput')?.addEventListener('input', function() { container.dataset.search = this.value; renderMeetings(container); });
-            }
-
-            function renderSettings(container) {
-                const session = state.currentUser;
-                if (session.role === 'member') { renderMemberSettings(container); return; }
-                const users = state.users;
-                const settings = state.settings;
-                const canManageUsers = hasPermission('manageUsers');
-                const orgDetails = settings.orgDetails || {};
-                let html = `
-                    <div class="card" style="margin-bottom:16px;"><div class="card-header"><h3>Financial Settings</h3></div><div class="card-body"><div class="form-group" style="max-width:300px;"><label>Annual Interest Rate (%)</label><input type="number" id="interestRateInput" value="${settings.interestRate}" min="0" max="100" step="0.1"><button class="btn btn-primary btn-sm" style="margin-top:8px;" onclick="saveInterestRate()">Save Rate</button></div></div></div>
-                    <div class="card" style="margin-bottom:16px;"><div class="card-header"><h3>Organization Details</h3></div><div class="card-body">
-                        <div class="form-row"><div class="form-group"><label>Name</label><input type="text" id="orgName" value="${escapeHtml(orgDetails.name || '')}"></div><div class="form-group"><label>Registration No</label><input type="text" id="orgRegNo" value="${escapeHtml(orgDetails.registrationNo || '')}"></div></div>
-                        <div class="form-group"><label>Address</label><input type="text" id="orgAddress" value="${escapeHtml(orgDetails.address || '')}"></div>
-                        <div class="form-row"><div class="form-group"><label>Phone</label><input type="text" id="orgPhone" value="${escapeHtml(orgDetails.phone || '')}"></div><div class="form-group"><label>Email</label><input type="email" id="orgEmail" value="${escapeHtml(orgDetails.email || '')}"></div></div>
-                        <div class="form-group"><label>Website</label><input type="text" id="orgWebsite" value="${escapeHtml(orgDetails.website || '')}"></div>
-                        <button class="btn btn-primary btn-sm" onclick="saveOrganizationDetails()">Save</button>
-                    </div></div>
-                    <div class="card" style="margin-bottom:16px;"><div class="card-header"><h3>Data Management</h3></div><div class="card-body"><div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn btn-secondary btn-sm" onclick="exportData()">📤 Export</button><button class="btn btn-danger btn-sm" onclick="clearAllData()">🗑️ Clear</button></div></div></div>
-                    <div class="card"><div class="card-header"><h3>User Management (${users.length})</h3>${canManageUsers ? '<button class="btn btn-primary btn-sm" onclick="openUserModal()">+ Add User</button>' : ''}</div><div class="card-body no-padding"><div class="table-wrapper"><table class="user-table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th>${canManageUsers ? '<th>Actions</th>' : ''}</tr></thead><tbody>${users.map(u => `<tr><td style="font-weight:600;">${escapeHtml(u.name)}</td><td>${escapeHtml(u.email)}</td><td><span class="badge ${u.role === 'admin' ? 'badge-primary' : 'badge-info'}">${capitalizeFirst(u.role)}</span></td><td><span class="badge ${u.active ? 'badge-success' : 'badge-danger'}">${u.active ? 'Active' : 'Disabled'}</span></td>${canManageUsers ? `<td><div class="user-actions"><button class="btn-icon" onclick="editUser('${u.id}')">✏️</button>${u.id !== session.id ? `<button class="btn-icon delete" onclick="confirmDeleteUser('${u.id}')">🗑️</button>` : ''}</div></td>` : ''}</tr>`).join('')}</tbody></table></div></div></div>
-                `;
-                container.innerHTML = html;
-            }
-            function renderMemberSettings(container) {
-                const user = state.currentUser;
-                container.innerHTML = `<div class="card"><div class="card-header"><h3>My Profile</h3></div><div class="card-body"><div class="form-group"><label>Name</label><input type="text" value="${escapeHtml(user.name)}" disabled></div><div class="form-group"><label>Email</label><input type="email" value="${escapeHtml(user.email)}" disabled></div><div class="form-group"><label>New Password</label><input type="password" id="memberNewPassword" placeholder="Leave blank to keep current"></div><button class="btn btn-primary" onclick="changeOwnPassword()">Update Password</button></div></div>`;
-            }
-            async function changeOwnPassword() {
-                const newPassword = document.getElementById('memberNewPassword').value;
-                if (!newPassword) { showToast('Enter new password.', 'warning'); return; }
-                try {
-                    await auth.currentUser.updatePassword(newPassword);
-                    showToast('Password updated.', 'success');
-                } catch (e) { showToast(e.message, 'error'); }
-            }
-
-            // Open modal functions
-            function openMemberModal(id) { /* populate form, open modal */ }
-            function openTransactionModal(id) { /* populate, open */ }
-            function openBankingModal(id) { /* populate, open */ }
-            function openMeetingModal(id) { /* populate, open */ }
-            function openUserModal(id) { /* populate, open */ }
-
-            // Form submission handlers (use Firestore)
-            document.getElementById('memberForm').addEventListener('submit', async function(e) {
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
                 e.preventDefault();
-                const id = document.getElementById('memberId').value;
-                const data = {
-                    name: document.getElementById('memberName').value.trim(),
-                    email: document.getElementById('memberEmail').value.trim(),
-                    phone: document.getElementById('memberPhone').value.trim(),
-                    position: document.getElementById('memberPosition').value.trim(),
-                    role: document.getElementById('memberRole').value,
-                    joinDate: document.getElementById('memberJoinDate').value,
-                    status: document.getElementById('memberStatus').value
-                };
-                if (!data.name || !data.position || !data.joinDate) { showToast('Required fields missing.', 'error'); return; }
-                try {
-                    if (id) { await db.collection('members').doc(id).update(data); }
-                    else { await db.collection('members').add(data); }
-                    // Optional: create user account
-                    const userEmail = document.getElementById('memberUserEmail').value.trim();
-                    const userPassword = document.getElementById('memberUserPassword').value;
-                    if (userEmail && userPassword) {
-                        const cred = await auth.createUserWithEmailAndPassword(userEmail, userPassword);
-                        await db.collection('users').doc(cred.user.uid).set({
-                            uid: cred.user.uid, name: data.name, email: userEmail, role: 'member',
-                            permissions: getDefaultPermissions('member'), active: true, linkedMemberId: null, createdAt: new Date().toISOString()
-                        });
-                    }
-                    closeModal('memberModal');
-                    showToast('Saved successfully.', 'success');
-                } catch (e) { showToast(e.message, 'error'); }
+                const u = document.getElementById('loginUsername').value;
+                const p = document.getElementById('loginPassword').value;
+                const errBox = document.getElementById('loginError');
+                const users = getData(STORAGE_KEYS.users, []);
+                const user = users.find(usr => usr.username === u && usr.passwordHash === hashPassword(p));
+                if (user) {
+                    if (!user.active) { errBox.textContent = 'Account is inactive. Contact admin.'; errBox.classList.add('show'); return; }
+                    setSession(user.id); showApp();
+                } else { errBox.textContent = 'Invalid username or password'; errBox.classList.add('show'); }
             });
 
-            // Similar handlers for transaction, banking, meeting, user (omitted for brevity but follow same pattern)
-
-            // Delete confirmation helper
-            function confirmDelete(collection, id, message) {
-                document.getElementById('confirmTitle').textContent = 'Delete';
-                document.getElementById('confirmMessage').textContent = message;
-                openModal('confirmModal');
-                document.getElementById('confirmDeleteBtn').onclick = async function() {
-                    await db.collection(collection).doc(id).delete();
-                    closeModal('confirmModal');
-                    showToast('Deleted.', 'success');
-                };
-            }
-
-            // Print/Export functions (simplified)
-            function printTransactions() { /* open print window with table */ }
-            function exportTransactionsCSV() { /* generate CSV */ }
-            function printBanking() { /* similar */ }
-            function exportBankingCSV() { /* similar */ }
-
-            // Sidebar toggle, theme, etc.
-            document.getElementById('sidebarToggle').addEventListener('click', function() {
-                document.getElementById('sidebar').classList.toggle('collapsed');
-                document.getElementById('mainContent').classList.toggle('collapsed');
-                this.textContent = document.getElementById('sidebar').classList.contains('collapsed') ? '▶' : '◀';
+            document.getElementById('logoutBtn').addEventListener('click', function() { clearSession(); showLogin(); });
+            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+            document.getElementById('sidebarToggle').addEventListener('click', toggleSidebar);
+            document.getElementById('mobileToggle').addEventListener('click', function() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('sidebarOverlay').classList.toggle('active'); });
+            document.getElementById('sidebarOverlay').addEventListener('click', closeSidebar);
+            document.getElementById('topbarAddBtn').addEventListener('click', function() {
+                if (currentPage === 'members') openMemberModal();
+                else if (currentPage === 'transactions') openTransactionModal();
+                else if (currentPage === 'banking') openBankingModal();
+                else if (currentPage === 'meetings') openMeetingModal();
+                else if (currentPage === 'settings') openUserModal();
+                else showToast('Navigate to a specific page to add records', 'info');
             });
-            document.getElementById('themeToggle').addEventListener('click', function() {
-                const current = document.documentElement.getAttribute('data-theme') || 'light';
-                const next = current === 'light' ? 'dark' : 'light';
-                document.documentElement.setAttribute('data-theme', next);
-                this.textContent = next === 'dark' ? '☀️' : '🌙';
-            });
-            document.getElementById('mobileToggle').addEventListener('click', function() {
-                document.getElementById('sidebar').classList.toggle('open');
-                document.getElementById('sidebarOverlay').classList.toggle('active');
-            });
-            document.getElementById('sidebarOverlay').addEventListener('click', function() {
-                document.getElementById('sidebar').classList.remove('open');
-                document.getElementById('sidebarOverlay').classList.remove('active');
-            });
-            function closeSidebar() {
-                document.getElementById('sidebar').classList.remove('open');
-                document.getElementById('sidebarOverlay').classList.remove('active');
-            }
+            document.querySelectorAll('.nav-item').forEach(item => { item.addEventListener('click', () => navigateTo(item.getAttribute('data-page'))); });
 
-            // Expose to global for inline onclick
-            window.navigateTo = navigateTo;
-            window.openMemberModal = openMemberModal;
-            window.editMember = function(id) { openMemberModal(id); };
-            window.confirmDeleteMember = function(id) { const m = state.members.find(x => x.id === id); if (m) confirmDelete('members', id, `Delete ${m.name}?`); };
-            window.openTransactionModal = openTransactionModal;
-            window.editTransaction = function(id) { openTransactionModal(id); };
-            window.confirmDeleteTransaction = function(id) { confirmDelete('transactions', id, 'Delete this transaction?'); };
-            window.openBankingModal = openBankingModal;
-            window.confirmDeleteBanking = function(id) { confirmDelete('banking', id, 'Delete this bank transaction?'); };
-            window.openMeetingModal = openMeetingModal;
-            window.editMeeting = function(id) { openMeetingModal(id); };
-            window.confirmDeleteMeeting = function(id) { confirmDelete('meetings', id, 'Delete this meeting?'); };
-            window.openUserModal = openUserModal;
-            window.editUser = function(id) { openUserModal(id); };
-            window.confirmDeleteUser = function(id) { const u = state.users.find(x => x.id === id); if (u) confirmDelete('users', id, `Delete user ${u.name}?`); };
-            window.saveInterestRate = function() {
-                const rate = parseFloat(document.getElementById('interestRateInput').value);
-                if (!isNaN(rate)) { db.collection('settings').doc('app_settings').update({ interestRate: rate }); showToast('Saved.', 'success'); }
-            };
-            window.saveOrganizationDetails = function() {
-                const orgDetails = {
-                    name: document.getElementById('orgName').value.trim(),
-                    registrationNo: document.getElementById('orgRegNo').value.trim(),
-                    address: document.getElementById('orgAddress').value.trim(),
-                    phone: document.getElementById('orgPhone').value.trim(),
-                    email: document.getElementById('orgEmail').value.trim(),
-                    website: document.getElementById('orgWebsite').value.trim()
-                };
-                db.collection('settings').doc('app_settings').update({ orgDetails });
-                showToast('Saved.', 'success');
-            };
-            window.exportData = function() {
-                const data = { users: state.users, members: state.members, transactions: state.transactions, banking: state.banking, meetings: state.meetings, settings: state.settings };
-                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a'); a.href = url; a.download = 'bloomstone_backup.json'; a.click(); URL.revokeObjectURL(url);
-            };
-            window.clearAllData = function() {
-                if (confirm('Clear all data?')) {
-                    ['users','members','transactions','banking','meetings'].forEach(col => db.collection(col).get().then(snapshot => snapshot.forEach(doc => doc.ref.delete())));
-                    db.collection('settings').doc('app_settings').delete();
-                }
-            };
-            window.changeOwnPassword = changeOwnPassword;
-            window.printTransactions = printTransactions;
-            window.exportTransactionsCSV = exportTransactionsCSV;
-            window.printBanking = printBanking;
-            window.exportBankingCSV = exportBankingCSV;
+            // Initialize
+            initData();
+            const savedTheme = JSON.parse(localStorage.getItem(STORAGE_KEYS.theme) || '"light"');
+            applyTheme(savedTheme);
+            document.getElementById('dateDisplay').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            
+            if (getSession()) { showApp(); } else { showLogin(); }
 
-            // Initialization
-            async function init() {
-                await ensureDefaultData();
-                setupListeners();
-            }
-            init();
         })();
     </script>
 </body>
