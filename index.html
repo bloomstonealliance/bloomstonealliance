@@ -98,7 +98,7 @@
         /* App Layout */
         .app-container { display: none; min-height: 100vh; }
         .app-container.active { display: flex; }
-        .sidebar { width: var(--sidebar-width); background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%); min-height: 100vh; position: fixed; top: 0; left: 0; bottom: 0; display: flex; flex-direction: column; z-index: 100; transition: width var(--transition), transform var(--transition); overflow: hidden; box-shadow: 4px 0 20px rgba(0,0,0,0.1); }
+        .sidebar { width: var(--sidebar-width); background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%); height: 100vh; height: 100dvh; position: fixed; top: 0; left: 0; bottom: 0; display: flex; flex-direction: column; z-index: 100; transition: width var(--transition), transform var(--transition); overflow: hidden; box-shadow: 4px 0 20px rgba(0,0,0,0.1); }
         .sidebar.collapsed { width: var(--sidebar-collapsed-width); }
         .sidebar.collapsed .sidebar-header h2, .sidebar.collapsed .sidebar-header p, .sidebar.collapsed .nav-item span:not(.nav-icon), .sidebar.collapsed .sidebar-footer .user-info { display: none; }
         .sidebar.collapsed .sidebar-header { justify-content: center; padding: 20px 0; }
@@ -118,13 +118,14 @@
         .nav-item:hover { background: var(--sidebar-hover); color: #e2e8f0; transform: translateX(2px); }
         .nav-item.active { background: var(--sidebar-active-bg); color: var(--sidebar-active); font-weight: 600; box-shadow: inset 0 0 0 1px rgba(20,184,166,0.2); }
         .nav-item .nav-icon { font-size: 18px; width: 24px; text-align: center; flex-shrink: 0; }
-        .sidebar-footer { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 12px; padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
+        .sidebar-footer { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 12px; flex-shrink: 0; padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
         .sidebar-footer .user-avatar { width: 38px; height: 38px; background: linear-gradient(135deg, #0d9488, #0f766e); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 15px; flex-shrink: 0; }
         .sidebar-footer .user-info { flex: 1; min-width: 0; }
         .sidebar-footer .user-name { font-size: 13px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .sidebar-footer .user-role { font-size: 11px; color: var(--sidebar-text); text-transform: capitalize; }
-        .sidebar-footer .btn-logout { background: transparent; border: none; color: var(--sidebar-text); cursor: pointer; font-size: 18px; padding: 8px; border-radius: var(--radius-xs); transition: all var(--transition); flex-shrink: 0; }
+        .sidebar-footer .btn-logout { background: transparent; border: none; color: var(--sidebar-text); cursor: pointer; font-size: 13px; font-weight: 600; padding: 8px 12px; border-radius: var(--radius-xs); transition: all var(--transition); flex-shrink: 0; }
         .sidebar-footer .btn-logout:hover { color: var(--danger); background: rgba(239,68,68,0.15); }
+        .topbar-logout { display: none !important; }
         
         .main-content { flex: 1; margin-left: var(--sidebar-width); padding: 0; min-height: 100vh; background: var(--bg); transition: margin-left var(--transition); min-width: 0; overflow-x: hidden; }
         .main-content.collapsed { margin-left: var(--sidebar-collapsed-width); }
@@ -278,6 +279,7 @@
             .topbar .topbar-actions { width: auto; flex-shrink: 0; gap: 8px; }
             .topbar .date-display { display: none; }
             #topbarAddBtn { display: none !important; }
+            .topbar-logout { display: inline-flex !important; }
             .fab { display: flex; right: 16px; }
             
             /* Notifications: full-width panel */
@@ -398,7 +400,7 @@
                     <div class="user-name" id="sidebarUsername">Admin</div>
                     <div class="user-role" id="sidebarRole">Admin</div>
                 </div>
-                <button class="btn-logout" id="logoutBtn" title="Logout">⏻</button>
+                <button class="btn-logout" id="logoutBtn" title="Logout">Logout</button>
             </div>
         </aside>
 
@@ -417,6 +419,7 @@
                         <div class="notif-dropdown" id="notifDropdown"></div>
                     </div>
                     <button class="btn btn-secondary btn-sm" id="themeToggle" title="Toggle dark/light mode">🌙</button>
+                    <button class="btn btn-secondary btn-sm topbar-logout" id="topbarLogoutBtn" title="Logout">↪</button>
                     <button class="btn btn-primary btn-sm" id="topbarAddBtn">+ Add Record</button>
                 </div>
             </div>
@@ -1977,6 +1980,7 @@
             });
 
             document.getElementById('logoutBtn').addEventListener('click', function() { clearSession(); showLogin(); });
+            document.getElementById('topbarLogoutBtn').addEventListener('click', function() { clearSession(); showLogin(); });
             document.getElementById('themeToggle').addEventListener('click', toggleTheme);
             document.getElementById('sidebarToggle').addEventListener('click', toggleSidebar);
             document.getElementById('mobileToggle').addEventListener('click', function() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('sidebarOverlay').classList.toggle('active'); });
