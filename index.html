@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Bloomstone Alliance - Fund Manager (Nepal)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -39,7 +39,7 @@
         body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; min-height: 100vh; overflow-x: hidden; transition: background 0.3s ease, color 0.3s ease; }
         
         /* Login */
-        .login-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0f172a 0%, #0d9488 50%, #0f766e 100%); padding: 20px; position: relative; overflow: hidden; }
+        .login-container { min-height: 100vh; min-height: 100dvh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0f172a 0%, #0d9488 50%, #0f766e 100%); padding: 20px; position: relative; overflow: hidden; }
         .login-container::before { content: ''; position: absolute; top: -40%; right: -20%; width: 80%; height: 100%; background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.1), transparent 60%); border-radius: 50%; pointer-events: none; }
         .login-box { background: var(--card-bg); border-radius: 32px; padding: 48px 40px; width: 100%; max-width: 430px; box-shadow: var(--shadow-xl); position: relative; z-index: 1; animation: slideUp 0.5s ease; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
@@ -57,10 +57,10 @@
         
         /* Rich Text Editor */
         .rich-toolbar { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; flex-wrap: wrap; }
-        .rich-btn { padding: 4px 12px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); border-radius: 6px; cursor: pointer; font-size: 13px; font-family: inherit; transition: all var(--transition); line-height: 1.4; }
+        .rich-btn { padding: 6px 14px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); border-radius: 6px; cursor: pointer; font-size: 13px; font-family: inherit; transition: all var(--transition); line-height: 1.4; }
         .rich-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--card-bg); }
         .rich-hint { font-size: 11px; color: var(--text-muted); margin-left: auto; }
-        .rich-editor { min-height: 110px; max-height: 220px; overflow-y: auto; padding: 12px 16px; border: 2px solid var(--border); border-radius: var(--radius-sm); font-size: 14px; color: var(--text); background: var(--input-bg); font-family: inherit; line-height: 1.7; outline: none; transition: all var(--transition); word-break: break-word; }
+        .rich-editor { min-height: 110px; max-height: 220px; overflow-y: auto; padding: 12px 16px; border: 2px solid var(--border); border-radius: var(--radius-sm); font-size: 14px; color: var(--text); background: var(--input-bg); font-family: inherit; line-height: 1.7; outline: none; transition: all var(--transition); word-break: break-word; -webkit-overflow-scrolling: touch; }
         .rich-editor:focus { border-color: var(--primary); background: var(--card-bg); box-shadow: 0 0 0 4px rgba(13,148,136,0.12); }
         .rich-editor:empty:before { content: attr(data-placeholder); color: var(--text-muted); pointer-events: none; }
         .rich-editor b, .rich-editor strong { font-weight: 700; }
@@ -110,20 +110,20 @@
         .sidebar-header .logo-icon { width: 44px; height: 44px; background: linear-gradient(135deg, #0d9488, #0f766e); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #fff; flex-shrink: 0; box-shadow: 0 8px 16px -4px rgba(13,148,136,0.4); }
         .sidebar-header h2 { font-size: 18px; color: #fff; font-weight: 800; letter-spacing: -0.3px; line-height: 1.2; }
         .sidebar-header p { font-size: 11px; color: var(--sidebar-text); letter-spacing: 0.8px; }
-        .sidebar-nav { flex: 1; padding: 16px 12px; overflow-y: auto; }
+        .sidebar-nav { flex: 1; padding: 16px 12px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
         .sidebar-nav .nav-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: #475569; font-weight: 700; padding: 0 12px; margin-bottom: 8px; margin-top: 16px; }
         .sidebar.collapsed .sidebar-nav .nav-label { display: none; }
         .sidebar-nav .nav-label:first-child { margin-top: 0; }
-        .nav-item { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: var(--radius-sm); cursor: pointer; color: var(--sidebar-text); transition: all var(--transition); margin-bottom: 4px; font-size: 14px; font-weight: 500; user-select: none; border: none; background: transparent; width: 100%; text-align: left; font-family: inherit; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: var(--radius-sm); cursor: pointer; color: var(--sidebar-text); transition: all var(--transition); margin-bottom: 4px; font-size: 14px; font-weight: 500; user-select: none; border: none; background: transparent; width: 100%; text-align: left; font-family: inherit; }
         .nav-item:hover { background: var(--sidebar-hover); color: #e2e8f0; transform: translateX(2px); }
         .nav-item.active { background: var(--sidebar-active-bg); color: var(--sidebar-active); font-weight: 600; box-shadow: inset 0 0 0 1px rgba(20,184,166,0.2); }
         .nav-item .nav-icon { font-size: 18px; width: 24px; text-align: center; flex-shrink: 0; }
-        .sidebar-footer { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 12px; }
+        .sidebar-footer { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 12px; padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
         .sidebar-footer .user-avatar { width: 38px; height: 38px; background: linear-gradient(135deg, #0d9488, #0f766e); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 15px; flex-shrink: 0; }
         .sidebar-footer .user-info { flex: 1; min-width: 0; }
         .sidebar-footer .user-name { font-size: 13px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .sidebar-footer .user-role { font-size: 11px; color: var(--sidebar-text); text-transform: capitalize; }
-        .sidebar-footer .btn-logout { background: transparent; border: none; color: var(--sidebar-text); cursor: pointer; font-size: 18px; padding: 6px; border-radius: var(--radius-xs); transition: all var(--transition); flex-shrink: 0; }
+        .sidebar-footer .btn-logout { background: transparent; border: none; color: var(--sidebar-text); cursor: pointer; font-size: 18px; padding: 8px; border-radius: var(--radius-xs); transition: all var(--transition); flex-shrink: 0; }
         .sidebar-footer .btn-logout:hover { color: var(--danger); background: rgba(239,68,68,0.15); }
         
         .main-content { flex: 1; margin-left: var(--sidebar-width); padding: 0; min-height: 100vh; background: var(--bg); transition: margin-left var(--transition); min-width: 0; overflow-x: hidden; }
@@ -131,10 +131,11 @@
         .topbar { background: rgba(255,255,255,0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 16px 32px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
         [data-theme="dark"] .topbar { background: rgba(30,41,59,0.8); }
         .topbar h1 { font-size: 20px; font-weight: 800; letter-spacing: -0.4px; color: var(--text); }
+        .topbar > div:first-child { display: flex; align-items: center; gap: 12px; min-width: 0; }
         .topbar .topbar-actions { display: flex; align-items: center; gap: 12px; }
         .topbar .date-display { font-size: 13px; color: var(--text-muted); font-weight: 500; }
         .page-content { padding: 24px 32px; max-width: 1400px; min-width: 0; }
-        .mobile-toggle { display: none; background: transparent; border: none; font-size: 24px; cursor: pointer; color: var(--text); padding: 4px; }
+        .mobile-toggle { display: none; background: transparent; border: none; font-size: 24px; cursor: pointer; color: var(--text); padding: 4px 8px; }
         
         /* Notification Bell */
         .notif-wrap { position: relative; }
@@ -142,7 +143,7 @@
         .notif-badge { position: absolute; top: -7px; right: -7px; background: #ef4444; color: #fff; font-size: 10px; font-weight: 700; min-width: 18px; height: 18px; border-radius: 999px; display: none; align-items: center; justify-content: center; padding: 0 4px; box-shadow: 0 2px 6px rgba(239,68,68,0.5); border: 2px solid var(--card-bg); }
         .notif-badge.show { display: flex; animation: badgePulse 2s infinite; }
         @keyframes badgePulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
-        .notif-dropdown { position: absolute; top: calc(100% + 12px); right: 0; background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius-sm); box-shadow: var(--shadow-xl); width: 320px; max-width: calc(100vw - 32px); max-height: 420px; overflow-y: auto; z-index: 150; display: none; scrollbar-width: none; -ms-overflow-style: none; }
+        .notif-dropdown { position: absolute; top: calc(100% + 12px); right: 0; background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius-sm); box-shadow: var(--shadow-xl); width: 320px; max-width: calc(100vw - 32px); max-height: 420px; overflow-y: auto; z-index: 150; display: none; scrollbar-width: none; -ms-overflow-style: none; -webkit-overflow-scrolling: touch; }
         .notif-dropdown::-webkit-scrollbar { display: none; }
         .notif-dropdown.active { display: block; animation: notifIn 0.25s ease; }
         @keyframes notifIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
@@ -168,7 +169,7 @@
         .stat-card .stat-icon.blue { background: var(--info-bg); color: var(--info); }
         .stat-card .stat-icon.orange { background: var(--warning-bg); color: var(--warning); }
         .stat-card .stat-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); font-weight: 600; margin-bottom: 4px; }
-        .stat-card .stat-value { font-size: 28px; font-weight: 800; letter-spacing: -1px; color: var(--text); }
+        .stat-card .stat-value { font-size: 28px; font-weight: 800; letter-spacing: -1px; color: var(--text); word-break: break-word; }
         .stat-card .stat-sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
         .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
         .card { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; transition: box-shadow var(--transition); min-width: 0; }
@@ -199,7 +200,7 @@
         @media (min-width: 769px) { .modal-overlay { align-items: center; padding: 20px; } }
         .modal-overlay.active { display: flex; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .modal { background: var(--card-bg); border-radius: 24px 24px 0 0; padding: 28px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-xl); animation: slideUpModal 0.35s cubic-bezier(0.16, 1, 0.3, 1); scrollbar-width: none; -ms-overflow-style: none; }
+        .modal { background: var(--card-bg); border-radius: 24px 24px 0 0; padding: 28px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-xl); animation: slideUpModal 0.35s cubic-bezier(0.16, 1, 0.3, 1); scrollbar-width: none; -ms-overflow-style: none; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
         .modal::-webkit-scrollbar { display: none; }
         @media (min-width: 769px) { .modal { border-radius: 24px; animation: modalIn 0.3s ease; } @keyframes modalIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } } }
         @keyframes slideUpModal { from { transform: translateY(100%); } to { transform: translateY(0); } }
@@ -209,11 +210,11 @@
         .modal-close:hover { background: var(--hover-bg); color: var(--text); }
         .modal-footer { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        .permission-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; padding: 12px; background: var(--input-bg); border-radius: var(--radius-sm); border: 1px solid var(--border); max-height: 280px; overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none; }
+        .permission-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; padding: 12px; background: var(--input-bg); border-radius: var(--radius-sm); border: 1px solid var(--border); max-height: 280px; overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none; -webkit-overflow-scrolling: touch; }
         .permission-list::-webkit-scrollbar { display: none; }
         .permission-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: var(--card-bg); border-radius: var(--radius-xs); border: 1px solid var(--border); }
         .permission-item label { font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px; color: var(--text); }
-        .permission-item input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer; }
+        .permission-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer; }
         
         /* Custom Dialog */
         .dialog-icon { width: 56px; height: 56px; background: var(--danger-bg); color: var(--danger); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 20px; }
@@ -248,16 +249,18 @@
         .filters-row .search-input, .filters-row .filter-select { flex: 1 1 150px; max-width: none; }
         
         /* Pagination */
-        .pagination { display: flex; justify-content: center; align-items: center; gap: 12px; padding: 16px; border-top: 1px solid var(--border); }
+        .pagination { display: flex; justify-content: center; align-items: center; gap: 12px; padding: 16px; border-top: 1px solid var(--border); flex-wrap: wrap; }
         .pagination-info { font-size: 13px; color: var(--text-muted); }
         
         /* FAB */
-        .fab { display: none; position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 18px; background: linear-gradient(135deg, #0d9488, #0f766e); color: white; border: none; font-size: 28px; box-shadow: 0 8px 24px rgba(13, 148, 136, 0.4); z-index: 60; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; align-items: center; justify-content: center; }
+        .fab { display: none; position: fixed; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); right: 24px; width: 56px; height: 56px; border-radius: 18px; background: linear-gradient(135deg, #0d9488, #0f766e); color: white; border: none; font-size: 28px; box-shadow: 0 8px 24px rgba(13, 148, 136, 0.4); z-index: 60; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; align-items: center; justify-content: center; }
         .fab:hover { transform: scale(1.05); box-shadow: 0 12px 28px rgba(13, 148, 136, 0.5); }
+        .fab:active { transform: scale(0.95); }
         
         /* Responsive */
         @media (max-width: 1024px) { .dashboard-grid { grid-template-columns: 1fr; } }
         @media (max-width: 768px) {
+            /* Layout */
             .sidebar { transform: translateX(-100%); box-shadow: var(--shadow-xl); width: var(--sidebar-width); }
             .sidebar.collapsed { width: var(--sidebar-width); }
             .sidebar.open { transform: translateX(0); }
@@ -265,27 +268,81 @@
             .main-content { margin-left: 0; }
             .main-content.collapsed { margin-left: 0; }
             .mobile-toggle { display: block; }
-            .page-content { padding: 16px; }
-            .topbar { padding: 12px 16px; flex-wrap: wrap; gap: 12px; border-radius: 0 0 24px 24px; }
-            .topbar .topbar-actions { width: 100%; justify-content: space-between; }
-            .topbar h1 { font-size: 18px; }
+            #sidebarToggle { display: none !important; }
+            .page-content { padding: 14px 12px calc(110px + env(safe-area-inset-bottom, 0px)); }
+            
+            /* Topbar: single compact row */
+            .topbar { padding: 10px 12px; flex-wrap: nowrap; gap: 8px; border-radius: 0 0 20px 20px; }
+            .topbar > div:first-child { flex: 1; min-width: 0; gap: 6px; }
+            .topbar h1 { font-size: 16px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+            .topbar .topbar-actions { width: auto; flex-shrink: 0; gap: 8px; }
             .topbar .date-display { display: none; }
             #topbarAddBtn { display: none !important; }
-            .fab { display: flex; }
-            .stats-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
-            .stat-card { padding: 16px; }
-            .stat-card .stat-value { font-size: 22px; }
+            .fab { display: flex; right: 16px; }
+            
+            /* Notifications: full-width panel */
+            .notif-dropdown { position: fixed; top: 64px; left: 10px; right: 10px; width: auto; max-width: none; max-height: 65vh; }
+            
+            /* Stats */
+            .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+            .stat-card { padding: 14px; }
+            .stat-card .stat-icon { width: 38px; height: 38px; font-size: 19px; margin-bottom: 8px; }
+            .stat-card .stat-value { font-size: 18px; }
+            .stat-card .stat-sub { font-size: 11px; }
+            
+            /* Filters: 2-col grid, search on top */
+            .filters-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+            .filters-row .search-input { grid-column: 1 / -1; }
+            
+            /* Card headers stack */
+            .card-header { flex-direction: column; align-items: stretch; padding: 14px 16px; }
+            .card-header h3 { margin-bottom: 8px; font-size: 15px; }
+            
+            /* CARD-STYLE RESPONSIVE TABLES */
+            .table-wrapper { padding: 12px; overflow-x: hidden; }
+            .responsive-table, .responsive-table tbody, .responsive-table tfoot { display: block; width: 100%; }
+            .responsive-table thead { display: none; }
+            .responsive-table tbody tr { display: block; background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius-sm); box-shadow: var(--shadow-sm); margin-bottom: 12px; padding: 8px 0; }
+            .responsive-table tbody tr:last-child { margin-bottom: 0; }
+            .responsive-table tbody tr:hover { background: var(--card-bg); }
+            .responsive-table tbody td { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 7px 14px; border-bottom: none; text-align: right; font-size: 13px; }
+            .responsive-table tbody td::before { content: attr(data-label); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-muted); text-align: left; flex-shrink: 0; }
+            .responsive-table tbody td.wrap-text { flex-direction: column; align-items: flex-start; text-align: left; gap: 3px; }
+            .responsive-table tbody td.no-label::before { content: none; }
+            .responsive-table tbody td.no-label { justify-content: flex-end; border-top: 1px dashed var(--border); margin-top: 6px; padding-top: 10px; }
+            .responsive-table tbody td.empty-cell { display: block; text-align: center; padding: 24px 14px; color: var(--text-muted); }
+            .responsive-table tfoot tr { display: flex; align-items: center; justify-content: space-between; }
+            .responsive-table tfoot td { border: none; padding: 10px 14px; }
+            .responsive-table tfoot td:nth-child(3) { display: none; }
+            .responsive-table tfoot td:first-child { flex: 1; text-align: left; }
+            
+            /* Bigger touch targets */
+            .btn-icon { padding: 10px; font-size: 18px; border-radius: 10px; }
+            .user-actions { gap: 10px; }
+            .pagination { padding: 12px 8px; gap: 8px; }
+            .pagination .btn-sm { padding: 10px 18px; }
+            
+            /* Modals: native bottom-sheet feel */
+            .modal { padding: 20px 16px calc(20px + env(safe-area-inset-bottom, 0px)); max-height: 92vh; border-radius: 24px 24px 0 0; }
+            .modal::before { content: ''; display: block; width: 42px; height: 4px; border-radius: 999px; background: var(--border); margin: -8px auto 14px; }
+            .modal-header h2 { font-size: 18px; }
+            .modal-close { padding: 8px 12px; }
             .form-row { grid-template-columns: 1fr; gap: 0; }
-            .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 90; }
-            .sidebar-overlay.active { display: block; }
-            .card-header { flex-direction: column; align-items: stretch; }
-            .card-header h3 { margin-bottom: 8px; }
-            .toast { min-width: auto; max-width: calc(100vw - 40px); }
-            .notif-dropdown { width: 280px; }
             .rich-hint { display: none; }
+            .rich-btn { padding: 8px 16px; }
+            
+            /* Prevent iOS input zoom */
+            .form-group input, .form-group select, .form-group textarea, .search-input, .filter-select, .rich-editor { font-size: 16px; }
+            
+            /* Toasts: full width */
+            .toast-container { top: 12px; left: 12px; right: 12px; align-items: stretch; }
+            .toast { min-width: 0; max-width: none; animation: toastInMobile 0.3s ease, toastOutMobile 0.3s ease 2.5s forwards; }
+            @keyframes toastInMobile { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: translateY(0); } }
+            @keyframes toastOutMobile { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-14px); } }
         }
         @media (max-width: 480px) { 
             .stats-grid { grid-template-columns: 1fr; } 
+            .login-box { padding: 32px 22px; border-radius: 24px; }
         }
         
         ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -348,7 +405,7 @@
         <!-- Main Content -->
         <main class="main-content" id="mainContent">
             <div class="topbar">
-                <div style="display:flex;align-items:center;gap:12px;">
+                <div>
                     <button class="mobile-toggle" id="mobileToggle">☰</button>
                     <button class="btn btn-secondary btn-sm" id="sidebarToggle" title="Toggle sidebar">◀</button>
                     <h1 id="pageTitle">Dashboard</h1>
@@ -709,6 +766,7 @@
             function formatDate(dateStr) { if (!dateStr) return '-'; const d = new Date(dateStr + 'T00:00:00'); if (isNaN(d.getTime())) return dateStr; return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }); }
             function getTodayStr() { return new Date().toISOString().split('T')[0]; }
             function escapeHtml(str) { if (!str) return ''; const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
+            function formatMultiLine(str) { return escapeHtml(str).replace(/\n/g, '<br>'); }
             function showToast(message, type) { type = type || 'success'; const container = document.getElementById('toastContainer'); const toast = document.createElement('div'); toast.className = 'toast toast-' + type; toast.textContent = message; container.appendChild(toast); setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 3000); }
 
             // --- Rich Text Helpers ---
@@ -783,7 +841,6 @@
             }
 
             function initData() {
-                // v4 flag: forces fresh load incl. the new preloaded meetings/announcements
                 if (!localStorage.getItem('bloomstone_preload_v4')) {
                     setData(STORAGE_KEYS.users, INITIAL_DATA.users);
                     setData(STORAGE_KEYS.members, INITIAL_DATA.members);
@@ -988,13 +1045,13 @@
                             <div class="card-header"><h3>Recent Transactions</h3></div>
                             <div class="card-body no-padding">
                                 <div class="table-wrapper" style="max-height: 400px; overflow-y: auto;">
-                                    <table>
+                                    <table class="responsive-table">
                                         <thead><tr><th>Member</th><th>Type</th><th>Amount</th><th>Date</th></tr></thead>
                                         <tbody>
                                             ${transactions.slice(-5).reverse().map(t => { 
                                                 const m = members.find(mem => mem.id === t.memberId); 
-                                                return `<tr><td>${m ? escapeHtml(m.name) : 'Unknown'}</td><td><span class="badge badge-info">${t.type}</span></td><td>${formatCurrency(t.amount)}</td><td>${formatDate(t.date)}</td></tr>`; 
-                                            }).join('') || `<tr><td colspan="4" style="text-align:center; padding: 30px;">No transactions yet</td></tr>`}
+                                                return `<tr><td data-label="Member">${m ? escapeHtml(m.name) : 'Unknown'}</td><td data-label="Type"><span class="badge badge-info">${t.type}</span></td><td data-label="Amount">${formatCurrency(t.amount)}</td><td data-label="Date">${formatDate(t.date)}</td></tr>`; 
+                                            }).join('') || `<tr><td colspan="4" class="empty-cell">No transactions yet</td></tr>`}
                                         </tbody>
                                     </table>
                                 </div>
@@ -1004,15 +1061,15 @@
                             <div class="card-header"><h3>Member Contributions</h3></div>
                             <div class="card-body no-padding">
                                 <div class="table-wrapper" style="max-height: 400px; overflow-y: auto;">
-                                    <table>
+                                    <table class="responsive-table">
                                         <thead><tr><th>Member Name</th><th style="text-align: right;">Total Contributed</th></tr></thead>
                                         <tbody>
                                             ${memberContributions.map(mc => `
                                                 <tr>
-                                                    <td>${escapeHtml(mc.name)}</td>
-                                                    <td style="text-align: right; font-weight: 600;">${formatCurrency(mc.total)}</td>
+                                                    <td data-label="Member">${escapeHtml(mc.name)}</td>
+                                                    <td data-label="Total" style="font-weight: 600;">${formatCurrency(mc.total)}</td>
                                                 </tr>
-                                            `).join('') || `<tr><td colspan="2" style="text-align:center; padding: 30px;">No members found</td></tr>`}
+                                            `).join('') || `<tr><td colspan="2" class="empty-cell">No members found</td></tr>`}
                                         </tbody>
                                     </table>
                                 </div>
@@ -1044,7 +1101,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Name</th><th>Position</th><th>Contact No.</th><th>Join Date</th><th>Status</th><th>Actions</th></tr></thead><tbody id="memberTableBody"></tbody></table></div></div>
+                        <div class="card-body no-padding"><div class="table-wrapper"><table class="responsive-table"><thead><tr><th>Name</th><th>Position</th><th>Contact No.</th><th>Join Date</th><th>Status</th><th>Actions</th></tr></thead><tbody id="memberTableBody"></tbody></table></div></div>
                     </div>
                 `;
                 document.getElementById('memberSearchInput').addEventListener('input', renderMemberTableBody);
@@ -1077,11 +1134,18 @@
                     if (!canEdit && !canDelete) {
                         actions = '<span class="badge badge-muted">View Only</span>';
                     } else {
-                        if (canEdit) actions += `<button class="btn-icon" onclick="openMemberModal('${m.id}')">✏️</button>`;
-                        if (canDelete) actions += `<button class="btn-icon delete" onclick="deleteMember('${m.id}')">🗑️</button>`;
+                        if (canEdit) actions += `<button class="btn-icon" onclick="openMemberModal('${m.id}')" title="Edit">✏️</button>`;
+                        if (canDelete) actions += `<button class="btn-icon delete" onclick="deleteMember('${m.id}')" title="Delete">🗑️</button>`;
                     }
-                    return `<tr><td>${escapeHtml(m.name)}</td><td>${escapeHtml(m.position)}</td><td style="white-space:nowrap;">${escapeHtml(m.phone || '-')}</td><td>${formatDate(m.joinDate)}</td><td><span class="badge ${m.status === 'active' ? 'badge-success' : 'badge-danger'}">${m.status}</span></td><td><div class="user-actions">${actions}</div></td></tr>`;
-                }).join('') || `<tr><td colspan="6" style="text-align:center; padding: 30px;">No members found</td></tr>`;
+                    return `<tr>
+                        <td data-label="Name">${escapeHtml(m.name)}</td>
+                        <td data-label="Position">${escapeHtml(m.position)}</td>
+                        <td data-label="Contact">${escapeHtml(m.phone || '-')}</td>
+                        <td data-label="Joined">${formatDate(m.joinDate)}</td>
+                        <td data-label="Status"><span class="badge ${m.status === 'active' ? 'badge-success' : 'badge-danger'}">${m.status}</span></td>
+                        <td class="no-label"><div class="user-actions">${actions}</div></td>
+                    </tr>`;
+                }).join('') || `<tr><td colspan="6" class="empty-cell">No members found</td></tr>`;
             }
 
             function renderTransactions() {
@@ -1091,7 +1155,7 @@
                 const canAdd = hasPermission('addTransaction');
                 const content = document.getElementById('pageContent');
                 content.innerHTML = `
-                    <div class="card"><div class="card-header"><h3>Amount Records</h3><div class="card-header-actions"><div class="filters-row"><input type="text" class="search-input" placeholder="Search desc..." id="txnSearchInput"><select class="filter-select" id="txnTypeFilter"><option value="">All Types</option>${types.map(t => `<option value="${t}">${t}</option>`).join('')}</select><select class="filter-select" id="txnMemberFilter"><option value="">All Members</option>${members.map(m => `<option value="${m.id}">${escapeHtml(m.name)}</option>`).join('')}</select></div><div style="display: flex; gap: 8px; flex-wrap: wrap;"><button class="btn btn-secondary btn-sm" onclick="exportTransactionsExcel()">📥 Excel</button><button class="btn btn-secondary btn-sm" onclick="printTransactions()">🖨️ Print</button>${canAdd ? `<button class="btn btn-primary btn-sm" onclick="openTransactionModal()">+ Record Amount</button>` : ''}</div></div></div><div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Member</th><th>Type</th><th>Amount</th><th>Date</th><th>Description</th><th>Actions</th></tr></thead><tbody id="txnTableBody"></tbody><tfoot id="txnTableFooter"></tfoot></table></div><div class="pagination" id="txnPagination"></div></div></div>
+                    <div class="card"><div class="card-header"><h3>Amount Records</h3><div class="card-header-actions"><div class="filters-row"><input type="text" class="search-input" placeholder="Search desc..." id="txnSearchInput"><select class="filter-select" id="txnTypeFilter"><option value="">All Types</option>${types.map(t => `<option value="${t}">${t}</option>`).join('')}</select><select class="filter-select" id="txnMemberFilter"><option value="">All Members</option>${members.map(m => `<option value="${m.id}">${escapeHtml(m.name)}</option>`).join('')}</select></div><div style="display: flex; gap: 8px; flex-wrap: wrap;"><button class="btn btn-secondary btn-sm" onclick="exportTransactionsExcel()">📥 Excel</button><button class="btn btn-secondary btn-sm" onclick="printTransactions()">🖨️ Print</button>${canAdd ? `<button class="btn btn-primary btn-sm" onclick="openTransactionModal()">+ Record Amount</button>` : ''}</div></div></div><div class="card-body no-padding"><div class="table-wrapper"><table class="responsive-table"><thead><tr><th>Member</th><th>Type</th><th>Amount</th><th>Date</th><th>Description</th><th>Actions</th></tr></thead><tbody id="txnTableBody"></tbody><tfoot id="txnTableFooter"></tfoot></table></div><div class="pagination" id="txnPagination"></div></div></div>
                 `;
                 document.getElementById('txnSearchInput').addEventListener('input', () => { txnPage = 0; renderTxnTableBody(); });
                 document.getElementById('txnTypeFilter').addEventListener('change', () => { txnPage = 0; renderTxnTableBody(); });
@@ -1140,11 +1204,18 @@
                     if (!canEdit && !canDelete) {
                         actions = '<span class="badge badge-muted">View Only</span>';
                     } else {
-                        if (canEdit) actions += `<button class="btn-icon" onclick="openTransactionModal('${t.id}')">✏️</button>`;
-                        if (canDelete) actions += `<button class="btn-icon delete" onclick="deleteTransaction('${t.id}')">🗑️</button>`;
+                        if (canEdit) actions += `<button class="btn-icon" onclick="openTransactionModal('${t.id}')" title="Edit">✏️</button>`;
+                        if (canDelete) actions += `<button class="btn-icon delete" onclick="deleteTransaction('${t.id}')" title="Delete">🗑️</button>`;
                     }
-                    return `<tr><td>${m ? escapeHtml(m.name) : 'Unknown'}</td><td><span class="badge badge-info">${t.type}</span></td><td>${formatCurrency(t.amount)}</td><td>${formatDate(t.date)}</td><td>${escapeHtml(t.description)}</td><td><div class="user-actions">${actions}</div></td></tr>`; 
-                }).join('') || `<tr><td colspan="6" style="text-align:center; padding: 30px;">No transactions found</td></tr>`;
+                    return `<tr>
+                        <td data-label="Member">${m ? escapeHtml(m.name) : 'Unknown'}</td>
+                        <td data-label="Type"><span class="badge badge-info">${t.type}</span></td>
+                        <td data-label="Amount">${formatCurrency(t.amount)}</td>
+                        <td data-label="Date">${formatDate(t.date)}</td>
+                        <td data-label="Description" class="wrap-text">${formatMultiLine(t.description)}</td>
+                        <td class="no-label"><div class="user-actions">${actions}</div></td>
+                    </tr>`; 
+                }).join('') || `<tr><td colspan="6" class="empty-cell">No transactions found</td></tr>`;
                 
                 let pagHtml = '';
                 if (totalPages > 1) {
@@ -1176,7 +1247,7 @@
                         <div class="stat-card"><div class="stat-icon green">📈</div><div class="stat-label">Total Deposit</div><div class="stat-value">${formatCurrency(totalDeposit)}</div><div class="stat-sub">Deposits & Interest</div></div>
                         <div class="stat-card"><div class="stat-icon orange">📉</div><div class="stat-label">Total Withdraw</div><div class="stat-value">${formatCurrency(totalWithdraw)}</div><div class="stat-sub">Withdrawals & Charges</div></div>
                     </div>
-                    <div class="card"><div class="card-header"><h3>Bank Transactions</h3><div class="card-header-actions"><div class="filters-row"><input type="text" class="search-input" placeholder="Search desc/acct..." id="bankSearchInput"><select class="filter-select" id="bankTypeFilter"><option value="">All Types</option>${types.map(t => `<option value="${t}">${t}</option>`).join('')}</select></div><div style="display: flex; gap: 8px; flex-wrap: wrap;"><button class="btn btn-secondary btn-sm" onclick="exportBankingExcel()">📥 Excel</button><button class="btn btn-secondary btn-sm" onclick="printBanking()">🖨️ Print</button>${canAdd ? `<button class="btn btn-primary btn-sm" onclick="openBankingModal()">+ Add Bank Record</button>` : ''}</div></div></div><div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Type</th><th>Amount</th><th>Date</th><th>Bank</th><th>Description</th><th>Actions</th></tr></thead><tbody id="bankTableBody"></tbody></table></div></div></div>
+                    <div class="card"><div class="card-header"><h3>Bank Transactions</h3><div class="card-header-actions"><div class="filters-row"><input type="text" class="search-input" placeholder="Search desc/acct..." id="bankSearchInput"><select class="filter-select" id="bankTypeFilter"><option value="">All Types</option>${types.map(t => `<option value="${t}">${t}</option>`).join('')}</select></div><div style="display: flex; gap: 8px; flex-wrap: wrap;"><button class="btn btn-secondary btn-sm" onclick="exportBankingExcel()">📥 Excel</button><button class="btn btn-secondary btn-sm" onclick="printBanking()">🖨️ Print</button>${canAdd ? `<button class="btn btn-primary btn-sm" onclick="openBankingModal()">+ Add Bank Record</button>` : ''}</div></div></div><div class="card-body no-padding"><div class="table-wrapper"><table class="responsive-table"><thead><tr><th>Type</th><th>Amount</th><th>Date</th><th>Bank</th><th>Description</th><th>Actions</th></tr></thead><tbody id="bankTableBody"></tbody></table></div></div></div>
                 `;
                 document.getElementById('bankSearchInput').addEventListener('input', renderBankTableBody);
                 document.getElementById('bankTypeFilter').addEventListener('change', renderBankTableBody);
@@ -1206,10 +1277,17 @@
                     } else if (!canManage) {
                         actions = '<span class="badge badge-muted">View Only</span>';
                     } else {
-                        actions = `<button class="btn-icon" onclick="openBankingModal('${b.id}')">✏️</button><button class="btn-icon delete" onclick="deleteBanking('${b.id}')">🗑️</button>`;
+                        actions = `<button class="btn-icon" onclick="openBankingModal('${b.id}')" title="Edit">✏️</button><button class="btn-icon delete" onclick="deleteBanking('${b.id}')" title="Delete">🗑️</button>`;
                     }
-                    return `<tr><td><span class="badge ${b.type === 'deposit' || b.type === 'interest' ? 'badge-success' : 'badge-danger'}">${b.type}</span></td><td>${formatCurrency(b.amount)}</td><td>${formatDate(b.date)}</td><td>${escapeHtml(b.account)}</td><td>${escapeHtml(b.description)}</td><td><div class="user-actions">${actions}</div></td></tr>`;
-                }).join('') || `<tr><td colspan="6" style="text-align:center; padding: 30px;">No bank records found</td></tr>`;
+                    return `<tr>
+                        <td data-label="Type"><span class="badge ${b.type === 'deposit' || b.type === 'interest' ? 'badge-success' : 'badge-danger'}">${b.type}</span></td>
+                        <td data-label="Amount">${formatCurrency(b.amount)}</td>
+                        <td data-label="Date">${formatDate(b.date)}</td>
+                        <td data-label="Bank">${escapeHtml(b.account)}</td>
+                        <td data-label="Description" class="wrap-text">${formatMultiLine(b.description)}</td>
+                        <td class="no-label"><div class="user-actions">${actions}</div></td>
+                    </tr>`;
+                }).join('') || `<tr><td colspan="6" class="empty-cell">No bank records found</td></tr>`;
             }
 
             function renderMeetings() {
@@ -1217,7 +1295,7 @@
                 const canAdd = hasPermission('manageMeetings');
                 const content = document.getElementById('pageContent');
                 content.innerHTML = `
-                    <div class="card"><div class="card-header"><h3>Meeting & Announcement</h3><div class="card-header-actions"><div class="filters-row"><input type="text" class="search-input" placeholder="Search subject/details..." id="meetSearchInput"></div><div style="display: flex; gap: 8px; flex-wrap: wrap;"><button class="btn btn-secondary btn-sm" onclick="exportMeetingsExcel()">📥 Excel</button><button class="btn btn-secondary btn-sm" onclick="printMeetings()">🖨️ Print</button>${canAdd ? `<button class="btn btn-primary btn-sm" onclick="openMeetingModal()">+ Add Record</button>` : ''}</div></div></div><div class="card-body no-padding"><div class="table-wrapper"><table><thead><tr><th>Date</th><th>Type</th><th>Subject (Venue/Title)</th><th>Details (Agenda/Desc)</th><th>Actions</th></tr></thead><tbody id="meetTableBody"></tbody></table></div></div></div>
+                    <div class="card"><div class="card-header"><h3>Meeting & Announcement</h3><div class="card-header-actions"><div class="filters-row"><input type="text" class="search-input" placeholder="Search subject/details..." id="meetSearchInput"></div><div style="display: flex; gap: 8px; flex-wrap: wrap;"><button class="btn btn-secondary btn-sm" onclick="exportMeetingsExcel()">📥 Excel</button><button class="btn btn-secondary btn-sm" onclick="printMeetings()">🖨️ Print</button>${canAdd ? `<button class="btn btn-primary btn-sm" onclick="openMeetingModal()">+ Add Record</button>` : ''}</div></div></div><div class="card-body no-padding"><div class="table-wrapper"><table class="responsive-table"><thead><tr><th>Date</th><th>Type</th><th>Subject (Venue/Title)</th><th>Details (Agenda/Desc)</th><th>Actions</th></tr></thead><tbody id="meetTableBody"></tbody></table></div></div></div>
                 `;
                 document.getElementById('meetSearchInput').addEventListener('input', renderMeetTableBody);
                 renderMeetTableBody();
@@ -1247,9 +1325,15 @@
                     const recordType = m.recordType || 'meeting';
                     const subject = m.subject || m.venue || '';
                     const detailsPlain = richTextToPlain(m.details || m.agenda || '');
-                    const truncated = detailsPlain.length > 60 ? detailsPlain.substring(0, 60) + '…' : detailsPlain;
-                    return `<tr><td>${formatDate(m.date)}</td><td><span class="badge ${recordType === 'announcement' ? 'badge-info' : 'badge-primary'}">${recordType}</span></td><td>${escapeHtml(subject)}</td><td style="max-width: 260px;">${escapeHtml(truncated)}</td><td><div class="user-actions">${actions}</div></td></tr>`;
-                }).join('') || `<tr><td colspan="5" style="text-align:center; padding: 30px;">No records found</td></tr>`;
+                    const truncated = detailsPlain.length > 80 ? detailsPlain.substring(0, 80) + '…' : detailsPlain;
+                    return `<tr>
+                        <td data-label="Date">${formatDate(m.date)}</td>
+                        <td data-label="Type"><span class="badge ${recordType === 'announcement' ? 'badge-info' : 'badge-primary'}">${recordType}</span></td>
+                        <td data-label="Subject">${escapeHtml(subject)}</td>
+                        <td data-label="Details" class="wrap-text">${escapeHtml(truncated)}</td>
+                        <td class="no-label"><div class="user-actions">${actions}</div></td>
+                    </tr>`;
+                }).join('') || `<tr><td colspan="5" class="empty-cell">No records found</td></tr>`;
             }
 
             window.viewMeeting = function(id) {
@@ -1291,7 +1375,7 @@
                         <div class="card-header"><h3>User Management</h3><div class="card-header-actions">${canManageUsers ? `<button class="btn btn-primary btn-sm" onclick="openUserModal()">+ Add User</button>` : ''}</div></div>
                         <div class="card-body no-padding">
                             <div class="table-wrapper">
-                                <table>
+                                <table class="responsive-table">
                                     <thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
                                     <tbody id="userTableBody"></tbody>
                                 </table>
@@ -1318,11 +1402,17 @@
                     if (!canManage) {
                         actions = '<span class="badge badge-muted">View Only</span>';
                     } else {
-                        actions = `<button class="btn-icon" onclick="openUserModal('${u.id}')">✏️</button>`;
-                        if (u.username !== 'admin') actions += `<button class="btn-icon delete" onclick="deleteUser('${u.id}')">🗑️</button>`;
+                        actions = `<button class="btn-icon" onclick="openUserModal('${u.id}')" title="Edit">✏️</button>`;
+                        if (u.username !== 'admin') actions += `<button class="btn-icon delete" onclick="deleteUser('${u.id}')" title="Delete">🗑️</button>`;
                     }
-                    return `<tr><td>${escapeHtml(u.name)}</td><td>${escapeHtml(u.username)}</td><td><span class="badge badge-primary">${u.role}</span></td><td><span class="badge ${u.active ? 'badge-success' : 'badge-danger'}">${u.active ? 'Active' : 'Inactive'}</span></td><td><div class="user-actions">${actions}</div></td></tr>`;
-                }).join('') || `<tr><td colspan="5" style="text-align:center; padding: 30px;">No users found</td></tr>`;
+                    return `<tr>
+                        <td data-label="Name">${escapeHtml(u.name)}</td>
+                        <td data-label="Username">${escapeHtml(u.username)}</td>
+                        <td data-label="Role"><span class="badge badge-primary">${u.role}</span></td>
+                        <td data-label="Status"><span class="badge ${u.active ? 'badge-success' : 'badge-danger'}">${u.active ? 'Active' : 'Inactive'}</span></td>
+                        <td class="no-label"><div class="user-actions">${actions}</div></td>
+                    </tr>`;
+                }).join('') || `<tr><td colspan="5" class="empty-cell">No users found</td></tr>`;
             }
 
             // ------------------------------------------------------------
@@ -1435,8 +1525,7 @@
             window.openModal = function(modalId) { document.getElementById(modalId).classList.add('active'); };
             window.closeModal = function(modalId) { document.getElementById(modalId).classList.remove('active'); if (modalId === 'importModal') { document.getElementById('importFileInput').value = ''; } };
             
-            // Event delegation: handles ALL [data-close] buttons, including ones
-            // created dynamically later (e.g. the Close button in the View modal).
+            // Event delegation: handles ALL [data-close] buttons, including dynamic ones
             document.addEventListener('click', function(e) {
                 const closeBtn = e.target.closest('[data-close]');
                 if (closeBtn) {
