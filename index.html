@@ -567,7 +567,7 @@
             'use strict';
 
             // ------------------------------------------------------------
-            // Preloaded Data (v4 — includes meetings/announcements)
+            // Preloaded Data (v6 — includes manual banking withdrawals)
             // ------------------------------------------------------------
             const M = {
                 hari: "mem_mt6yg46b0lh85u", sashi: "mem_mt6yifq8qir7tq", rabin: "mem_mt6yjnkojy5vt5",
@@ -723,6 +723,15 @@
                 ["txn_mt7bp1k88glaha", M.rabin, 2000, "2026-08-07", ""]
             ];
 
+            // Manual banking records (investment withdrawals — not linked to transactions)
+            const MANUAL_BANKING = [
+                { id: "bank_mt8smkzk1uw6s7", type: "withdrawal", amount: 6000, date: "2025-01-07", account: "Jyoti Bikash Bank", description: "Cheque No: 0010757351 for investment purpose\n" },
+                { id: "bank_mt8svairo710dg", type: "withdrawal", amount: 14000, date: "2025-04-11", account: "Jyoti Bikash Bank ", description: "Cheque No: 0010757352 for investment purpose\n" },
+                { id: "bank_mt8swlfin22v0n", type: "withdrawal", amount: 180000, date: "2025-11-25", account: "Jyoti Bikash Bank", description: "Cheque No: 0010757354 for investment purpose\n" },
+                { id: "bank_mt8sxilbd6hh19", type: "withdrawal", amount: 96000, date: "2026-02-02", account: "Jyoti Bikash Bank", description: "Cheque No: 0010757355 for investment purpose\n" },
+                { id: "bank_mt8sye8o2u0jmn", type: "withdrawal", amount: 150000, date: "2026-06-01", account: "Jyoti Bikash Bank", description: "Cheque No: 0010757351 for investment purpose" }
+            ];
+
             const INITIAL_DATA = {
                 users: [
                     { id: "admin_mt5x09k5p9w6m8", username: "admin", passwordHash: "h_6quw9w_8", name: "System Administrator", role: "admin", permissions: { viewDashboard: true, viewMembers: true, addMember: true, editMember: true, deleteMember: true, viewTransactions: true, addTransaction: true, editTransaction: true, deleteTransaction: true, viewBanking: true, manageBanking: true, viewMeetings: true, manageMeetings: true, manageUsers: true, accessSettings: true, changeOwnCredential: true }, createdAt: "2026-08-23T14:41:08.453Z", active: true },
@@ -841,14 +850,18 @@
             }
 
             function initData() {
-                if (!localStorage.getItem('bloomstone_preload_v4')) {
+                // v6 flag: forces fresh load incl. the 5 manual banking withdrawals
+                if (!localStorage.getItem('bloomstone_preload_v6')) {
                     setData(STORAGE_KEYS.users, INITIAL_DATA.users);
                     setData(STORAGE_KEYS.members, INITIAL_DATA.members);
                     setData(STORAGE_KEYS.transactions, INITIAL_DATA.transactions);
-                    setData(STORAGE_KEYS.banking, generateBankingFromTransactions(INITIAL_DATA.transactions, INITIAL_DATA.members));
+                    // Merge auto-generated banking (141 deposits) with manual banking (5 withdrawals)
+                    setData(STORAGE_KEYS.banking, [...generateBankingFromTransactions(INITIAL_DATA.transactions, INITIAL_DATA.members), ...MANUAL_BANKING]);
                     setData(STORAGE_KEYS.meetings, INITIAL_DATA.meetings);
                     setData(STORAGE_KEYS.settings, INITIAL_DATA.settings);
-                    localStorage.setItem('bloomstone_preload_v4', 'true');
+                    localStorage.setItem('bloomstone_preload_v6', 'true');
+                    localStorage.removeItem('bloomstone_preload_v5');
+                    localStorage.removeItem('bloomstone_preload_v4');
                     localStorage.removeItem('bloomstone_preload_v3');
                     localStorage.removeItem('bloomstone_preload_v2');
                     localStorage.removeItem('bloomstone_preload_v1');
