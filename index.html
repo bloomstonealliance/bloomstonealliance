@@ -290,9 +290,9 @@
             .stat-card .stat-value { font-size: 18px; }
             .stat-card .stat-sub { font-size: 11px; }
             
-            /* Filters: 2-col grid, search on top */
-            .filters-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
-            .filters-row .search-input { grid-column: 1 / -1; }
+            /* FILTERS: stacked full-width (fixes overflow from long select options) */
+            .filters-row { display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 10px; }
+            .filters-row .search-input, .filters-row .filter-select { grid-column: 1 / -1; min-width: 0; width: 100%; max-width: none; flex-basis: auto; }
             
             /* Card headers stack */
             .card-header { flex-direction: column; align-items: stretch; padding: 14px 16px; }
