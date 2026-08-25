@@ -510,7 +510,7 @@
             'use strict';
 
             // ------------------------------------------------------------
-            // Preloaded Data (v3 — from latest JSON backup)
+            // Preloaded Data (v4 — includes meetings/announcements)
             // ------------------------------------------------------------
             const M = {
                 hari: "mem_mt6yg46b0lh85u", sashi: "mem_mt6yifq8qir7tq", rabin: "mem_mt6yjnkojy5vt5",
@@ -684,7 +684,16 @@
                 transactions: TXN_ROWS.map(function(r) {
                     return { id: r[0], memberId: r[1], type: "contribution", amount: r[2], date: r[3], description: r[4] };
                 }),
-                meetings: [],
+                meetings: [
+                    {
+                        id: "meet_mt7uzqr7o1rctx",
+                        date: "2026-08-24",
+                        recordType: "announcement",
+                        subject: "Announcement: Bloomstone Alliance Web App Live",
+                        details: "<div><div><p>The web application for Bloomstone Alliance is now live. All members are requested to log in, explore the app, and share their feedback directly in the WhatsApp group.</p><p><b>Action Steps for Members</b></p><ul><li><p><b>Access the App:</b> Open the new web portal and navigate through the core features.</p></li><li><p><b>Test Functionality:</b> Check your account settings, overall layout, and key tools to ensure everything operates smoothly.</p></li><li><p><b>Share Feedback:</b> Drop any suggestions, user experience issues, or bug reports into the main WhatsApp group so the development team can review them.</p></li></ul></div></div>",
+                        createdAt: "2026-08-24T23:20:17.205Z"
+                    }
+                ],
                 settings: {
                     interestRate: 10,
                     orgDetails: { name: "Bloomstone Alliance", address: "Kathmandu, Nepal", phone: "01-XXXXXXX", email: "info@bloomstone.np", website: "www.bloomstone.np", registrationNo: "12345" }
@@ -774,15 +783,16 @@
             }
 
             function initData() {
-                // v3 flag: forces fresh load of the NEW preloaded data (replaces v2/v1 data)
-                if (!localStorage.getItem('bloomstone_preload_v3')) {
+                // v4 flag: forces fresh load incl. the new preloaded meetings/announcements
+                if (!localStorage.getItem('bloomstone_preload_v4')) {
                     setData(STORAGE_KEYS.users, INITIAL_DATA.users);
                     setData(STORAGE_KEYS.members, INITIAL_DATA.members);
                     setData(STORAGE_KEYS.transactions, INITIAL_DATA.transactions);
                     setData(STORAGE_KEYS.banking, generateBankingFromTransactions(INITIAL_DATA.transactions, INITIAL_DATA.members));
                     setData(STORAGE_KEYS.meetings, INITIAL_DATA.meetings);
                     setData(STORAGE_KEYS.settings, INITIAL_DATA.settings);
-                    localStorage.setItem('bloomstone_preload_v3', 'true');
+                    localStorage.setItem('bloomstone_preload_v4', 'true');
+                    localStorage.removeItem('bloomstone_preload_v3');
                     localStorage.removeItem('bloomstone_preload_v2');
                     localStorage.removeItem('bloomstone_preload_v1');
                     localStorage.removeItem(STORAGE_KEYS.session);
@@ -1262,7 +1272,7 @@
                     </div>
                     <div class="modal-footer" style="border-top:none; padding-top:16px;">
                         ${hasPermission('manageMeetings') ? `<button type="button" class="btn btn-outline" onclick="closeModal('viewMeetingModal'); openMeetingModal('${m.id}');">✏️ Edit</button>` : ''}
-                        <button type="button" class="btn btn-secondary" data-close="viewMeetingModal">Close</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('viewMeetingModal')">Close</button>
                     </div>
                 `;
                 openModal('viewMeetingModal');
@@ -1424,7 +1434,15 @@
             // ------------------------------------------------------------
             window.openModal = function(modalId) { document.getElementById(modalId).classList.add('active'); };
             window.closeModal = function(modalId) { document.getElementById(modalId).classList.remove('active'); if (modalId === 'importModal') { document.getElementById('importFileInput').value = ''; } };
-            document.querySelectorAll('[data-close]').forEach(btn => { btn.addEventListener('click', function() { closeModal(this.getAttribute('data-close')); }); });
+            
+            // Event delegation: handles ALL [data-close] buttons, including ones
+            // created dynamically later (e.g. the Close button in the View modal).
+            document.addEventListener('click', function(e) {
+                const closeBtn = e.target.closest('[data-close]');
+                if (closeBtn) {
+                    closeModal(closeBtn.getAttribute('data-close'));
+                }
+            });
 
             // --- Members ---
             window.openMemberModal = function(id = null) {
