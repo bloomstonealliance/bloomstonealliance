@@ -417,7 +417,6 @@
                         <div class="notif-dropdown" id="notifDropdown"></div>
                     </div>
                     <button class="btn btn-secondary btn-sm" id="themeToggle" title="Toggle dark/light mode">🌙</button>
-                    <button class="btn btn-primary btn-sm" id="topbarAddBtn">+ Add Record</button>
                 </div>
             </div>
             <div class="page-content" id="pageContent"></div>
@@ -1021,7 +1020,6 @@
                 else if (page === 'meetings') canAddCurrent = hasPermission('manageMeetings');
                 else if (page === 'settings') canAddCurrent = hasPermission('manageUsers');
 
-                document.getElementById('topbarAddBtn').classList.toggle('hidden', !canAddCurrent);
                 document.getElementById('fabAddBtn').classList.toggle('hidden', !canAddCurrent);
             }
 
@@ -1990,7 +1988,6 @@
                 else if (currentPage === 'settings' && hasPermission('manageUsers')) openUserModal();
                 else showToast('You do not have permission to add records here', 'error');
             }
-            document.getElementById('topbarAddBtn').addEventListener('click', handleAddRecord);
             document.getElementById('fabAddBtn').addEventListener('click', handleAddRecord);
 
             document.querySelectorAll('.nav-item').forEach(item => { item.addEventListener('click', () => navigateTo(item.getAttribute('data-page'))); });
