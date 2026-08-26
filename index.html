@@ -125,7 +125,6 @@
         .sidebar-footer .user-role { font-size: 11px; color: var(--sidebar-text); text-transform: capitalize; }
         .sidebar-footer .btn-logout { background: transparent; border: none; color: var(--sidebar-text); cursor: pointer; font-size: 13px; font-weight: 600; padding: 8px 12px; border-radius: var(--radius-xs); transition: all var(--transition); flex-shrink: 0; }
         .sidebar-footer .btn-logout:hover { color: var(--danger); background: rgba(239,68,68,0.15); }
-        .topbar-logout { display: none !important; }
         
         .main-content { flex: 1; margin-left: var(--sidebar-width); padding: 0; min-height: 100vh; background: var(--bg); transition: margin-left var(--transition); min-width: 0; overflow-x: hidden; }
         .main-content.collapsed { margin-left: var(--sidebar-collapsed-width); }
@@ -279,7 +278,6 @@
             .topbar .topbar-actions { width: auto; flex-shrink: 0; gap: 8px; }
             .topbar .date-display { display: none; }
             #topbarAddBtn { display: none !important; }
-            .topbar-logout { display: inline-flex !important; }
             .fab { display: flex; right: 16px; }
             
             /* Notifications: full-width panel */
@@ -1980,7 +1978,6 @@
             });
 
             document.getElementById('logoutBtn').addEventListener('click', function() { clearSession(); showLogin(); });
-            document.getElementById('topbarLogoutBtn').addEventListener('click', function() { clearSession(); showLogin(); });
             document.getElementById('themeToggle').addEventListener('click', toggleTheme);
             document.getElementById('sidebarToggle').addEventListener('click', toggleSidebar);
             document.getElementById('mobileToggle').addEventListener('click', function() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('sidebarOverlay').classList.toggle('active'); });
